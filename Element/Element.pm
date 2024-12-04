@@ -4,144 +4,297 @@
 
 =head1 NAME
 
-VOTABLE::Element - VOTABLE XML element class
+VOTable::Element - Generic VOTable element class
 
 =head1 SYNOPSIS
 
-C<use VOTABLE::Element>
-
-C<$votable_element = new VOTABLE::Element>
-
-C<$votable_element = new VOTABLE::Element undef, a1 =E<gt> v1, a2 =E<gt> v2, ...>
-
-C<$votable_element = new VOTABLE::Element $xml_string>
-
-C<$votable_element = new VOTABLE::Element $xml_string, a1 =E<gt> v1, a2 =E<gt> v2, ...>
-
-C<$votable_element = new VOTABLE::Element $xmldom_element>
-
-C<$votable_element = new VOTABLE::Element $xmldom_element, a1 =E<gt> v1, a2 =E<gt> v2, ...>
+use VOTable::Element
 
 =head1 DESCRIPTION
 
-This class is a VOTABLE-specific wrapper around the
-C<XML::DOM::Element> class. It provides the base functionality for all
-VOTABLE element classes, and allows access to implementation-specific
-details, such as C<the XML::DOM::Element> objects embedded within the
-VOTABLE objects. The typical user should never need access to the
-implementation-specific details, so these base methods are for use
-primarily by other VOTABLE objects. This approach was taken to allow
-modification of the underlying XML technology (currently C<XML::DOM>,
-but we may use something else later) without changing the user API.
+This class implements a generic interface to VOTable elements. This
+class inherits from XML::LibXML::Element. All VOTable element classes
+should inherit from this class to ensure uniform functionality.
 
-The overall design of the VOTABLE objects is straightforward. Each XML
-element in the VOTABLE DTD is represented by a class. Each element
-class is a subclass of C<VOTABLE::Element> (this class). Within each
-element class, there are attributes and child elements, along with
-implementation-specific data, such as references to the underlying
-C<XML::DOM> objects.
+This class implements much of the functionality of each element by
+providing generic code that is customized at run time for each
+element. For example, a single AUTOLOAD method is used to implement
+the accessors (get_*(), set_*(), remove_*()) for all attributes, and
+the accessors (get_*(), set_*(), append_*(), remove_*()) for child
+elements for each element class, greatly decreasing the amount of code
+required to implement an element class.
 
-Attributes are manipulated using C<get_ATTNAME> and C<set_ATTNAME>
-methods (accessors), where C<ATTNAME> is replaced by the name of the
-attribute in question. The C<set> methods take a single argument (the
-value to set the attribute to), and the C<get> methods take no
-arguments. Since attributes can only take single values, all
-C<set_ATTNAME> methods take single scalars as arguments, and
-C<get_ATTNAME> methods return single scalars. All C<set_ATTNAME>
-methods return the newly-set value on success, or C<undef> if an error
-occurs.
+This class was designed to be subclassed, and should rarely (if ever)
+be used in its base form.
 
-Child elements have similar accessors, of the form C<get_ELNAME> and
-C<set_ELNAME>, where C<ELNAME> is replaced by the name of the element
-(more precisely, the name of the element I<tag>, such as C<TABLEDATA>
-for a C<TABLEDATA> element). Note that these names, and the methods,
-are case-sensitive. The type of arguments passed to and returned from
-the element accessors is determined by the multiplicity of the child
-elements (as defined by the VOTABLE DTD). Elements which can occur 0
-or 1 times (those which are unquantified, or quantified with a '?' in
-the DTD) are passed and returned as scalars, while elements which can
-occur 1 or more times (those quantified with a '+' or '*' in the DTD)
-are passed and returned as lists. Like C<set_ATTNAME> accessors,
-C<set_ELNAME> accessors return the new value(s) on success. On
-failure, scalar-returning methods return C<undef>, while
-list-returning methods return an empty list.
+There are a few warnings that must be kept in mind when using the
+inherited methods, especially when adding a class for a new element:
+
+=over 4
+
+=item
+
+VOTable element tag names should always be completely in upper case.
+
+=item
+
+VOTable element attribute names should always be completely in
+lower case. The only exception is the 'ID' attribute.
+
+=item
+
+VOTable attribute names which contain hyphens (-) as a word separator
+must be mapped to underscores (_) when calling the corresponding
+accessors. For example, to call the 'get' method for the
+'content-type' attribute, call get_content_type(), not
+get_content-type() (which is an invalid name for a subroutine in
+Perl).
 
 =head2 Methods
 
-=head3 C<new($str_or_ref, %options)>
+=head3 new($arg)
 
-This is the class constructor. C<$str_or_ref>, if defined, contains a
-string of XML to use to initialize the new object, or a reference to
-an existing C<XML::DOM::Element> object to use to initialize the new
-object. If C<$str_or_ref> is undefined, a new, empty
-C<XML::DOM::Element> object is created for the new object. The
-C<%options> argument contains 0 or more C<key =E<gt> value> pairs to
-use when setting the initial values of the element attributes. On
-success, this method returns the blessed refrence for the new
-object. On failure, this method returns C<undef>.
+Create and return a new VOTable::Element object. Throw an exception if
+an error occurs. This method dynamically determines the tag name (and
+thus the class name) for the new element from the class name used when
+the constructor is invoked, and blesses the new object
+appropriately. For example, the TD element class inherits this new()
+method. When called at run time, new() determines that the method is
+called for the class VOTable::TD, and blesses the new object into that
+class. If $arg is supplied, and is a XML::LibXML::Element object, that
+object is used to create the VOTable::Element object (just by
+reblessing).
+
+=head3 get()
+
+Return all of the text (including the contents of CDATA sections) from
+within this element as a single string. Throw an exception if an error
+occurs. The string is constructed by simply concatenating the text
+from each child text/CDATA node. Return an empty string if there is no
+text. This method is only intended for use by elements which contain
+PCDATA content and/or CDATA sections. It should also work for
+mixed-model elements (i.e. with PCDATA/CDATA and child elements), but
+those types of elements should normally be avoided. Character entities
+are NOT converted to entity references. Text which was ingested as a
+character entity reference, or as part of a CDATA section, is
+therefore returned by the get() method in its parsed form. For
+example, text containing the string '&amp;' returns as '&'; a CDATA
+section containing '&' also returns as '&'.
+
+=head3 set($str)
+
+Set the text content of the element to the specified string. Throw an
+exception if an error occurs. This method is only intended for use by
+elements which contain PCDATA content. It should also work for
+mixed-model elements (i.e. with PCDATA and child elements), but those
+types of elements should normally be avoided. Note that the existing
+text content of the element is deleted first. Character entities
+should _not_ be replaced with the corresponding entity references
+before this method is called. For example, to put a '&' into the
+element, call set('&'). If you call set('&amp;'), you will get() back
+the string '&amp;' (which is probably a good thing).
+
+=head3 empty()
+
+Empty the text content of the element. Throw an exception if an error
+occurs. This method is only intended for use by elements which contain
+PCDATA content. It should also work for mixed-model element (i.e. with
+PCDATA and child elements), but those types of elements should
+normally be avoided.
+
+=head3 AUTOLOAD(@args)
+
+This method is used to trap calls to accessors for attributes and
+child elements. The package variable $AUTOLOAD is checked for the
+requested method name, and the appropriate calls to other methods are
+made to execute the desired action. For example, if the attribute
+accessor get_ID() is called, the AUTOLOAD() method is invoked when the
+method is not explicitly found. The $AUTOLOAD variable is parsed to
+get the desired attribute name, and getAttribute() is called to get
+the value of the ID attribute. This approach allows the addition of
+new attributes and child elements to element classes without adding
+new method code. The allowed attributes for an element class must be
+listed in a package variable in the class called
+@valid_attribute_names, and valid names for child elements must be
+listed in @valid_child_element_names. Note that if better performance
+is required, derived classes can explicitly implement any desired
+accessor methods, which will automatically override the corresponding
+methods based on the AUTOLOAD() mechanism. If a 'get' accessor is
+called for an attribute, return the value of the attribute (the value
+will be 'undef' if the attribute is not set). If a 'set' or 'remove'
+accessor is called for an attribute, do so. If a 'get' accessor is
+called for a child element, return a (possibly empty) list containing
+the objects for the child elements of that type. If a 'set' accessor
+is called, remove and delete any existing child elements of the
+specified type, and append the new children provided in the argument
+list. If a 'append' accessor is called, append the new children
+provided in the argument list. If a 'remove' accessor is called,
+remove and delete all child elements of the specified type. Throw an
+exception if an error occurs, such as the use of an invalid attribute
+or child element name.
+
+=head3 get_valid_attribute_names()
+
+Return a list of the names of attributes valid for this element. The
+list of valid attributes is stored in the package variable
+@valid_attribute_names. This list is empty for VOTable::Element, but
+must be set as needed for any subclasses. Subclasses with no
+attributes need not define the @valid_attribute_names package
+variable.
+
+=head3 get_valid_child_element_names()
+
+Return a list of the names of child elements valid for this
+element. The list of valid child elements is stored in the package
+variable @valid_child_element_names. This list is empty for
+VOTable::Element, but should be set as needed for any
+subclasses. Subclasses with no child elements need not define the
+@valid_child_element_names package variable.
+
+=head3 toString($arg)
+
+Return a string representation of the element and all of its
+children. Character entities are replaced with entity references where
+appropriate. If $arg is '1', the output has extra whitespace for
+readability. If $arg is '2', text content is surrounded by
+newlines. This method is directly inherited from XML::LibXML::Element,
+so further documentation may be found in the XML::LibXML::Element
+manual page.
+
+=head3 _set_child_elements(@elements)
+
+(Internal method) Set the child elements of a single type of the
+current element to the specified elements. All items in @elements are
+assumed to be XML::LibXML::Element-derived objects with the same tag
+name. Existing elements with the same tag name are removed prior to
+adding the new elements. Throw an exception if an error occurs.
+
+=head3 _append_child_elements(@elements)
+
+(Internal method) Append the specified elements to the current
+element. All items in @elements are assumed to be
+XML::LibXML::Element-derived objects. Throw an exception if an error
+occurs.
+
+=head3 _remove_child_elements($tag_name)
+
+(Internal method) Remove all child elements with the specified tag
+name. Throw an exception if an error occurs.
 
 =head1 WARNINGS
 
 =over 4
 
-=item *
+=item
 
-This code (perhaps unwisely) assumes that object internal structure is
-always maintained. For example, this code assumes that every
-C<VOTABLE::Element> I<always> has an underlying C<XML::DOM::Element>
-object. When aberrant cases are encountered, an exception is raised
-(using the C<Carp::croak> subroutine).
-
-=item *
-
-Similarly, this code assumes that C<XML::DOM> methods always
-succeed. When aberrant cases are encountered, an exception is raised
-(using the C<Carp::croak> subroutine).
-
-=item *
-
-Attribute and element names containing embedded hyphens ('-') use
-accessors where the hyphen is mapped to an underscore ('_') in the
-name of the accessor method. This is a necessity, since the hyphen is
-not a valid name character in Perl.
+The VOTable format defined by the DTD is not currently strictly
+enforced.
 
 =back
 
 =head1 SEE ALSO
 
-I<perl>, I<XML::DOM>
+=over 4
+
+=item
+
+XML::LibXML::Element
+
+=back
 
 =head1 AUTHOR
 
-Eric Winter, NASA GSFC (elwinter@milkyway.gsfc.nasa.gov)
+Eric Winter, NASA GSFC (Eric.L.Winter.1@gsfc.nasa.gov)
 
 =head1 VERSION
 
-$Id: Element.pm,v 1.1.1.4 2002/06/09 21:13:08 elwinter Exp $
+$Id: Element.pm,v 1.1.1.23 2003/08/04 15:37:48 elwinter Exp $
 
 =cut
 
-#******************************************************************************
 #******************************************************************************
 
 # Revision history
 
 # $Log: Element.pm,v $
-# Revision 1.1.1.4  2002/06/09  21:13:08  elwinter
-# Sert version to 0.03.
+# Revision 1.1.1.23  2003/08/04 15:37:48  elwinter
+# Added code to AUTOLOAD to allow get of single child elements.
 #
-# Revision 1.1.1.3  2002/06/09  19:48:33  elwinter
-# Changed required Perl version to 5.6.1.
+# Revision 1.1.1.22  2003/04/09 20:43:21  elwinter
+# Fixed small documentation error.
 #
-# Revision 1.1.1.2  2002/05/17  14:13:12  elwinter
-# First complete version.
+# Revision 1.1.1.21  2003/04/09 20:34:51  elwinter
+# Updated test code and documentation.
+#
+# Revision 1.1.1.20  2003/04/07 20:06:31  elwinter
+# Added missing return() in append code.
+#
+# Revision 1.1.1.19  2003/04/07 17:26:49  elwinter
+# Updated documentation.
+#
+# Revision 1.1.1.18  2003/04/01 14:05:28  elwinter
+# Development checkin.
+#
+# Revision 1.1.1.17  2003/03/20 16:13:12  elwinter
+# Changed getElementsByTagName to getChildrenByTagName.
+#
+# Revision 1.1.1.16  2003/03/12 12:41:44  elwinter
+# Overhauled to use XML::LibXML.
+#
+# Revision 1.1.1.15  2003/03/10 16:24:02  elwinter
+# Added comment about & entity.
+#
+# Revision 1.1.1.14  2003/02/18 17:29:01  elwinter
+# Modified toString() to map character entity references.
+#
+# Revision 1.1.1.13  2003/01/02 16:15:29  elwinter
+# Fixed code which printed out trailing space for indented elements when no
+# child elements exist.
+#
+# Revision 1.1.1.12  2002/11/30 18:31:02  elwinter
+# Added _append_child_elements().
+#
+# Revision 1.1.1.11  2002/11/30 18:17:13  elwinter
+# Overhauled to use more exception-based error trapping.
+#
+# Revision 1.1.1.10  2002/11/19 13:53:28  elwinter
+# Moved all element accessors to VOTable::Element class.
+#
+# Revision 1.1.1.9  2002/11/17 16:29:51  elwinter
+# Added code for get_valid_child_element_names.
+#
+# Revision 1.1.1.8  2002/11/17 16:05:32  elwinter
+# Added code for get_valid_attribute_names.
+#
+# Revision 1.1.1.7  2002/11/14 17:12:02  elwinter
+# Moved new to Element.
+#
+# Revision 1.1.1.6  2002/11/14 16:37:19  elwinter
+# Moved toString and new_from_xmldom to Element.
+#
+# Revision 1.1.1.5  2002/11/13 19:04:01  elwinter
+# Moved all accessor (get/set/remove methods to VOTable::Element AUTOLOAD.
+#
+# Revision 1.1.1.4  2002/11/13 17:03:36  elwinter
+# Moved set() method to VOTable::Element.
+#
+# Revision 1.1.1.3  2002/11/13 16:30:34  elwinter
+# Moved empty() method to VOTable::Element.
+#
+# Revision 1.1.1.2  2002/11/13 15:50:52  elwinter
+# Moved get() method to VOTable::Element.
+#
+# Revision 1.1.1.1  2002/11/13 14:42:09  elwinter
+# Placeholder for new branch.
+#
+# Revision 1.1  2002/11/12 15:29:31  elwinter
+# Initial revision
 #
 
-#******************************************************************************
 #******************************************************************************
 
 # Begin the package definition.
-package VOTABLE::Element;
+package VOTable::Element;
 
 # Specify the minimum acceptable Perl version.
 use 5.6.1;
@@ -156,369 +309,399 @@ use diagnostics;
 use warnings;
 
 #******************************************************************************
-#******************************************************************************
 
-# Set up the inheritance mexhanism.
-our @ISA = qw();
+# Set up the inheritance mechanism.
+use XML::LibXML;
+our @ISA = qw(XML::LibXML::Element);
 
 # Module version.
-our $VERSION = '0.03';
+our $VERSION = 1.0;
 
-#******************************************************************************
 #******************************************************************************
 
 # Specify external modules to use.
 
-# Standard modules.
+# Standard modules
 use Carp;
-use English;
-use XML::DOM;
 
-# Third-party modules.
+# Third-party modules
 
-# Project modules.
+# Project modules
 
 #******************************************************************************
+
+# Class constants
+
+# Constants for node types.
+use constant ELEMENT_NODE => 1;
+use constant TEXT_NODE => 3;
+
 #******************************************************************************
 
-# Class constants.
+# Class variables
 
-# Name of current package.
-my($PACKAGE_NAME) = 'VOTABLE::Element';
-
-# Name of current element (a dummy, in this case).
-my($TAG_NAME) = 'ELEMENT';
-
-# Name of underlying XML::DOM object class.
-my($XMLDOM_BASE_CLASS) = 'XML::DOM::Element';
-
-# List of valid attributes for this object.
+# Define the default attribute and child element lists as empty.
 my(@valid_attribute_names) = ();
+my(@valid_child_element_names) = ();
 
-#******************************************************************************
-#******************************************************************************
-
-# Class variables.
-
-# Factory parser for parsing arbitrary XML strings.
-my($xmldom_parser_factory) = new XML::DOM::Parser;
-
-# Factory document for creating XML::DOM objects.
-my($xmldom_document_factory) = new XML::DOM::Document;
-
-#******************************************************************************
-#******************************************************************************
-
-# Class methods
-
-#------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
-
-#******************************************************************************
 #******************************************************************************
 
 # Method definitions
 
 #------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
-
-# Constructors and destructors
-
-#------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
-
-# new()
-
-# This is the main constructor for the class.
-
-# The first argument ($class) always contains the class to bless the
-# new object into. This will usually be the name of the current class,
-# unless this constructor is called for an object that inherits from
-# the current class.
-
-# All remaining arguments are stored in the @options array. The first
-# additional argument, if it is defined, contains either a string
-# containing the XML to use when creating the new object, or a
-# reference to an existing XML::DOM::Element object to use for the new
-# object. Any additional items in the @options array are assumed to be
-# keyword => value pairs to use to initialize the attributes of the
-# new object.
-
-# Note that if you want to specify attribute values to the
-# constructor, but do not want to specify a string or object reference
-# to use, you must pass undef as the first additional argument.
 
 sub new()
 {
 
     # Save arguments.
-    # $class is the class name for the new object.
-    # @options contains all of the remaining options used when the
-    # constructor is invoked.
-    my($class, @options) = @_;
+    my($class, $arg) = @_;
 
     #--------------------------------------------------------------------------
 
-    # Local variables.
+    # Local variables
 
-    # Name of current method.
-    my($method_name) = 'new';
-
-    # Reference to XML::DOM::Element for the new object.
-    my($xmldom_element_this);
-
-    # String with initial text for XML.
-    my($str);
-
-    # Hash containing keyword-value pairs to initialize attributes.
-    my(%attributes);
-
-    # Current attribute name and value.
-    my($attribute_name, $attribute_value);
+    # Name of current element tag.
+    my($tag_name);
 
     # Reference to new object.
-    my($this);
-
-    # Code string for run-time evaluation of 'set' accessors.
-    my($set_attribute);
+    my($self);
 
     #--------------------------------------------------------------------------
 
-    # Process the options.
-    if (@options) {
- 	if (ref($options[0])) {
- 	    if (ref($options[0]) ne $XMLDOM_BASE_CLASS) {
- 		carp("$PACKAGE_NAME::$method_name - Bad input class: ",
- 		     ref($options[0]), "!\n");
- 		return(undef);
- 	    }
- 	    ($xmldom_element_this, %attributes) = @options;
- 	} else {
- 	    ($str, %attributes) = @options;
- 	}
-    }
+    # Extract the tag name from the class name.
+    $tag_name = ($class =~ /^VOTable::(.*)/)[0]
+	or croak("Invalid VOTable class: $class!");
 
-    # Make sure only valid attribute names were specified.
-    foreach $attribute_name (keys(%attributes)) {
-  	if (not grep(/$attribute_name/, @valid_attribute_names)) {
-  	    carp("Invalid $PACKAGE_NAME attribute name: $attribute_name!");
-  	    return(undef);
-  	}
-    }
+    # Check to see if an argument (a XML::LibXML::Element) object was
+    # provided. If so, use it to create the new VOTable::Element
+    # object. Otherwise, create one from scratch.
+    if ($arg) {
 
-    #--------------------------------------------------------------------------
+	# Make sure a XML::LibXML::Element object was provided.
+	ref($arg) eq 'XML::LibXML::Element'
+	    or croak("Not a XML::LibXML::Element object!");
 
-    # Create the object as an empty hash.
-    $this = {};
+	# Make sure the element name is the same as the tag name.
+	$tag_name eq $arg->nodeName
+	    or croak("Tag name ($tag_name)/class name ($class) mismatch!");
 
-    # Bless the object into the specified class.
-    bless $this => $class;
-
-    # Fill in the object.
-    if ($xmldom_element_this) {
-
-	# Save the specified XML::DOM::Element.
-
-    } elsif ($str) {
-
-	# Create the element from the string.
-	if (not $xmldom_element_this = $this->_new_from_string($str)) {
-	    carp("$PACKAGE_NAME::$method_name - Unable to create new " .
-		 "element from '$str'!");
-	    return(undef);
-	}
+	# Use the supplied object as the new object.
+	$self = $arg;
 
     } else {
 
-	# Create an empty XML::DOM::Element.
-	if (not $xmldom_element_this = $xmldom_document_factory->
-	    createElement($TAG_NAME)) {
-	    carp("$PACKAGE_NAME::$method_name - Unable to create " .
-		 "$XMLDOM_BASE_CLASS for $TAG_NAME!");
-	    return(undef);
+	# Create the new element.
+	$self = XML::LibXML::Element->new($tag_name)
+	    or croak("Unable to create XML::LibXML::Element for $tag_name!");
+
+    }
+
+    # Bless the new object into this class.
+    bless $self => $class;
+
+    # Return a reference to the new object.
+    return($self);
+
+}
+
+#------------------------------------------------------------------------------
+
+sub get()
+{
+
+    # Save arguments.
+    my($self) = @_;
+
+    #--------------------------------------------------------------------------
+
+    # Local variables
+
+    # String to hold the text content of this element.
+    my($str);
+
+    #--------------------------------------------------------------------------
+
+    # Build a string from the text nodes for this element.
+    $str = $self->textContent;
+
+    # Return the string.
+    return($str);
+
+}
+
+#------------------------------------------------------------------------------
+
+sub set()
+{
+
+    # Save arguments.
+    my($self, $str) = @_;
+
+    #--------------------------------------------------------------------------
+
+    # Local variables
+
+    # XML::LibXML::Text node for new data.
+    my($text);
+
+    #--------------------------------------------------------------------------
+
+    # Empty the element.
+    $self->empty;
+
+    # Create a new text node for the new text and add it.
+    $text = XML::LibXML::Text->new($str)
+	or croak('Unable to create new XML::LibXML::Text object!');
+    $self->appendChild($text);
+
+}
+
+#------------------------------------------------------------------------------
+
+sub empty()
+{
+
+    # Save arguments.
+    my($self) = @_;
+
+    #--------------------------------------------------------------------------
+
+    # Local variables
+
+    # Current node.
+    my($node);
+
+    #--------------------------------------------------------------------------
+
+    # Remove and delete the existing text child nodes.
+    foreach $node ($self->getChildNodes) {
+  	next if $node->nodeType != TEXT_NODE;
+  	$node->unbindNode;
+  	undef($node);
+    }
+
+}
+
+#------------------------------------------------------------------------------
+
+sub AUTOLOAD()
+{
+
+    # Save arguments.
+    my($self, @args) = @_;
+
+    #--------------------------------------------------------------------------
+
+    # Local variables.
+
+    # $AUTOLOAD is a package variable that will contain the
+    # fully-qualified name of the method being requested.
+    our $AUTOLOAD;
+
+    #--------------------------------------------------------------------------
+
+    # Local variables
+
+    # Name of method requested, without package designation.
+    my($method_name);
+
+    # Name of requested attribute or element.
+    my($name);
+
+    # XML::LibXML::NodeList object for child elements.
+    my($nodelist);
+
+    # Index specifying which child element to return.
+    my($which);
+
+    # Array of child elements to return.
+    my(@elements);
+
+    #--------------------------------------------------------------------------
+
+    # Bounce back if DESTROY has been requested.
+    return if $AUTOLOAD =~ /::DESTROY$/;
+
+    # Extract the method name.
+    ($method_name) = ($AUTOLOAD =~ /::([^:]+)$/)
+	or croak("Invalid AUTOLOAD contents: $AUTOLOAD!");
+
+    # If the requested method is a "get" accessor, extract the name of
+    # the target item (attribute or child element) and fetch the value
+    # of that attribute (or that set of child elements), and return
+    # it/them. Otherwise, if a "set" or "append" accessor, extract the
+    # target item name and set the value of that attribute, or the
+    # list of child elements. Otherwise, if a "remove" accessor,
+    # extract the target name and remove that attribute or set of
+    # elements. Note that in all cases, attributes are checked before
+    # elements.
+    use Data::Dumper;
+    # "get" accessors
+    if ($method_name =~ /^get_/) {
+  	($name) = ($method_name =~ /^get_(.+)$/)
+	    or croak("Bad 'get' accessor: $method_name!");
+  	$name =~ s/_/-/g;
+  	if (grep(/^$name$/, $self->get_valid_attribute_names)) {
+  	    return($self->getAttribute($name));
+  	} elsif (grep(/^$name$/, $self->get_valid_child_element_names)) {
+	    $which = $args[0];
+	    if (defined($which)) {
+		$nodelist = $self->getChildrenByTagName($name);
+		$elements[0] = $nodelist->get_node($which);
+	    } else {
+		@elements = $self->getChildrenByTagName($name);
+	    }
+	    map { bless $_ => "VOTable::$name"; } @elements;
+	    if (wantarray) {
+		return(@elements);
+	    } else {
+		return($elements[0]);
+	    }
+  	} else {
+  	    croak("Bad 'get' accessor: $method_name!");
+  	}
+
+    # "set" accessors
+    } elsif ($method_name =~ /^set_/) {
+  	($name) = ($method_name =~ /^set_(.+)$/)
+	    or croak("Bad 'set' accessor: $method_name!");
+  	$name =~ s/_/-/g;
+  	if (grep(/^$name$/, $self->get_valid_attribute_names)) {
+  	    $self->setAttribute($name, $args[0]);
+  	} elsif (grep(/^$name$/, $self->get_valid_child_element_names)) {
+  	    $self->_set_child_elements(@args);
+  	} else {
+  	    croak("Bad 'set' accessor: $method_name!");
+  	}
+	return;
+
+    # "append" accessors
+    } elsif ($method_name =~ /^append_/) {
+  	($name) = ($method_name =~ /^append_(.+)$/)
+	    or croak("Bad 'append' accessor: $method_name!");
+  	$name =~ s/_/-/g;
+  	if (grep(/^$name$/, $self->get_valid_child_element_names)) {
+  	    $self->_append_child_elements(@args);
+  	} else {
+  	    croak("Bad 'append' accessor: $method_name!");
+  	}
+	return;
+
+    # "remove" accessors
+    } elsif ($method_name =~ /^remove_/) {
+  	($name) = ($method_name =~ /^remove_(.+)$/)
+	    or croak("Bad 'remove' accessor: $method_name!");
+  	$name =~ s/_/-/g;
+  	if (grep(/^$name$/, $self->get_valid_attribute_names)) {
+  	    $self->removeAttribute($name);
+  	} elsif (grep(/^$name$/, $self->get_valid_child_element_names)) {
+  	    $self->_remove_child_elements($name);
+	} else {
+	    croak("Bad 'remove' accessor: $method_name!");
 	}
-
+	return;
     }
 
-    # Save the XML::DOM::Element object, regardless of source.
-    $this->{$XMLDOM_BASE_CLASS} = $xmldom_element_this;
-
-    # Process any specified attributes. This code assumes that the
-    # name of each attribute can be directly mapped to a subroutine
-    # name.
-    while (($attribute_name, $attribute_value) = each(%attributes)) {
-   	$set_attribute = "\$this->set_${attribute_name}(\$attribute_value)";
-  	eval($set_attribute);
-   	if ($EVAL_ERROR) {
-   	    carp("$PACKAGE_NAME::$method_name - Error evaluating $TAG_NAME " .
-		 "'$set_attribute': $EVAL_ERROR!");
-   	    return(undef);
-   	}
-    }
-
-    # Construct the VOTABLE object from the XML::DOM object.
-    if (not $this->_build_from_XMLDOM) {
-   	carp("$PACKAGE_NAME::$method_name - Unable to build $TAG_NAME " .
-	     "from $XMLDOM_BASE_CLASS!");
-   	return(undef);
-    }
-
-    #--------------------------------------------------------------------------
-
-    # Return the new object.
-    return($this);
-
-}
-
-#------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
-
-# Attribute accessor methods.
-
-# These methods assume they are called for a valid VOTABLE
-# object. Therefore, no error checking is done on the object
-# internals.
-
-# For each attribute get_xxx() method, simply return the result of the
-# getAttribute() method for the corresponding attribute of the
-# XML::DOM::Element object.
-
-# For each attribute set_xxx() method, validate the new value if
-# possible, then call the setAttribute() method for the
-# XML::DOM::Element object. Return the new value with a call to the
-# getAttribute() method.
-
-#------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
-
-#------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
-
-# Element accessor methods.
-
-# These methods assume they are called for a valid VOTABLE
-# object. Therefore, no error checking is done on the object
-# internals.
-
-# For each element get_xxx() method, check to see if the element(s)
-# exists. If so, return a reference to the VOTABLE object for the
-# element (or a list of VOTABLE object references for multiple
-# elements). Note that these methods use exists() to check for the
-# element(s), to avoid creation on non-existence (which is what
-# defined() would do if we used it instead of exists()). If the child
-# is not found, return undef. If an error occurs, carp() a message and
-# return undef.
-
-# For each set_xxx() method, check to see if the element(s) currently
-# exist. If so, remove them before attaching the new elements. Note
-# that the set_xxx() methods must maintain the element order specified
-# in the DTD. The current object (always referred to as $this) and its
-# children must be linked at two levels - the VOTABLE level, and the
-# XML::DOM level. Linking at the VOTABLE level is easy, since links
-# are unidirectional, from parent to child. At the XML::DOM level,
-# many more steps must be taken to establish the links. Return the
-# supplied argument, using the matching get_xxx() method, to ensure
-# success. Otherwise, carp() and error message and return undef.
-
-# These methods follow the standard naming convention that variables
-# referring to VOTABLE objects have a 'votable_' prefix, and those
-# referring to XML::DOM objects have a 'xmldom_' prefix.
-
-#------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
-
-#------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
-
-# PCDATA content accessor methods.
-
-#------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
-
-#------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
-
-# Internal methods.
-
-#------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
-
-# _build_from_XMLDOM()
-
-# This method does the hard work of mapping an XML::DOM::Element
-# object to a VOTABLE::Element object.
-
-sub _build_from_XMLDOM()
-{
-
-    # Save arguments.
-    my($this) = @_;
-
-    #--------------------------------------------------------------------------
-
-    # Local variables.
-
-    # Reference to underlying XML::DOM object for this object.
-    my($xmldom_element_this);
-
-    #--------------------------------------------------------------------------
-
-    # Get a reference to the XML::DOM object for this object.
-    $xmldom_element_this = $this->{$XMLDOM_BASE_CLASS};
-
-    #--------------------------------------------------------------------------
-
-    # Return normally.
-    return(1);
+    # No method defined.
+    croak("Bad method name: $method_name!");
 
 }
 
 #------------------------------------------------------------------------------
 
-# _new_from_string()
+sub get_valid_attribute_names()
+{
+    my($self) = @_;
+    my($var) = '@' . ref($self) . "::valid_attribute_names";
+    return(eval($var));
+}
 
-# Internal utility method to parse an XML string and extract a single
-# element from it.
+#------------------------------------------------------------------------------
 
-sub _new_from_string()
+sub get_valid_child_element_names()
+{
+    my($self) = @_;
+    my($var) = '@' . ref($self) . "::valid_child_element_names";
+    return(eval($var));
+}
+
+#------------------------------------------------------------------------------
+
+sub _set_child_elements()
 {
 
     # Save arguments.
-    my($this, $str) = @_;
+    my($self, @elements) = @_;
 
     #--------------------------------------------------------------------------
 
-    # Local variables.
+    # Local variables
 
-    # Method name.
-    my($method_name) = '_new_from_string';
-
-    # Temporary XML document for parsing input string.
-    my($xmldom_document_temp);
-
-    # Reference to XML::DOM::Element object for new element.
-    my($xmldom_element_new);
+    # Tag name of new elements.
+    my($tag_name);
 
     #--------------------------------------------------------------------------
 
-    # Create the XML::DOM::Document by parsing the string.
-    if (not $xmldom_document_temp = $xmldom_parser_factory->parse($str)) {
-	carp("$PACKAGE_NAME::$method_name - Unable to parse '$str'!");
-	return(undef);
+    # Fetch the tag name of the new elements.
+    $tag_name = $elements[0]->nodeName
+	or croak('Element has no node name!');
+
+    # Remove all existing elements of this name.
+    $self->_remove_child_elements($tag_name);
+
+    # Add the new elements to the current object.
+    $self->_append_child_elements(@elements);
+
+}
+
+#------------------------------------------------------------------------------
+
+sub _append_child_elements()
+{
+
+    # Save arguments.
+    my($self, @elements) = @_;
+
+    #--------------------------------------------------------------------------
+
+    # Local variables
+
+    # Current element to add.
+    my($element);
+
+    #--------------------------------------------------------------------------
+
+    # Append the elements to the current object.
+    foreach $element (@elements) {
+	$self->appendChild($element);
     }
 
-    # Get a reference to the new element. This code assumes that the
-    # input string contains a single element.
-    if (not $xmldom_element_new = $xmldom_document_temp->getDocumentElement) {
-	carp("$PACKAGE_NAME::$method_name - Unable to find " .
-	     "$XMLDOM_BASE_CLASS!");
-	return(undef);
-    }
+}
+
+#------------------------------------------------------------------------------
+
+sub _remove_child_elements()
+{
+
+    # Save arguments.
+    my($self, $tag_name) = @_;
 
     #--------------------------------------------------------------------------
 
-    # Return the new element.
-    return($xmldom_element_new);
+    # Local variables
+
+    # XML::LibXML::Node object for current child node.
+    my($node);
+
+    #--------------------------------------------------------------------------
+
+    # Remove and delete each element with this tag name.
+    foreach $node ($self->childNodes) {
+  	next if $node->nodeType != ELEMENT_NODE;
+  	next if $node->nodeName ne $tag_name;
+	$node->unbindNode;
+	undef($node);
+    }
 
 }
 

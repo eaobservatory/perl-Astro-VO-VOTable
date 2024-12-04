@@ -1,17 +1,12 @@
-Revision history for Perl extension VOTABLE.
+Revision history for Perl extension VOTable.
 
-0.01  Tuesday 14 May 2002
+1.0   Monday 7 April 2003
 
-- First release.
+- Software has been completely rewritten for speed.
 
-0.02  Tuesday 21 May 2002
+- Code is now based on XML::LibXML/libxml2, rather than
+XML::DOM/expat.
 
-- Documentation update release.
+0.01  Friday 6 September 2002
 
-0.03  Sunday 9 June 2002
-- Added support for BINARY data.
-
-- Added utility methods for appending rows to tables, and to set and
-retrieve individual rows.
-
-- Numerous minor and major bug fixes, especially in element ordering.
+- Initial version. Intended to completely replace VOTABLE classes.

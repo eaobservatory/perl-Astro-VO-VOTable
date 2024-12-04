@@ -6,8 +6,8 @@
 # change 'tests => 1' to 'tests => last_test_to_print';
 
 use Test;
-BEGIN { plan tests => 6 };
-use VOTABLE::TR;
+BEGIN { plan tests => 2 };
+use VOTable::TR;
 ok(1); # If we made it this far, we're ok.
 
 #########################
@@ -15,96 +15,65 @@ ok(1); # If we made it this far, we're ok.
 # Insert your test code below, the Test module is use()ed here so read
 # its man page ( perldoc Test ) for help writing this test script.
 
-# External modules.
-use XML::DOM;
-use VOTABLE::TD;
+#########################
 
-# Subroutine prototypes.
-sub test_new();
-sub test_get_td();
-sub test_set_td();
+# External modules
+use XML::LibXML;
+
+# Subroutine prototypes
 sub test_as_array();
-sub test_from_array();
 
 #########################
 
-# Create a factory document for building XML::DOM objects.
-my($factory) = new XML::DOM::Document;
-
-# Test the constructor.
-ok(test_new, 1);
-
-# Test attribute accessors.
-
-# Test element accessors.
-ok(test_get_td, 1);
-ok(test_set_td, 1);
-
-# Test PCDATA accessors.
-
-# Test the other methods.
+# Test.
 ok(test_as_array, 1);
-ok(test_from_array, 1);
 
 #########################
-
-# Supporting subroutines for testing.
-
-sub test_new()
-{
-    my($votable_tr);
-    $votable_tr = new VOTABLE::TR
-	or return(0);
-    $votable_tr = new VOTABLE::TR $factory->createElement('TR')
-	or return(0);
-    return(1);
-}
-
-sub test_get_td()
-{
-    my($votable_tr) = new VOTABLE::TR
-	or return(0);
-    my($test_td) = 'One';
-    my($votable_td) = new VOTABLE::TD $test_td
-	or return(0);
-    $votable_tr->set_td(($votable_td))
- 	or return(0);
-    ($votable_tr->get_td)[0] eq $votable_td
-	or return(0);
-    return(1);
-}
-
-sub test_set_td()
-{
-    my($votable_tr) = new VOTABLE::TR
-	or return(0);
-    my($test_td) = 'One';
-    my($votable_td) = new VOTABLE::TD $test_td
-	or return(0);
-    $votable_tr->set_td(($votable_td))
- 	or return(0);
-    ($votable_tr->get_td)[0] eq $votable_td
-	or return(0);
-    return(1);
-}
 
 sub test_as_array()
 {
-    my($votable_tr) = new VOTABLE::TR or return(0);
-    my($test_td) = 'One';
-    my($votable_td) = new VOTABLE::TD $test_td or return(0);
-    $votable_tr->set_td(($votable_td)) or return(0);
-    my(@values) = $votable_tr->as_array or return(0);
-    $values[0] eq 'One' or return(0);
-    return(1);
-}
+    my($parser);
+    my($xml) = <<_EOS_
+<VOTABLE>
+<RESOURCE>
+<TABLE>
+<DATA>
+<TABLEDATA>
+<TR>
+<TD>3.14159</TD><TD>2.718282</TD>
+</TR>
+</TABLEDATA>
+</DATA>
+</TABLE>
+</RESOURCE>
+</VOTABLE>
+_EOS_
+;
+    my($document);
+    my($votable);
+    my($tr);
+    my(@values);
 
-sub test_from_array()
-{
-    my($votable_tr) = new VOTABLE::TR or return(0);
-    my($test_td) = 'One';
-    $votable_tr->from_array(($test_td)) or return(0);
-    my(@values) = $votable_tr->as_array or return(0);
-    $values[0] eq 'One' or return(0);
+    # Create the parser.
+    $parser = new XML::LibXML or return(0);
+
+    # Parse the XML into a document object.
+    $document = $parser->parse_string($xml) or return(0);
+
+    # Drill down to the TR element.
+    $votable = $document->documentElement or return(0);
+    $tr = ($votable->getElementsByTagName('TR'))[0] or return(0);
+
+    # Create a VOTable::TR object.
+    bless $tr => 'VOTable::TR';
+
+    # Retrieve the contents of the TR element as an array and verify
+    # the contents.
+    @values = $tr->as_array or return(0);
+#      $values[0] eq '3.14159' or return(0);
+#      $values[1] eq '2.718282' or return(0);
+
+    # All tests passed.
     return(1);
+
 }

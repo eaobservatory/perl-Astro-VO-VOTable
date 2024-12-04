@@ -6,8 +6,8 @@
 # change 'tests => 1' to 'tests => last_test_to_print';
 
 use Test;
-BEGIN { plan tests => 7 };
-use VOTABLE::TABLEDATA;
+BEGIN { plan tests => 6 };
+use VOTable::TABLEDATA;
 ok(1); # If we made it this far, we're ok.
 
 #########################
@@ -15,130 +15,190 @@ ok(1); # If we made it this far, we're ok.
 # Insert your test code below, the Test module is use()ed here so read
 # its man page ( perldoc Test ) for help writing this test script.
 
-# External modules.
-use XML::DOM;
-use VOTABLE::TR;
+#########################
 
-# Subroutine prototypes.
+# External modules
+use XML::LibXML;
+
+# Subroutine prototypes
 sub test_new();
-sub test_get_tr();
-sub test_set_tr();
-sub test_append_tr();
+sub test_get_array();
 sub test_get_row();
-sub test_set_row();
+sub test_get_cell();
+sub test_get_num_rows();
 
 #########################
 
-# Create a factory document for building XML::DOM objects.
-my($factory) = new XML::DOM::Document;
-
-# Test the constructor.
+# Test.
 ok(test_new, 1);
-
-# Test PCDATA accessors.
-
-# Test attribute accessors.
-
-# Test element accessors.
-ok(test_get_tr, 1);
-ok(test_set_tr, 1);
-ok(test_append_tr, 1);
-
-# Test other methods.
+ok(test_get_array, 1);
 ok(test_get_row, 1);
-ok(test_set_row, 1);
+ok(test_get_cell, 1);
+ok(test_get_num_rows, 1);
 
 #########################
-
-# Supporting subroutines for testing.
 
 sub test_new()
 {
-    my($votable_tabledata);
-    $votable_tabledata = new VOTABLE::TABLEDATA
-	or return(0);
-    $votable_tabledata = new VOTABLE::TABLEDATA
-	$factory->createElement('TABLEDATA')
-	or return(0);
+    my($tabledata);
+    $tabledata = new VOTable::TABLEDATA or return(0);
     return(1);
 }
 
-sub test_get_tr()
+sub test_get_array()
 {
-    my($votable_tabledata);
-    $votable_tabledata = new VOTABLE::TABLEDATA
-	or return(0);
-    my($votable_tr) = new VOTABLE::TR
- 	or return(0);
-    $votable_tabledata->set_tr(($votable_tr))
-	or return(0);
-    ($votable_tabledata->get_tr)[0] eq $votable_tr
-	or return(0);
-    return(1);
-}
+    my($parser);
+    my($xml) = <<_EOS_
+<VOTABLE>
+<RESOURCE>
+<TABLE>
+<DATA>
+<TABLEDATA>
+<TR>
+<TD>3.14159</TD><TD>2.718282</TD>
+</TR>
+<TR>
+<TD>2.22</TD><TD>4.44</TD>
+</TR>
+</TABLEDATA>
+</DATA>
+</TABLE>
+</RESOURCE>
+</VOTABLE>
+_EOS_
+;
+    my($document);
+    my($votable);
+    my($tabledata);
+    my($array);
 
-sub test_set_tr()
-{
-    my($votable_tabledata);
-    $votable_tabledata = new VOTABLE::TABLEDATA
-	or return(0);
-    my($votable_tr) = new VOTABLE::TR
- 	or return(0);
-    $votable_tabledata->set_tr(($votable_tr))
-	or return(0);
-    ($votable_tabledata->get_tr)[0] eq $votable_tr
-	or return(0);
-    return(1);
-}
+    # Create the parser.
+    $parser = new XML::LibXML or return(0);
 
-sub test_append_tr()
-{
-    my($votable_tabledata);
-    $votable_tabledata = new VOTABLE::TABLEDATA
-	or return(0);
-    my($votable_tr) = new VOTABLE::TR
- 	or return(0);
-    $votable_tabledata->append_tr($votable_tr) eq $votable_tr
-	or return(0);
-    ($votable_tabledata->get_tr)[0] eq $votable_tr
-	or return(0);
+    # Parse the XML into a document object.
+    $document = $parser->parse_string($xml) or return(0);
+
+    # Drill down to the TABLEDATA element.
+    $votable = $document->documentElement or return(0);
+    $tabledata = ($votable->getElementsByTagName('TABLEDATA'))[0] or return(0);
+
+    # Create a VOTable::TABLEDATA object.
+    bless $tabledata => 'VOTable::TABLEDATA';
+
+    # Fetch the table contents as an array.
+    $array = $tabledata->get_array or return(0);
+    $array->[0][0] eq '3.14159' or return(0);
+    $array->[0][1] eq '2.718282' or return(0);
+    $array->[1][0] eq '2.22' or return(0);
+    $array->[1][1] eq '4.44' or return(0);
+
+    # Return normally.
     return(1);
+
 }
 
 sub test_get_row()
 {
-    my($votable_tabledata);
-    my($votable_tr);
-    my($votable_td);
-    my(@row);
-    my($test_str) = 'Test';
+    my($parser);
+    my($xml) = <<_EOS_
+<VOTABLE>
+<RESOURCE>
+<TABLE>
+<DATA>
+<TABLEDATA>
+<TR>
+<TD>3.14159</TD><TD>2.718282</TD>
+</TR>
+<TR>
+<TD>2.22</TD><TD>4.44</TD>
+</TR>
+</TABLEDATA>
+</DATA>
+</TABLE>
+</RESOURCE>
+</VOTABLE>
+_EOS_
+;
+    my($document);
+    my($votable);
+    my($tabledata);
+    my(@values);
 
-    $votable_td = new VOTABLE::TD $test_str or return(0);
-    $votable_tr = new VOTABLE::TR or return(0);
-    $votable_tr->set_td(($votable_td)) or return(0);
-    $votable_tabledata = new VOTABLE::TABLEDATA or return(0);
-    $votable_tabledata->append_tr($votable_tr) eq $votable_tr
-	or return(0);
-    @row = $votable_tabledata->get_row(0) or return(0);
-    $row[0] eq $test_str or return(0);
+    # Create the parser.
+    $parser = new XML::LibXML or return(0);
+
+    # Parse the XML into a document object.
+    $document = $parser->parse_string($xml) or return(0);
+
+    # Drill down to the TABLEDATA element.
+    $votable = $document->documentElement or return(0);
+    $tabledata = ($votable->getElementsByTagName('TABLEDATA'))[0] or return(0);
+
+    # Create a VOTable::TABLEDATA object.
+    bless $tabledata => 'VOTable::TABLEDATA';
+
+    # Retrieve the contents of the TR elements as arrays and verify
+    # the contents.
+    @values = $tabledata->get_row(0) or return(0);
+    $values[0] eq '3.14159' or return(0);
+    $values[1] eq '2.718282' or return(0);
+    @values = $tabledata->get_row(1) or return(0);
+    $values[0] eq '2.22' or return(0);
+    $values[1] eq '4.44' or return(0);
+
+    # All tests passed.
+    return(1);
+
+}
+
+sub test_get_cell()
+{
     return(1);
 }
 
-sub test_set_row()
+sub test_get_num_rows()
 {
-    my($votable_tabledata);
-    my($votable_tr);
-    my($votable_td);
-    my($test_str) = 'Hello';
+    my($parser);
+    my($xml) = <<_EOS_
+<VOTABLE>
+<RESOURCE>
+<TABLE>
+<DATA>
+<TABLEDATA>
+<TR>
+<TD>3.14159</TD><TD>2.718282</TD>
+</TR>
+<TR>
+<TD>2.22</TD><TD>4.44</TD>
+</TR>
+</TABLEDATA>
+</DATA>
+</TABLE>
+</RESOURCE>
+</VOTABLE>
+_EOS_
+;
+    my($document);
+    my($votable);
+    my($tabledata);
 
-    $votable_tabledata = new VOTABLE::TABLEDATA or return(0);
-    $votable_tr = new VOTABLE::TR or return(0);
-    $votable_tabledata->set_tr(($votable_tr)) or return(0);
-    $votable_td = new VOTABLE::TD or return(0);
-    $votable_tr->set_td(($votable_td)) or return(0);
-    $votable_tabledata->set_row(0, ($test_str));
-    @row = $votable_tabledata->get_row(0) or return(0);
-    $row[0] eq $test_str or return(0);
+    # Create the parser.
+    $parser = new XML::LibXML or return(0);
 
+    # Parse the XML into a document object.
+    $document = $parser->parse_string($xml) or return(0);
+
+    # Drill down to the TABLEDATA element.
+    $votable = $document->documentElement or return(0);
+    $tabledata = ($votable->getElementsByTagName('TABLEDATA'))[0] or return(0);
+
+    # Create a VOTable::TABLEDATA object.
+    bless $tabledata => 'VOTable::TABLEDATA';
+
+    # Retrieve and verify the row count.
+    $tabledata->get_num_rows == 2 or return(0);
+
+    # All tests passed.
     return(1);
+
 }

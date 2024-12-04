@@ -1,4 +1,4 @@
-Makefile.PL
 MANIFEST
+Makefile.PL
 STREAM.pm
 test.pl

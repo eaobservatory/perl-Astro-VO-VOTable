@@ -1,4 +1,4 @@
-Makefile.PL
 MANIFEST
+Makefile.PL
 TABLEDATA.pm
 test.pl

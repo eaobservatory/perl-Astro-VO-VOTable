@@ -4,166 +4,144 @@
 
 =head1 NAME
 
-VOTABLE::TR - VOTABLE TR XML element class
+VOTable::TR - VOTable TR element class
 
 =head1 SYNOPSIS
 
-C<use VOTABLE::TR;>
+use VOTable::TR
 
 =head1 DESCRIPTION
 
-This class implements the C<TR> element from the C<VOTABLE> DTD. This
-element is used to store a single row in a data table.
-
-The C<TR> element is a Tier 1 element, and is described by the
-following excerpt from the C<VOTABLE> 1.0 DTD:
-
- <!ELEMENT TR (TD+)>
+This class implements an interface to VOTable TR elements. This class
+inherits from VOTable::Element, and therefore all of the methods from
+that class are available to this class.
 
 =head2 Methods
 
-=head3 C<new($xmldom_element, %options)>
+=head3 new($arg)
 
-Create and return a new C<VOTABLE::TR> object, based on the supplied
-C<XML::DOM::Element> object, using C<%options> to set the attributes
-of the new object. If no C<XML::DOM::Element> object is specified, or
-is undefined, create and return an empty C<VOTABLE::TR> object. Return
-undef if an error occurs.
+Create and return a new VOTable::TR object. Throw an exception if an
+error occurs. If $arg is supplied, and is a XML::LibXML::Element
+object for a 'TR' element, that object is used to create the
+VOTable::TR object (just by reblessing).
 
-=head3 C<get_td>
+=head3 get_TD()
 
-Return a list of the C<VOTABLE::TD> objects for the C<TD> elements
-which are the children of this C<TR> element. Return an empty list if
-no C<TD> elements are found, or if an error occurs.
+Return a list containing the VOTable::TD objects for the TD child
+elements of this TR element. Return an empty list if no TD elements
+exist as children of this TR element. Throw an exception if an error
+occurs.
 
-=head3 C<set_td(@votable_td)>
+=head3 set_TD(@tds)
 
-Set the C<TD> elements for this C<TR> element using the supplied list
-of C<VOTABLE::TD> objects. Any previously existing C<TD> elements are
-first removed. Return the input list on success, or an empty list if
-an error occurs.
+Use @tds (a list of VOTable::TD objects) to set the TD element
+children of this TR element. Any existing TD elements in this TR
+element are deleted first. Throw an exception if an error occurs.
 
-=head3 C<as_array>
+=head3 append_TD(@tds)
 
-Return the contents of the C<TD> elements for this C<TR> element as an
-array of values. Return an empty list if an error occurs.
+Use @tds (a list of VOTable::TD objects) to append the TD element
+children to this TR element. Any existing TD elements in this TR
+element are retained. Throw an exception if an error occurs.
 
-=head3 C<from_array(@values)>
+=head3 toString($arg)
 
-Set the values of the C<TD> element children of this C<TR> element
-using the C<@values> array. Return the list of new values added, or an
-enpty list if an error occurs.
+Return a string representation of the element and all of its
+children. Character entities are replaced with entity references where
+appropriate. If $arg is '1', the output has extra whitespace for
+readability. If $arg is '2', text content is surrounded by
+newlines. This method is directly inherited from XML::LibXML::Element,
+so further documentation may be found in the XML::LibXML::Element
+manual page.
 
-=head2 Notes on class internals
+=head3 as_array()
 
-=over 4
-
-=item *
-
-Method names that begin with a leading underscore ('C<_>') are for
-internal use only, and should I<not> be used outside of the C<VOTABLE>
-class hierarchy.
-
-=item *
-
-The names of the C<get_XXX> and C<set_XXX> accessors for attributes
-and elements are derived directly from the names of the attributes or
-elements. Attribute and element names containing embedded hyphens
-('C<->') use accessors where the hyphen is mapped to an underscore
-('C<_>') in the name of the accessor method. This is a necessity,
-since the hyphen is not a valid name character in Perl.
-
-=back
+Return the contents of the TD elements for this TR element as an array
+of values. Values for the TD elements are fetched using the TD method,
+get(). Throw an exception if an error occurs.
 
 =head1 WARNINGS
 
 =over 4
 
-=item *
+=item
 
-This code (perhaps unwisely) assumes that object internal structure is
-always maintained. For example, this code assumes that every
-C<VOTABLE::TR> object I<always> has an underlying C<XML::DOM::Element>
-object. As long as the internal structure is manipulated only by the
-publicly-available methods, this should be an adequate assumption. If
-a method detects an aberrant case, a warning message is printed (using
-the C<Carp::carp> subroutine), and the method fails.
-
-=item *
-
-Similarly, this code assumes that C<XML::DOM> methods always
-succeed. If a method detects an aberrant case, a warning message is
-printed (using the C<Carp::carp> subroutine), and the method fails.
-
-=item *
-
-Most attribute C<set_XXX> accessors do not perform validation of the
-new attribute values. The exceptions are the accessors for attributes
-with enumerated values; the new value is checked against the list of
-acceptable values, as defined in the DTD.
+None.
 
 =back
 
 =head1 SEE ALSO
 
-C<VOTABLE>, C<VOTABLE::TABLEDATA>, C<VOTABLE::TD>
+=over 4
+
+=item
+
+VOTable::Element
+
+=back
 
 =head1 AUTHOR
 
-Eric Winter, NASA GSFC (elwinter@milkyway.gsfc.nasa.gov)
+Eric Winter, NASA GSFC (Eric.L.Winter.1@gsfc.nasa.gov)
 
 =head1 VERSION
 
-$Id: TR.pm,v 1.1.1.14 2002/06/09 21:13:08 elwinter Exp $
+$Id: TR.pm,v 1.1.1.13 2003/04/09 16:25:00 elwinter Exp $
 
 =cut
 
-#------------------------------------------------------------------------------
+#******************************************************************************
 
 # Revision history
 
 # $Log: TR.pm,v $
-# Revision 1.1.1.14  2002/06/09  21:13:08  elwinter
-# Sert version to 0.03.
+# Revision 1.1.1.13  2003/04/09 16:25:00  elwinter
+# Changed VERSION to 1.0.
 #
-# Revision 1.1.1.13  2002/06/09  19:54:46  elwinter
-# Changed required Perl version to 5.6.1.
+# Revision 1.1.1.12  2003/04/07 17:29:33  elwinter
+# Updated documentation.
 #
-# Revision 1.1.1.12  2002/05/24  13:01:30  elwinter
-# Added from_array() method.
+# Revision 1.1.1.11  2003/03/12 12:41:44  elwinter
+# Overhauled to use XML::LibXML.
 #
-# Revision 1.1.1.11  2002/05/23  13:13:38  elwinter
+# Revision 1.1.1.10  2002/11/19 13:53:28  elwinter
+# Moved all element accessors to VOTable::Element class.
+#
+# Revision 1.1.1.9  2002/11/17 16:29:51  elwinter
+# Added code for get_valid_child_element_names.
+#
+# Revision 1.1.1.8  2002/11/14 17:12:02  elwinter
+# Moved new to Element.
+#
+# Revision 1.1.1.7  2002/11/14 16:37:19  elwinter
+# Moved toString and new_from_xmldom to Element.
+#
+# Revision 1.1.1.6  2002/11/13 19:04:01  elwinter
+# Moved all accessor (get/set/remove methods to VOTable::Element AUTOLOAD.
+#
+# Revision 1.1.1.5  2002/11/12 15:30:11  elwinter
+# Added toString method.
+#
+# Revision 1.1.1.4  2002/10/25 18:30:48  elwinter
+# Changed required Perl version to 5.6.0.
+#
+# Revision 1.1.1.3  2002/10/25 18:30:22  elwinter
+# Changed required Perl version to 5.6.0.
+#
+# Revision 1.1.1.2  2002/09/11  16:48:44  elwinter
 # Added as_array() method.
 #
-# Revision 1.1.1.10  2002/05/21  14:14:07  elwinter
-# Incremented $VERSION to 0.02.
+# Revision 1.1.1.1  2002/09/11  16:36:18  elwinter
+# Placeholder for new branch.
 #
-# Revision 1.1.1.9  2002/05/21  13:50:49  elwinter
-# Overhauled and updated documentation.
-#
-# Revision 1.1.1.8  2002/05/14  17:46:54  elwinter
-# Changed undef list returns to empty lists.
-#
-# Revision 1.1.1.7  2002/05/07  16:00:35  elwinter
-# Fixed TD bug.
-#
-# Revision 1.1.1.6  2002/05/07  15:48:01  elwinter
-# Overhauled.
-#
-# Revision 1.1.1.5  2002/05/03  18:02:43  elwinter
-# Removed superfluous code.
-#
-# Revision 1.1.1.4  2002/05/03  17:45:29  elwinter
-# Overhauled.
-#
-# Revision 1.1.1.3  2002/04/28  19:35:13  elwinter
-# Added constructor.
+# Revision 1.1  2002/09/11  15:10:29  elwinter
+# Initial revision
 #
 
 #******************************************************************************
 
 # Begin the package definition.
-package VOTABLE::TR;
+package VOTable::TR;
 
 # Specify the minimum acceptable Perl version.
 use 5.6.1;
@@ -177,472 +155,71 @@ use diagnostics;
 # Use enhanced warnings.
 use warnings;
 
-#------------------------------------------------------------------------------
+#******************************************************************************
 
-# Set up the inheritance mexhanism.
-our @ISA = qw();
+# Set up the inheritance mechanism.
+use VOTable::Element;
+our @ISA = qw(VOTable::Element);
 
 # Module version.
-our $VERSION = '0.03';
-
-#------------------------------------------------------------------------------
-
-# Specify external modules to use.
-
-# Standard modules.
-use Carp;
-use English;
-use XML::DOM;
-
-# Third-party modules.
-
-# Project modules.
-use VOTABLE::TD;
-
-#------------------------------------------------------------------------------
-
-# Class constants.
-
-# Name of XML tag for current class.
-my($TAG_NAME) = 'TR';
-
-# Name of underlying XML::DOM object class.
-my($XMLDOM_BASE_CLASS) = 'XML::DOM::Element';
-
-# List of valid attributes for this element.
-my(@valid_attribute_names) = ();
-
-#------------------------------------------------------------------------------
-
-# Class variables.
-
-# This object is used to access the factory methods in the
-# XML::DOM::Document class.
-my($xmldom_document_factory) = new XML::DOM::Document;
+our $VERSION = 1.0;
 
 #******************************************************************************
 
-# Class methods
+# Specify external modules to use.
+
+# Standard modules
+
+# Third-party modules
+
+# Project modules
+use VOTable::TD;
+
+#******************************************************************************
+
+# Class constants
+
+#******************************************************************************
+
+# Class variables
+
+our(@valid_child_element_names) = qw(TD);
+
+#******************************************************************************
+
+# Method definitions
 
 #------------------------------------------------------------------------------
-
-# INIT()
-
-# This subroutine is run just before the main program starts. It is
-# used to initialize the package as a whole.
-
-sub INIT()
-{
-
-    # Create the factory document.
-    $xmldom_document_factory = new XML::DOM::Document;
-    if (not $xmldom_document_factory) {
-	croak('Unable to create factory document!');
-    }
-
-}
-
-#------------------------------------------------------------------------------
-
-# Object methods
-
-#------------------------------------------------------------------------------
-
-# new()
-
-# This is the main constructor for the class.
-
-# The first argument ($class) always contains the name of the class to
-# bless the new object into. This will usually be the name of the
-# current class, unless this constructor is called for an object that
-# inherits from the current class.
-
-# All remaining arguments are stored in the @options array. The first
-# additional argument, if it exists, contains a reference to an
-# existing XML::DOM::Element object to use for the new object. Any
-# additional items in the @options array are assumed to be keyword =>
-# value pairs to use to initialize the attributes of the new object.
-
-# Note that if you want to specify attribute values to the
-# constructor, but do not want to specify an object reference to use,
-# you must pass undef as the first additional argument.
-
-sub new()
-{
-
-    # Save arguments.
-    # $class is the class name for the new object.
-    # @options contains all of the remaining options used when the
-    # constructor is invoked.
-    my($class, @options) = @_;
-
-    #--------------------------------------------------------------------------
-
-    # Local variables.
-
-    # Reference to XML::DOM::Element object for the new object.
-    my($xmldom_element_this);
-
-    # Hash containing keyword-value pairs to initialize attributes.
-    my(%attributes);
-
-    # Name of current element tag.
-    my($tag_name);
-
-    # Current attribute name and value.
-    my($attribute_name, $attribute_value);
-
-    # Reference to new object.
-    my($this);
-
-    # Code string for eval.
-    my($set_attribute);
-
-    #--------------------------------------------------------------------------
-
-    # Process the options.
-    if (@options) {
-	if (ref($options[0])) {
-	    if (ref($options[0]) ne $XMLDOM_BASE_CLASS) {
- 		carp('Bad input class: ', ref($options[0]));
- 		return(undef);
- 	    }
-	}
-	($xmldom_element_this, %attributes) = @options;
-    }
-
-    # Make sure the specified element (if any) is the correct type.
-    if ($xmldom_element_this) {
-	$tag_name = $xmldom_element_this->getTagName;
-	if ($tag_name ne $TAG_NAME) {
-	    carp("Invalid tag name: $tag_name!");
-	    return(undef);
-	}
-    }
-
-    # Make sure only valid attributes were specified.
-    foreach $attribute_name (keys(%attributes)) {
-	if (not grep(/$attribute_name/, @valid_attribute_names)) {
-	    carp("Invalid attribute name: $attribute_name!");
-	    return(undef);
-	}
-    }
-
-    #--------------------------------------------------------------------------
-
-    # Create the object as an empty hash.
-    $this = {};
-
-    # Bless the object.
-    bless $this, $class;
-
-    # Fill in the object.
-    if ($xmldom_element_this) {
-
-	# Save the specified XML::DOM::Element.
-
-    } else {
-
-	# Create a new XML::DOM::Element object.
-	$xmldom_element_this =
-	    $xmldom_document_factory->createElement($TAG_NAME);
-	if (not $xmldom_element_this) {
-	    carp('Unable to create XML::DOM::Element.');
-	    return(undef);
-	}
-
-    }
-
-    # Save the new XML::DOM::Element.
-    if ($this->_set_XMLDOM($xmldom_element_this) ne $xmldom_element_this) {
-	carp("Unable to set $XMLDOM_BASE_CLASS.");
-	return(undef);
-    }
-
-    # Process any specified attributes.
-    while (($attribute_name, $attribute_value) = each(%attributes)) {
-	$attribute_name =~ s/-/_/;
-	$set_attribute = "\$this->set_${attribute_name}(\$attribute_value)";
-	eval($set_attribute);
-	if ($EVAL_ERROR) {
-	    carp("Error evaluating '$set_attribute': $EVAL_ERROR!");
-	    return(undef);
-	}
-    }
-
-    # Construct the VOTABLE::TR object from the XML::DOM object.
-    if (not $this->_build_from_XMLDOM) {
-	carp("Unable to build VOTABLE::$TAG_NAME object from " .
-	     "XML::DOM::Element!");
-	return(undef);
-    }
-
-    # Return the object.
-    return($this);
-
-}
-
-#------------------------------------------------------------------------------
-
-# as_array()
-
-# Return the TD elements as an array of values.
 
 sub as_array()
 {
 
     # Save arguments.
-    my($this) = @_;
+    my($self) = @_;
 
     #--------------------------------------------------------------------------
 
     # Local variables.
 
-    # Array to hold the TD element values.
+    # Array of values to return.
     my(@values);
 
-    # Array of TD elements for this TR.
-    my(@votable_td);
-
-    # Loop counter.
-    my($i);
+    # Current TD element for this TR.
+    my($td);
 
     #--------------------------------------------------------------------------
 
-    # Fetch the TD elements for this TR.
-    @votable_td = $this->get_td;
-    if (@votable_td == 0) {
-	carp('No TD elements found!');
-	return(());
-    }
+    # Empty the values array.
+    @values = ();
 
     # Convert the TD elements to an array.
-    for ($i = 0; $i < @votable_td; $i++) {
-	$values[$i] = $votable_td[$i]->get;
+    foreach $td ($self->get_TD) {
+	push(@values, $td->get);
     }
 
     # Return the array of values.
     return(@values);
 
-}
-
-#------------------------------------------------------------------------------
-
-# from_array()
-
-# Set the contents of the TR using the contents of the array. Return
-# the new values on success, or an empty list on error.
-
-sub from_array()
-{
-
-    # Save arguments.
-    my($this, @values) = @_;
-
-    #--------------------------------------------------------------------------
-
-    # Local variables.
-
-    # Array of TD elements for this TR.
-    my(@votable_td);
-
-    # Loop counter.
-    my($i);
-
-    #--------------------------------------------------------------------------
-
-    # If TD elements already exist for this TR, replace their values
-    # with the new values. If no TD elements exist yet for this TR,
-    # create them as needed.
-    @votable_td = $this->get_td;
-    if (@votable_td) {
-	for ($i = 0; $i < @votable_td; $i++) {
-	    $votable_td[$i]->set($values[$i]);
-	}
-    } else {
-	for ($i = 0; $i < @values; $i++) {
-	    $votable_td[$i] = new VOTABLE::TD $values[$i];
-	}
-	$this->set_td(@votable_td);
-    }
-
-    # Return the array of values.
-    return(@values);
-
-}
-
-#------------------------------------------------------------------------------
-
-# Attribute accessor methods
-
-#------------------------------------------------------------------------------
-
-# Element accessor methods
-
-#------------------------------------------------------------------------------
-
-sub get_td()
-{
-    my($this) = @_;
-    if (exists($this->{'TD'})) {
-	return(@{$this->{'TD'}});
-    } else {
-	return(());
-    }
-}
-
-sub set_td()
-{
-
-    # Save arguments.
-    my($this, @votable_td) = @_;
-
-    #--------------------------------------------------------------------------
-
-    # Local variables.
-
-    # Reference to XML::DOM::Element object for this object.
-    my($xmldom_element_this);
-
-    # Reference to current VOTABLE::TD object.
-    my($votable_td);
-
-    # Temporary arrays of XML::DOM::Element objects.
-    my(@xmldom_elements);
-
-    # Loop counter.
-    my($i);
-
-    #--------------------------------------------------------------------------
-
-    # Validate the input.
-    foreach $votable_td (@votable_td) {
-	if (ref($votable_td) ne 'VOTABLE::TD') {
-	    carp('Invalid object class: ' . ref($votable_td));
-	    return(());
-	}
-    }
-
-    # Link the new elements to this VOTABLE object.
-    $this->{'TD'} = [@votable_td];
-
-    #--------------------------------------------------------------------------
-
-    # Link the objects at the XML::DOM level.
-
-    # Get a reference to the XML::DOM::Element object for this object.
-    $xmldom_element_this = $this->_get_XMLDOM;
-
-    # Attach each INFO XML::DOM::Element to the
-    # XML::DOM::Document. THIS IS IMPORTANT!
-    foreach $votable_td (@votable_td) {
-	$votable_td->_get_XMLDOM->setOwnerDocument($xmldom_element_this->
-						   getOwnerDocument);
-    }
-
-    # If any TD elements exist for the this object, delete them. Then
-    # add each of the new TD elements.
-    if ($xmldom_element_this->hasChildNodes) {
-	if (@xmldom_elements =
-	    $xmldom_element_this->getElementsByTagName('TD', 0)) {
-	    for ($i = 0; $i < @xmldom_elements; $i++) {
-		$xmldom_element_this->removeChild($xmldom_elements[$i]);
-	    }
-	}
-    }
-    foreach $votable_td (@votable_td) {
-	$xmldom_element_this->
-	    appendChild($votable_td->_get_XMLDOM);
-    }
-
-    # Return the new objects.
-    return($this->get_td);
-
-}
-
-#------------------------------------------------------------------------------
-
-# PCDATA content accessor methods
-
-#------------------------------------------------------------------------------
-
-# Internal methods
-
-#------------------------------------------------------------------------------
-
-sub _build_from_XMLDOM()
-{
-
-    # Save arguments.
-    my($this) = @_;
-
-    #--------------------------------------------------------------------------
-
-    # Local variables.
-
-    # Reference to XML::DOM::Element object for current VOTABLE object.
-    my($xmldom_element_this);
-
-    # Temporary array of XML::DOM::Element objects.
-    my(@xmldom_elements);
-
-    # New TD element, single and all.
-    my($votable_td, @votable_td);
-
-    # Temporary reference to current XML::DOM::Element.
-    my($xmldom_element);
-
-    #--------------------------------------------------------------------------
-
-    # Fetch the current XML::DOM::Element object.
-    $xmldom_element_this = $this->_get_XMLDOM;
-
-    #--------------------------------------------------------------------------
-
-    # TD
-
-    # There must be at least one TD, eventually.
-    @xmldom_elements =
-	$xmldom_element_this->getElementsByTagName('TD', 0);
-    foreach $xmldom_element (@xmldom_elements) {
-	$votable_td = new VOTABLE::TD $xmldom_element;
-	push(@votable_td, $votable_td);
-    }
-    $this->set_td(@votable_td);
-
-    #--------------------------------------------------------------------------
-
-    # Return normally.
-    return(1);
-
-}
-
-#------------------------------------------------------------------------------
-
-# _get_XMLDOM()
-
-# Internal method to get a reference to the underlying
-# XML::DOM::Element object.
-
-sub _get_XMLDOM()
-{
-    my($this) = @_;
-    return($this->{$XMLDOM_BASE_CLASS});
-}
-
-#------------------------------------------------------------------------------
-
-# _set_XMLDOM()
-
-# Internal method to set the reference to the underlying
-# XML::DOM::Element object. Return the reference to the new
-# XML::DOM::Element.
-
-sub _set_XMLDOM()
-{
-    my($this, $xmldom_element) = @_;
-    $this->{$XMLDOM_BASE_CLASS} = $xmldom_element;
-    return($this->{$XMLDOM_BASE_CLASS});
 }
 
 #******************************************************************************

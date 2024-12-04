@@ -6,8 +6,8 @@
 # change 'tests => 1' to 'tests => last_test_to_print';
 
 use Test;
-BEGIN { plan tests => 28 };
-use VOTABLE::FIELD;
+BEGIN { plan tests => 5 };
+use VOTable::FIELD;
 ok(1); # If we made it this far, we're ok.
 
 #########################
@@ -17,140 +17,244 @@ ok(1); # If we made it this far, we're ok.
 
 #########################
 
-# External modules.
-use XML::DOM;
-use VOTABLE::DESCRIPTION;
-use VOTABLE::LINK;
-use VOTABLE::PARAM;
+# External modules
+use English;
+use VOTable::Document;
 
-# Subroutine prototypes.
-sub test_new();
-sub test_get_description();
-sub test_set_description();
-sub test_get_values();
-sub test_set_values();
-sub test_get_link();
-sub test_set_link();
+# Subroutine prototypes
+sub test_set_datatype();
+sub test_set_type();
+sub test_get_DESCRIPTION();
+sub test_set_DESCRIPTION();
 
 #########################
 
-# Create a factory document for building XML::DOM objects.
-my($factory) = new XML::DOM::Document;
-
-# Test the constructor.
-ok(test_new, 1);
-
-# Test the attribute accessors.
-my($test_field) = new VOTABLE::FIELD;
-ok($test_field->set_ID('100'), 100);
-ok($test_field->get_ID, 100);
-ok($test_field->set_arraysize('100x100'), '100x100');
-ok($test_field->get_arraysize, '100x100');
-ok($test_field->set_datatype('double'), 'double');
-ok($test_field->get_datatype, 'double');
-ok($test_field->set_name('RA'), 'RA');
-ok($test_field->get_name, 'RA');
-ok($test_field->set_precision('F4'), 'F4');
-ok($test_field->get_precision, 'F4');
-ok($test_field->set_ref('test reference'), 'test reference');
-ok($test_field->get_ref, 'test reference');
-ok($test_field->set_type('hidden'), 'hidden');
-ok($test_field->get_type, 'hidden');
-ok($test_field->set_ucd('POS_EQ_RA'), 'POS_EQ_RA');
-ok($test_field->get_ucd, 'POS_EQ_RA');
-ok($test_field->set_unit('degree'), 'degree');
-ok($test_field->get_unit, 'degree');
-ok($test_field->set_width(9), 9);
-ok($test_field->get_width, 9);
-
-# Test the element accessors.
-ok(test_get_description, 1);
-ok(test_set_description, 1);
-ok(test_get_values, 1);
-ok(test_set_values, 1);
-ok(test_get_link, 1);
-ok(test_set_link, 1);
+# Test.
+ok(test_set_datatype, 1);
+ok(test_set_type, 1);
+ok(test_get_DESCRIPTION, 1);
+ok(test_set_DESCRIPTION, 1);
 
 #########################
 
-# Supporting subroutines for testing.
-
-sub test_new()
+sub test_set_datatype()
 {
-    my($votable_field);
-    $votable_field = new VOTABLE::FIELD
-	or return(0);
-    $votable_field = new VOTABLE::FIELD $factory->createElement('FIELD')
-	or return(0);
+
+    # Local variables
+
+    # Reference to test FIELD object.
+    my($field);
+
+    # Current datatype value.
+    my($datatype);
+
+    # Valid datatype attribute values.
+    my(@valids) = qw(boolean bit unsignedByte short int long char
+		     unicodeChar float double floatComplex doubleComplex);
+
+    #--------------------------------------------------------------------------
+
+    # Create the object.
+    $field = new VOTable::FIELD or return(0);
+
+    # Try each of the valid values.
+    foreach $datatype (@valids) {
+	$field->set_datatype($datatype);
+	$field->get_datatype eq $datatype or return(0);
+    }
+
+    # Make sure bad values fail.
+    eval { $field->set_datatype('BAD_VALUE!'); };
+    return(0) if not $EVAL_ERROR;
+
+    # All tests passed.
     return(1);
+
 }
 
-sub test_get_description()
+sub test_set_type()
 {
-    my($votable_field) = new VOTABLE::FIELD
- 	or return(0);
-    my($test_description) = 'This is a test.';
-    my($votable_description) = new VOTABLE::DESCRIPTION $test_description
- 	or return(0);
-    $votable_field->set_description($votable_description) eq
-	$votable_description
- 	or return(0);
+
+    # Local variables
+
+    # Reference to test FIELD object.
+    my($field);
+
+    # Current type value.
+    my($type);
+
+    # Valid type attribute values.
+    my(@valids) = qw(hidden no_query trigger);
+
+    #--------------------------------------------------------------------------
+
+    # Create the object.
+    $field = new VOTable::FIELD or return(0);
+
+    # Try each of the valid values.
+    foreach $type (@valids) {
+	$field->set_type($type);
+	$field->get_type eq $type or return(0);
+    }
+
+    # Make sure bad values fail.
+    eval { $field->set_type('BAD_VALUE!'); };
+    return(0) if not $EVAL_ERROR;
+
+    # All tests passed.
     return(1);
+
 }
 
-sub test_set_description()
+sub test_get_DESCRIPTION()
 {
-    my($votable_field) = new VOTABLE::FIELD
- 	or return(0);
-    my($test_description) = 'This is a test.';
-    my($votable_description) = new VOTABLE::DESCRIPTION $test_description
- 	or return(0);
-    $votable_field->set_description($votable_description) eq
-	$votable_description
- 	or return(0);
+
+    # Local variables
+
+    # String of XML to parse.
+    my($xml);
+
+    # VOTable::Document object for current document.
+    my($document);
+
+    # VOTable::VOTABLE element object for the document element.
+    my($votable);
+
+    # VOTable::RESOURCE object for the RESOURCE element.
+    my($resource);
+
+    # VOTable::TABLE object for the TABLE element.
+    my($table);
+
+    # VOTable::FIELD object for the FIELD element.
+    my($field);
+
+    # VOTable::DESCRIPTION object for the DESCRIPTION element.
+    my($description);
+
+    #--------------------------------------------------------------------------
+
+    # Parse the XML.
+    $xml = '<VOTABLE><RESOURCE><TABLE><FIELD><DESCRIPTION>This is a FIELD description!</DESCRIPTION></FIELD></TABLE></RESOURCE></VOTABLE>';
+    $document = VOTable::Document->new_from_string($xml) or return(0);
+
+    # Drill down to the FIELD element.
+    $votable = $document->get_VOTABLE or return(0);
+    $resource = ($votable->get_RESOURCE)[0] or return(0);
+    $table = ($resource->get_TABLE)[0] or return(0);
+    $field = ($table->get_FIELD)[0] or return(0);
+
+    # Fetch the DESCRIPTION element.
+    $description = $field->get_DESCRIPTION or return(0);
+    $description->isa('VOTable::DESCRIPTION') or return(0);
+    $description->get eq 'This is a FIELD description!' or return(0);
+
+    # All tests succeeded.
     return(1);
+
 }
 
-sub test_get_values()
+sub test_set_DESCRIPTION()
 {
-    my($votable_field) = new VOTABLE::FIELD
- 	or return(0);
-    my($votable_values) = new VOTABLE::VALUES
- 	or return(0);
-    $votable_field->set_values(($votable_values))
- 	or return(0);
-    return(1);
-}
 
-sub test_set_values()
-{
-    my($votable_field) = new VOTABLE::FIELD
- 	or return(0);
-    my($votable_values) = new VOTABLE::VALUES
- 	or return(0);
-    $votable_field->set_values(($votable_values))
- 	or return(0);
-    return(1);
-}
+    # Local variables
 
-sub test_get_link()
-{
-    my($votable_field) = new VOTABLE::FIELD
- 	or return(0);
-    my($votable_link) = new VOTABLE::LINK
- 	or return(0);
-    $votable_field->set_link(($votable_link))
- 	or return(0);
-    return(1);
-}
+    # String of XML to parse.
+    my($xml);
 
-sub test_set_link()
-{
-    my($votable_field) = new VOTABLE::FIELD
- 	or return(0);
-    my($votable_link) = new VOTABLE::LINK
- 	or return(0);
-    $votable_field->set_link(($votable_link))
- 	or return(0);
+    # VOTable::Document object for current document.
+    my($document);
+
+    # VOTable::VOTABLE object for the document element.
+    my($votable);
+
+    # VOTable::RESOURCE object for the RESOURCE element.
+    my($resource);
+
+    # VOTable::TABLE object for the TABLE element.
+    my($table);
+
+    # VOTable::FIELD object for the FIELD element.
+    my($field);
+
+    # VOTable::DESCRIPTION object for the DESCRIPTION element.
+    my($description);
+
+    #--------------------------------------------------------------------------
+
+    # Test a FIELD without any child elements.
+
+    # Parse the XML.
+    $xml = '<VOTABLE><RESOURCE><TABLE><FIELD/></TABLE></RESOURCE></VOTABLE>';
+    $document = VOTable::Document->new_from_string($xml) or return(0);
+
+    # Fetch the VOTABLE element.
+    $votable = $document->get_VOTABLE or return(0);
+
+    # Fetch the RESOURCE element.
+    $resource = ($votable->get_RESOURCE)[0] or return(0);
+
+    # Fetch the TABLE element.
+    $table = ($resource->get_TABLE)[0] or return(0);
+
+    # Fetch the FIELD element.
+    $field = ($table->get_FIELD)[0] or return(0);
+
+    # Create the DESCRIPTION element.
+    $description = VOTable::DESCRIPTION->new() or return(0);
+    $description->set('This is a test.');
+
+    # Set then fetch the DESCRIPTION element.
+    $field->set_DESCRIPTION($description);
+    $description = $field->get_DESCRIPTION or return(0);
+    $description->isa('VOTable::DESCRIPTION') or return(0);
+    $description->get eq 'This is a test.' or return(0);
+
+    #--------------------------------------------------------------------------
+
+    # Make sure it works when replacing another DESCRIPTION.
+
+    # Create the second DESCRIPTION element.
+    $description = VOTable::DESCRIPTION->new() or return(0);
+    $description->set('This is another test.');
+
+    # Set then fetch the DESCRIPTION element.
+    $field->set_DESCRIPTION($description);
+    $description = $field->get_DESCRIPTION or return(0);
+    $description->isa('VOTable::DESCRIPTION') or return(0);
+    $description->get eq 'This is another test.' or return(0);
+
+    #--------------------------------------------------------------------------
+
+    # Make sure it works when other child elements are present.
+
+    # Parse the XML.
+    $xml = '<VOTABLE><RESOURCE><TABLE><FIELD><VALUES/></FIELD></TABLE></RESOURCE></VOTABLE>';
+    $document = VOTable::Document->new_from_string($xml) or return(0);
+
+    # Fetch the VOTABLE element.
+    $votable = $document->get_VOTABLE or return(0);
+
+    # Fetch the RESOURCE element.
+    $resource = ($votable->get_RESOURCE)[0] or return(0);
+
+    # Fetch the TABLE element.
+    $table = ($resource->get_TABLE)[0] or return(0);
+
+    # Fetch the FIELD element.
+    $field = ($table->get_FIELD)[0] or return(0);
+
+    # Create the DESCRIPTION element.
+    $description = VOTable::DESCRIPTION->new() or return(0);
+    $description->set('This is yet another test.');
+
+    # Set then fetch the DESCRIPTION element.
+    $field->set_DESCRIPTION($description);
+    $description = $field->get_DESCRIPTION or return(0);
+    $description->isa('VOTable::DESCRIPTION') or return(0);
+    $description->get eq 'This is yet another test.' or return(0);
+
+    # All tests succeeded.
     return(1);
+
 }

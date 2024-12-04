@@ -6,8 +6,8 @@
 # change 'tests => 1' to 'tests => last_test_to_print';
 
 use Test;
-BEGIN { plan tests => 6 };
-use VOTABLE::FITS;
+BEGIN { plan tests => 2 };
+use VOTable::FITS;
 ok(1); # If we made it this far, we're ok.
 
 #########################
@@ -15,86 +15,76 @@ ok(1); # If we made it this far, we're ok.
 # Insert your test code below, the Test module is use()ed here so read
 # its man page ( perldoc Test ) for help writing this test script.
 
-# External modules.
-use VOTABLE::STREAM;
+#########################
 
-# Subroutine prototypes.
-sub test_new();
-sub test_get_extnum();
-sub test_set_extnum();
-sub test_get_stream();
-sub test_set_stream();
+# External modules
+use VOTable::Document;
+
+# Subroutine prototypes
+sub test_get_STREAM();
 
 #########################
 
-# Create a factory document for building XML::DOM objects.
-my($factory) = new XML::DOM::Document or die;
-
-# Test the constructor.
-ok(test_new, 1);
-
-# Test the attribute accessors.
-ok(test_get_extnum, 1);
-ok(test_set_extnum, 1);
-
-# Test element accessors.
-ok(test_get_stream, 1);
-ok(test_set_stream, 1);
-
-# Test the PCDATA accessors.
+# Test.
+ok(test_get_STREAM, 1);
 
 #########################
 
-# Supporting subroutines for testing.
-
-sub test_new()
+sub test_get_STREAM()
 {
-    my($votable_fits);
-    $votable_fits = new VOTABLE::FITS
-	or return(0);
-    $votable_fits = new VOTABLE::FITS $factory->createElement('FITS')
-	or return(0);
-    return(1);
-}
 
-sub test_get_extnum()
-{
-    my($votable_fits) = new VOTABLE::FITS undef, extnum => '100'
-	or return(0);
-    $votable_fits->get_extnum eq '100'
-	or return(0);
-    return(1);
-}
+    # Local variables
 
-sub test_set_extnum()
-{
-    my($votable_fits) = new VOTABLE::FITS
-	or return(0);
-    $votable_fits->set_extnum(100) eq '100'
-	or return(0);
-    return(1);
-}
+    # String of XML to parse.
+    my($xml);
 
-sub test_get_stream()
-{
-    my($votable_fits) = new VOTABLE::FITS
-	or return(0);
-    my($votable_stream) = new VOTABLE::STREAM 'Test stream'
- 	or return(0);
-    $votable_fits->set_stream($votable_stream) eq $votable_stream
- 	or return(0);
-    $votable_fits->get_stream eq $votable_stream
- 	or return(0);
-    return(1);
-}
+    # VOTable::Document object for current document.
+    my($document);
 
-sub test_set_stream()
-{
-    my($votable_fits) = new VOTABLE::FITS
-	or return(0);
-    my($votable_stream) = new VOTABLE::STREAM 'Test stream'
- 	or return(0);
-    $votable_fits->set_stream($votable_stream) eq $votable_stream
- 	or return(0);
+    # VOTable::VOTABLE object for the document element.
+    my($votable);
+
+    # VOTable::RESOURCE object for the RESOURCE element.
+    my($resource);
+
+    # VOTable::TABLE object for the TABLE element.
+    my($table);
+
+    # VOTable::DATA object for the DATA element.
+    my($data);
+
+    # VOTable::FITS object for the FITS element.
+    my($fits);
+
+    # VOTable::STREAM object for the STREAM element.
+    my($stream);
+
+    #--------------------------------------------------------------------------
+
+    # Parse the XML.
+    $xml = '<VOTABLE><RESOURCE><TABLE><DATA><FITS><STREAM/></FITS></DATA></TABLE></RESOURCE></VOTABLE>';
+    $document = VOTable::Document->new_from_string($xml) or return(0);
+
+    # Fetch the VOTABLE element.
+    $votable = $document->get_VOTABLE or return(0);
+
+    # Fetch the RESOURCE element.
+    $resource = ($votable->get_RESOURCE)[0] or return(0);
+
+    # Fetch the TABLE element.
+    $table = ($resource->get_TABLE)[0] or return(0);
+
+    # Fetch the DATA element.
+    $data = ($table->get_DATA)[0] or return(0);
+
+    # Fetch the FITS element.
+    $fits = ($data->get_FITS)[0] or return(0);
+
+    # Fetch the STREAM element.
+    $stream = ($fits->get_STREAM)[0] or return(0);
+    $stream->isa('VOTable::STREAM') or return(0);
+
+    # All tests succeeded.
     return(1);
+
 }

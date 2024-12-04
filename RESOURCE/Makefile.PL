@@ -1,11 +1,10 @@
 use ExtUtils::MakeMaker;
-# See lib/ExtUtils/MakeMaker.pm for details of how to influence
-# the contents of the Makefile that is written.
+
+# Write the Makefile.
 WriteMakefile(
-    'NAME'		=> 'VOTABLE::RESOURCE',
-    'VERSION_FROM'	=> 'RESOURCE.pm', # finds $VERSION
-    'PREREQ_PM'		=> {}, # e.g., Module::Name => 1.1
-    ($] >= 5.005 ?    ## Add these new keywords supported since 5.005
-      (ABSTRACT_FROM => 'RESOURCE.pm', # retrieve abstract from module
-       AUTHOR     => 'A. U. Thor <a.u.thor@a.galaxy.far.far.away>') : ()),
-);
+	      'NAME' => 'VOTable::RESOURCE',
+	      'VERSION_FROM' => 'RESOURCE.pm',
+	      'PREREQ_PM' => {},
+	      'ABSTRACT_FROM' => 'RESOURCE.pm',
+	      'AUTHOR' => 'Eric Winter <Eric.L.Winter.1@gsfc.nasa.gov>',
+	      );

@@ -1,4 +1,4 @@
-Makefile.PL
 MANIFEST
+Makefile.PL
 OPTION.pm
 test.pl

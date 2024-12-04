@@ -1,4 +1,4 @@
-Makefile.PL
 MANIFEST
 MIN.pm
+Makefile.PL
 test.pl

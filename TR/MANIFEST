@@ -1,4 +1,4 @@
-Makefile.PL
 MANIFEST
-test.pl
+Makefile.PL
 TR.pm
+test.pl
