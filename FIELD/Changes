@@ -1,0 +1,6 @@
+Revision history for Perl extension VOTABLE::FIELD.
+
+0.01  Sat Apr 27 11:46:41 2002
+	- original version; created by h2xs 1.21 with options
+		-APXf -n VOTABLE::FIELD
+
