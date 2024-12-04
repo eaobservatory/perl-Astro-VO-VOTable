@@ -44,12 +44,13 @@
 <P>
 <HR>
 <H1><A NAME="synopsis">SYNOPSIS</A></H1>
-<P><CODE>use VOTABLE::FITS;</CODE></P>
+<PRE>
+ use VOTABLE::FITS;</PRE>
 <P>
 <HR>
 <H1><A NAME="description">DESCRIPTION</A></H1>
 <P>This class implements the <CODE>FITS</CODE> element from the <CODE>VOTABLE</CODE>
-DTD. This element is used to encapsulate FITS-formatted data.</P>
+DTD. This element encapsulates FITS-formatted data.</P>
 <P>The <CODE>FITS</CODE> element is a Tier 1 element, and is described by the
 following excerpt from the <CODE>VOTABLE</CODE> 1.0 DTD:</P>
 <PRE>
@@ -83,9 +84,8 @@ element is found, or an error occurs.</P>
 <P>
 <H3><A NAME="set_stream($votable_stream)"><CODE>set_stream($votable_stream)</CODE></A></H3>
 <P>Set the <CODE>STREAM</CODE> element for this <CODE>FITS</CODE> element using the supplied
-<CODE>VOTABLE::STREAM</CODE> object. Any existing <CODE>STREAM</CODE> element is first
-removed. Return the <CODE>VOTABLE::STREAM</CODE> object on success, or <CODE>undef</CODE>
-if an error occurs.</P>
+<CODE>VOTABLE::STREAM</CODE> object. Return the <CODE>VOTABLE::STREAM</CODE> object on
+success, or <CODE>undef</CODE> if an error occurs.</P>
 <P>
 <H2><A NAME="notes on class internals">Notes on class internals</A></H2>
 <UL>
@@ -97,15 +97,20 @@ class hierarchy.
 <LI>
 The names of the <CODE>get_XXX</CODE> and <CODE>set_XXX</CODE> accessors for attributes
 and elements are derived directly from the names of the attributes or
-elements. Attribute and element names containing embedded hyphens
-('<CODE>-</CODE>') use accessors where the hyphen is mapped to an underscore
-('<CODE>_</CODE>') in the name of the accessor method. This is a necessity,
-since the hyphen is not a valid name character in Perl.
+elements, with the attribute name replacing 'XXX'. Attribute and
+element names containing embedded hyphens ('<CODE>-</CODE>') use accessors where
+the hyphen is mapped to an underscore ('<CODE>_</CODE>') in the name of the
+accessor method. This is a necessity, since the hyphen is not a valid
+name character in Perl.
 <P></P></UL>
 <P>
 <HR>
 <H1><A NAME="warnings">WARNINGS</A></H1>
 <UL>
+<LI>
+This class is a shell for now. No actual support for FITS files is
+currently provided.
+<P></P>
 <LI>
 This class does not currently support decoding of the <CODE>FITS STREAM</CODE>,
 but that capability will be added ASAP.
@@ -113,12 +118,11 @@ but that capability will be added ASAP.
 <LI>
 This code (perhaps unwisely) assumes that object internal structure is
 always maintained. For example, this code assumes that every
-<CODE>VOTABLE::FITS</CODE> object <EM>always</EM> has an underlying
-<CODE>XML::DOM::Element</CODE> object. As long as the internal structure is
-manipulated only by the publicly-available methods, this should be an
-adequate assumption. If a method detects an aberrant case, a warning
-message is printed (using the <CODE>Carp::carp</CODE> subroutine), and the
-method fails.
+<CODE>VOTABLE</CODE> object <EM>always</EM> has an underlying <CODE>XML::DOM::Element</CODE>
+object. As long as the internal structure is manipulated only by the
+publicly-available methods, this should be an adequate assumption. If
+a method detects an aberrant case, a warning message is printed (using
+the <CODE>Carp::carp</CODE> subroutine), and the method fails.
 <P></P>
 <LI>
 Similarly, this code assumes that <CODE>XML::DOM</CODE> methods always
@@ -142,7 +146,7 @@ acceptable values, as defined in the DTD.
 <P>
 <HR>
 <H1><A NAME="version">VERSION</A></H1>
-<P>$Id: FITS.pm,v 1.1.1.8 2002/05/21 14:10:49 elwinter Exp $</P>
+<P>$Id: FITS.pm,v 1.1.1.10 2002/06/09 21:13:08 elwinter Exp $</P>
 
 </BODY>
 

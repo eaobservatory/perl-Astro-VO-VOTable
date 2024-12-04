@@ -195,7 +195,7 @@ Eric Winter, NASA GSFC (elwinter@milkyway.gsfc.nasa.gov)
 
 =head1 VERSION
 
-$Id: Document.pm,v 1.1.1.19 2002/05/21 14:09:55 elwinter Exp $
+$Id: Document.pm,v 1.1.1.22 2002/06/09 21:13:08 elwinter Exp $
 
 =cut
 
@@ -204,6 +204,15 @@ $Id: Document.pm,v 1.1.1.19 2002/05/21 14:09:55 elwinter Exp $
 # Revision history
 
 # $Log: Document.pm,v $
+# Revision 1.1.1.22  2002/06/09  21:13:08  elwinter
+# Sert version to 0.03.
+#
+# Revision 1.1.1.21  2002/06/09  19:47:30  elwinter
+# Changed required Perl version to 5.6.1.
+#
+# Revision 1.1.1.20  2002/06/08  20:41:42  elwinter
+# Fixed bug in element insertion order.
+#
 # Revision 1.1.1.19  2002/05/21  14:09:55  elwinter
 # Incremented $VERSION to 0.02.
 #
@@ -265,7 +274,7 @@ $Id: Document.pm,v 1.1.1.19 2002/05/21 14:09:55 elwinter Exp $
 package VOTABLE::Document;
 
 # Specify the minimum acceptable Perl version.
-use 5.006;
+use 5.6.1;
 
 # Turn on strict syntax checking.
 use strict;
@@ -282,7 +291,7 @@ use warnings;
 our @ISA = qw();
 
 # Module version.
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 #------------------------------------------------------------------------------
 
@@ -837,7 +846,7 @@ sub set_info()
 	    # insert the INFO elements right after it. Otherwise,
 	    # append the INFO elements.
 	    if ($xmldom_elements[0] ne $xmldom_element_this->getLastChild) {
-		foreach $votable_info (@votable_info) {
+		foreach $votable_info (reverse(@votable_info)) {
 		    $xmldom_element_info = $votable_info->_get_XMLDOM;
 		    $xmldom_element_this->
 			insertBefore($xmldom_element_info,
@@ -857,7 +866,7 @@ sub set_info()
 	    # insert the INFO elements right after it. Otherwise,
 	    # append the INFO elements.
 	    if ($xmldom_elements[0] ne $xmldom_element_this->getLastChild) {
-		foreach $votable_info (@votable_info) {
+		foreach $votable_info (reverse(@votable_info)) {
 		    $xmldom_element_info = $votable_info->_get_XMLDOM;
 		    $xmldom_element_this->
 			insertBefore($xmldom_element_info,
@@ -874,7 +883,7 @@ sub set_info()
 
 	    # No DESCRIPTION or DEFINITIONS element found, so insert
 	    # the INFO elements as the first children.
-	    foreach $votable_info (@votable_info) {
+	    foreach $votable_info (reverse(@votable_info)) {
 		$xmldom_element_info = $votable_info->_get_XMLDOM;
 		$xmldom_element_this->
 		    insertBefore($xmldom_element_info,
@@ -976,7 +985,7 @@ sub set_resource()
 	    # insert the RESOURCE elements right after it. Otherwise,
 	    # append the RESOURCE elements.
 	    if ($xmldom_elements[-1] ne $xmldom_element_this->getLastChild) {
-		foreach $votable_resource (@votable_resource) {
+		foreach $votable_resource (reverse(@votable_resource)) {
 		    $xmldom_element_resource = $votable_resource->_get_XMLDOM;
 		    $xmldom_element_this->
 			insertBefore($xmldom_element_resource,
@@ -997,7 +1006,7 @@ sub set_resource()
 	    # insert the RESOURCE elements right after it. Otherwise,
 	    # append the RESOURCE elements.
 	    if ($xmldom_elements[0] ne $xmldom_element_this->getLastChild) {
-		foreach $votable_resource (@votable_resource) {
+		foreach $votable_resource (reverse(@votable_resource)) {
 		    $xmldom_element_resource = $votable_resource->_get_XMLDOM;
 		    $xmldom_element_this->
 			insertBefore($xmldom_element_resource,
@@ -1018,7 +1027,7 @@ sub set_resource()
 	    # insert the RESOURCE elements right after it. Otherwise,
 	    # append the RESOURCE elements.
 	    if ($xmldom_elements[0] ne $xmldom_element_this->getLastChild) {
-		foreach $votable_resource (@votable_resource) {
+		foreach $votable_resource (reverse(@votable_resource)) {
 		    $xmldom_element_resource = $votable_resource->_get_XMLDOM;
 		    $xmldom_element_this->
 			insertBefore($xmldom_element_resource,
@@ -1036,7 +1045,7 @@ sub set_resource()
 
 	    # No DESCRIPTION, DEFINITIONS, or INFO elements found, so
 	    # insert the RESOURCE elements as the first children.
-	    foreach $votable_resource (@votable_resource) {
+	    foreach $votable_resource (reverse(@votable_resource)) {
 		$xmldom_element_resource =
 		    $votable_resource->_get_XMLDOM;
 		$xmldom_element_this->

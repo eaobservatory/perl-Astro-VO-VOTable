@@ -8,12 +8,12 @@ VOTABLE::FITS - VOTABLE FITS XML element class
 
 =head1 SYNOPSIS
 
-C<use VOTABLE::FITS;>
+ use VOTABLE::FITS;
 
 =head1 DESCRIPTION
 
 This class implements the C<FITS> element from the C<VOTABLE>
-DTD. This element is used to encapsulate FITS-formatted data.
+DTD. This element encapsulates FITS-formatted data.
 
 The C<FITS> element is a Tier 1 element, and is described by the
 following excerpt from the C<VOTABLE> 1.0 DTD:
@@ -53,9 +53,8 @@ element is found, or an error occurs.
 =head3 C<set_stream($votable_stream)>
 
 Set the C<STREAM> element for this C<FITS> element using the supplied
-C<VOTABLE::STREAM> object. Any existing C<STREAM> element is first
-removed. Return the C<VOTABLE::STREAM> object on success, or C<undef>
-if an error occurs.
+C<VOTABLE::STREAM> object. Return the C<VOTABLE::STREAM> object on
+success, or C<undef> if an error occurs.
 
 =head2 Notes on class internals
 
@@ -71,16 +70,22 @@ class hierarchy.
 
 The names of the C<get_XXX> and C<set_XXX> accessors for attributes
 and elements are derived directly from the names of the attributes or
-elements. Attribute and element names containing embedded hyphens
-('C<->') use accessors where the hyphen is mapped to an underscore
-('C<_>') in the name of the accessor method. This is a necessity,
-since the hyphen is not a valid name character in Perl.
+elements, with the attribute name replacing 'XXX'. Attribute and
+element names containing embedded hyphens ('C<->') use accessors where
+the hyphen is mapped to an underscore ('C<_>') in the name of the
+accessor method. This is a necessity, since the hyphen is not a valid
+name character in Perl.
 
 =back
 
 =head1 WARNINGS
 
 =over 4
+
+=item *
+
+This class is a shell for now. No actual support for FITS files is
+currently provided.
 
 =item *
 
@@ -91,12 +96,11 @@ but that capability will be added ASAP.
 
 This code (perhaps unwisely) assumes that object internal structure is
 always maintained. For example, this code assumes that every
-C<VOTABLE::FITS> object I<always> has an underlying
-C<XML::DOM::Element> object. As long as the internal structure is
-manipulated only by the publicly-available methods, this should be an
-adequate assumption. If a method detects an aberrant case, a warning
-message is printed (using the C<Carp::carp> subroutine), and the
-method fails.
+C<VOTABLE> object I<always> has an underlying C<XML::DOM::Element>
+object. As long as the internal structure is manipulated only by the
+publicly-available methods, this should be an adequate assumption. If
+a method detects an aberrant case, a warning message is printed (using
+the C<Carp::carp> subroutine), and the method fails.
 
 =item *
 
@@ -123,7 +127,7 @@ Eric Winter, NASA GSFC (elwinter@milkyway.gsfc.nasa.gov)
 
 =head1 VERSION
 
-$Id: FITS.pm,v 1.1.1.8 2002/05/21 14:10:49 elwinter Exp $
+$Id: FITS.pm,v 1.1.1.10 2002/06/09 21:13:08 elwinter Exp $
 
 =cut
 
@@ -132,6 +136,12 @@ $Id: FITS.pm,v 1.1.1.8 2002/05/21 14:10:49 elwinter Exp $
 # Revision history
 
 # $Log: FITS.pm,v $
+# Revision 1.1.1.10  2002/06/09  21:13:08  elwinter
+# Sert version to 0.03.
+#
+# Revision 1.1.1.9  2002/06/08  20:45:27  elwinter
+# Minor documentation tweaks,
+#
 # Revision 1.1.1.8  2002/05/21  14:10:49  elwinter
 # Incremented $VERSION to 0.02.
 #
@@ -157,7 +167,7 @@ $Id: FITS.pm,v 1.1.1.8 2002/05/21 14:10:49 elwinter Exp $
 package VOTABLE::FITS;
 
 # Specify the minimum acceptable Perl version.
-use 5.006;
+use 5.6.1;
 
 # Turn on strict syntax checking.
 use strict;
@@ -170,11 +180,11 @@ use warnings;
 
 #------------------------------------------------------------------------------
 
-# Set up the inheritance mexhanism.
+# Set up the inheritance mechanism.
 our @ISA = qw();
 
 # Module version.
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 #------------------------------------------------------------------------------
 
@@ -485,7 +495,7 @@ sub set_stream()
 
 #------------------------------------------------------------------------------
 
-# PCDATA content accessor methods
+# #PCDATA content accessor methods
 
 #------------------------------------------------------------------------------
 

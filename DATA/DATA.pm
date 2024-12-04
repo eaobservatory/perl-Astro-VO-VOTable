@@ -74,7 +74,11 @@ C<FITS>, or C<TABLEDATA> element in this C<DATA> element is replaced
 by the new C<TABLEDATA> element. Return the C<VOTABLE::TABLEDATA>
 object on success, or C<undef> if an error occurs.
 
-=head2 Notes on class internals
+=head3 C<get_content>
+
+Read the data described by the underlying elements for this C<DATA>
+element, and return the content as a string. Return C<undef> if an
+error occurs.
 
 =over 4
 
@@ -136,7 +140,7 @@ Eric Winter, NASA GSFC (elwinter@milkyway.gsfc.nasa.gov)
 
 =head1 VERSION
 
-$Id: DATA.pm,v 1.1.1.7 2002/05/21 14:08:54 elwinter Exp $
+$Id: DATA.pm,v 1.1.1.10 2002/06/09 21:13:08 elwinter Exp $
 
 =cut
 
@@ -145,6 +149,15 @@ $Id: DATA.pm,v 1.1.1.7 2002/05/21 14:08:54 elwinter Exp $
 # Revision history
 
 # $Log: DATA.pm,v $
+# Revision 1.1.1.10  2002/06/09  21:13:08  elwinter
+# Sert version to 0.03.
+#
+# Revision 1.1.1.9  2002/06/09  19:44:07  elwinter
+# Changed reuired Perl version to 5.6.1.
+#
+# Revision 1.1.1.8  2002/05/23  13:07:10  elwinter
+# Added get_content() method.
+#
 # Revision 1.1.1.7  2002/05/21  14:08:54  elwinter
 # Incremented $VERSION to 0.02.
 #
@@ -167,7 +180,7 @@ $Id: DATA.pm,v 1.1.1.7 2002/05/21 14:08:54 elwinter Exp $
 package VOTABLE::DATA;
 
 # Specify the minimum acceptable Perl version.
-use 5.006;
+use 5.6.1;
 
 # Turn on strict syntax checking.
 use strict;
@@ -184,7 +197,7 @@ use warnings;
 our @ISA = qw();
 
 # Module version.
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 #------------------------------------------------------------------------------
 
@@ -382,6 +395,41 @@ sub new()
 
     # Return the object.
     return($this);
+
+}
+
+#------------------------------------------------------------------------------
+
+# get_content()
+
+# Read the data from the resource specified by the enclosed elements.
+
+sub get_content()
+{
+
+    # Save arguments.
+    my($this) = @_;
+
+    #--------------------------------------------------------------------------
+
+    # Local variables.
+
+    # String to hold the content of the data.
+    my($content);
+
+    #--------------------------------------------------------------------------
+
+    # Only BINARY supported for now.
+    if (not exists($this->{'BINARY'})) {
+	carp('No BINARY found!');
+	return(undef);
+    }
+
+    # Read the content.
+    $content = $this->{'BINARY'}->get_content;
+
+    # Return the contents.
+    return($content);
 
 }
 

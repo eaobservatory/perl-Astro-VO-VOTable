@@ -120,7 +120,7 @@ Eric Winter, NASA GSFC (elwinter@milkyway.gsfc.nasa.gov)
 
 =head1 VERSION
 
-$Id: DEFINITIONS.pm,v 1.1.1.9 2002/05/21 14:09:19 elwinter Exp $
+$Id: DEFINITIONS.pm,v 1.1.1.11 2002/06/09 21:13:08 elwinter Exp $
 
 =cut
 
@@ -129,6 +129,12 @@ $Id: DEFINITIONS.pm,v 1.1.1.9 2002/05/21 14:09:19 elwinter Exp $
 # Revision history
 
 # $Log: DEFINITIONS.pm,v $
+# Revision 1.1.1.11  2002/06/09  21:13:08  elwinter
+# Sert version to 0.03.
+#
+# Revision 1.1.1.10  2002/06/09  19:46:25  elwinter
+# Changed required Perl version to 5.6.1.
+#
 # Revision 1.1.1.9  2002/05/21  14:09:19  elwinter
 # Incremented $VERSION to 0.02.
 #
@@ -157,7 +163,7 @@ $Id: DEFINITIONS.pm,v 1.1.1.9 2002/05/21 14:09:19 elwinter Exp $
 package VOTABLE::DEFINITIONS;
 
 # Specify the minimum acceptable Perl version.
-use 5.006;
+use 5.6.1;
 
 # Turn on strict syntax checking.
 use strict;
@@ -174,7 +180,7 @@ use warnings;
 our @ISA = qw();
 
 # Module version.
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 #------------------------------------------------------------------------------
 

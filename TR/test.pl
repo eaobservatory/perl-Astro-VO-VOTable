@@ -6,7 +6,7 @@
 # change 'tests => 1' to 'tests => last_test_to_print';
 
 use Test;
-BEGIN { plan tests => 4 };
+BEGIN { plan tests => 6 };
 use VOTABLE::TR;
 ok(1); # If we made it this far, we're ok.
 
@@ -23,6 +23,8 @@ use VOTABLE::TD;
 sub test_new();
 sub test_get_td();
 sub test_set_td();
+sub test_as_array();
+sub test_from_array();
 
 #########################
 
@@ -39,6 +41,10 @@ ok(test_get_td, 1);
 ok(test_set_td, 1);
 
 # Test PCDATA accessors.
+
+# Test the other methods.
+ok(test_as_array, 1);
+ok(test_from_array, 1);
 
 #########################
 
@@ -79,5 +85,26 @@ sub test_set_td()
  	or return(0);
     ($votable_tr->get_td)[0] eq $votable_td
 	or return(0);
+    return(1);
+}
+
+sub test_as_array()
+{
+    my($votable_tr) = new VOTABLE::TR or return(0);
+    my($test_td) = 'One';
+    my($votable_td) = new VOTABLE::TD $test_td or return(0);
+    $votable_tr->set_td(($votable_td)) or return(0);
+    my(@values) = $votable_tr->as_array or return(0);
+    $values[0] eq 'One' or return(0);
+    return(1);
+}
+
+sub test_from_array()
+{
+    my($votable_tr) = new VOTABLE::TR or return(0);
+    my($test_td) = 'One';
+    $votable_tr->from_array(($test_td)) or return(0);
+    my(@values) = $votable_tr->as_array or return(0);
+    $values[0] eq 'One' or return(0);
     return(1);
 }

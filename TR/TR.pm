@@ -43,6 +43,17 @@ of C<VOTABLE::TD> objects. Any previously existing C<TD> elements are
 first removed. Return the input list on success, or an empty list if
 an error occurs.
 
+=head3 C<as_array>
+
+Return the contents of the C<TD> elements for this C<TR> element as an
+array of values. Return an empty list if an error occurs.
+
+=head3 C<from_array(@values)>
+
+Set the values of the C<TD> element children of this C<TR> element
+using the C<@values> array. Return the list of new values added, or an
+enpty list if an error occurs.
+
 =head2 Notes on class internals
 
 =over 4
@@ -103,7 +114,7 @@ Eric Winter, NASA GSFC (elwinter@milkyway.gsfc.nasa.gov)
 
 =head1 VERSION
 
-$Id: TR.pm,v 1.1.1.10 2002/05/21 14:14:07 elwinter Exp $
+$Id: TR.pm,v 1.1.1.14 2002/06/09 21:13:08 elwinter Exp $
 
 =cut
 
@@ -112,6 +123,18 @@ $Id: TR.pm,v 1.1.1.10 2002/05/21 14:14:07 elwinter Exp $
 # Revision history
 
 # $Log: TR.pm,v $
+# Revision 1.1.1.14  2002/06/09  21:13:08  elwinter
+# Sert version to 0.03.
+#
+# Revision 1.1.1.13  2002/06/09  19:54:46  elwinter
+# Changed required Perl version to 5.6.1.
+#
+# Revision 1.1.1.12  2002/05/24  13:01:30  elwinter
+# Added from_array() method.
+#
+# Revision 1.1.1.11  2002/05/23  13:13:38  elwinter
+# Added as_array() method.
+#
 # Revision 1.1.1.10  2002/05/21  14:14:07  elwinter
 # Incremented $VERSION to 0.02.
 #
@@ -143,7 +166,7 @@ $Id: TR.pm,v 1.1.1.10 2002/05/21 14:14:07 elwinter Exp $
 package VOTABLE::TR;
 
 # Specify the minimum acceptable Perl version.
-use 5.006;
+use 5.6.1;
 
 # Turn on strict syntax checking.
 use strict;
@@ -160,7 +183,7 @@ use warnings;
 our @ISA = qw();
 
 # Module version.
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 #------------------------------------------------------------------------------
 
@@ -356,6 +379,95 @@ sub new()
 
     # Return the object.
     return($this);
+
+}
+
+#------------------------------------------------------------------------------
+
+# as_array()
+
+# Return the TD elements as an array of values.
+
+sub as_array()
+{
+
+    # Save arguments.
+    my($this) = @_;
+
+    #--------------------------------------------------------------------------
+
+    # Local variables.
+
+    # Array to hold the TD element values.
+    my(@values);
+
+    # Array of TD elements for this TR.
+    my(@votable_td);
+
+    # Loop counter.
+    my($i);
+
+    #--------------------------------------------------------------------------
+
+    # Fetch the TD elements for this TR.
+    @votable_td = $this->get_td;
+    if (@votable_td == 0) {
+	carp('No TD elements found!');
+	return(());
+    }
+
+    # Convert the TD elements to an array.
+    for ($i = 0; $i < @votable_td; $i++) {
+	$values[$i] = $votable_td[$i]->get;
+    }
+
+    # Return the array of values.
+    return(@values);
+
+}
+
+#------------------------------------------------------------------------------
+
+# from_array()
+
+# Set the contents of the TR using the contents of the array. Return
+# the new values on success, or an empty list on error.
+
+sub from_array()
+{
+
+    # Save arguments.
+    my($this, @values) = @_;
+
+    #--------------------------------------------------------------------------
+
+    # Local variables.
+
+    # Array of TD elements for this TR.
+    my(@votable_td);
+
+    # Loop counter.
+    my($i);
+
+    #--------------------------------------------------------------------------
+
+    # If TD elements already exist for this TR, replace their values
+    # with the new values. If no TD elements exist yet for this TR,
+    # create them as needed.
+    @votable_td = $this->get_td;
+    if (@votable_td) {
+	for ($i = 0; $i < @votable_td; $i++) {
+	    $votable_td[$i]->set($values[$i]);
+	}
+    } else {
+	for ($i = 0; $i < @values; $i++) {
+	    $votable_td[$i] = new VOTABLE::TD $values[$i];
+	}
+	$this->set_td(@votable_td);
+    }
+
+    # Return the array of values.
+    return(@values);
 
 }
 

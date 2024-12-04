@@ -34,6 +34,8 @@
 			<LI><A HREF="#set_link(@votable_link)"><CODE>set_link(@votable_link)</CODE></A></LI>
 			<LI><A HREF="#get_data"><CODE>get_data</CODE></A></LI>
 			<LI><A HREF="#set_data($votable_data)"><CODE>set_data($votable_data)</CODE></A></LI>
+			<LI><A HREF="#get_row($rownum)"><CODE>get_row($rownum)</CODE></A></LI>
+			<LI><A HREF="#set_row($rownum, @values)"><CODE>set_row($rownum, @values)</CODE></A></LI>
 		</UL>
 
 		<LI><A HREF="#notes on class internals">Notes on class internals</A></LI>
@@ -54,7 +56,8 @@
 <P>
 <HR>
 <H1><A NAME="synopsis">SYNOPSIS</A></H1>
-<P><CODE>use VOTABLE::TABLE;</CODE></P>
+<PRE>
+ use VOTABLE::TABLE;</PRE>
 <P>
 <HR>
 <H1><A NAME="description">DESCRIPTION</A></H1>
@@ -84,27 +87,30 @@ specified, or is undefined, create and return an empty
 attribute has not been set, or an error occurs.</P>
 <P>
 <H3><A NAME="set_id($id)"><CODE>set_ID($id)</CODE></A></H3>
-<P>Set the value of the <CODE>ID</CODE> attribute to the specified value. Return
-the new value of the attribute on success, or <CODE>undef</CODE> if an error
-occurs.</P>
+<P>Set the value of the <CODE>ID</CODE> attribute to the specified value. Use
+<CODE>undef</CODE> as the argument to clear any existing value of the
+attribute. Return the new value of the attribute on success, or
+<CODE>undef</CODE> if an error occurs.</P>
 <P>
 <H3><A NAME="get_name"><CODE>get_name</CODE></A></H3>
 <P>Return the value of the <CODE>name</CODE> attribute. Return <CODE>undef</CODE> if the
 attribute has not been set, or an error occurs.</P>
 <P>
 <H3><A NAME="set_name($name)"><CODE>set_name($name)</CODE></A></H3>
-<P>Set the value of the <CODE>name</CODE> attribute to the specified value. Return
-the new value of the attribute on success, or <CODE>undef</CODE> if an error
-occurs.</P>
+<P>Set the value of the <CODE>name</CODE> attribute to the specified value. Use
+<CODE>undef</CODE> as the argument to clear any existing value of the
+attribute. Return the new value of the attribute on success, or
+<CODE>undef</CODE> if an error occurs.</P>
 <P>
 <H3><A NAME="get_ref"><CODE>get_ref</CODE></A></H3>
 <P>Return the value of the <CODE>ref</CODE> attribute. Return <CODE>undef</CODE> if the
 attribute has not been set, or an error occurs.</P>
 <P>
 <H3><A NAME="set_ref($ref)"><CODE>set_ref($ref)</CODE></A></H3>
-<P>Set the value of the <CODE>ref</CODE> attribute to the specified value. Return
-the new value of the attribute on success,or <CODE>undef</CODE> if an error
-occurs.</P>
+<P>Set the value of the <CODE>ref</CODE> attribute to the specified value. Use
+<CODE>undef</CODE> as the argument to clear any existing value of the
+attribute. Return the new value of the attribute on success,or
+<CODE>undef</CODE> if an error occurs.</P>
 <P>
 <H3><A NAME="get_description"><CODE>get_description</CODE></A></H3>
 <P>Return the <CODE>VOTABLE::DESCRIPTION</CODE> object for the <CODE>DESCRIPTION</CODE>
@@ -113,8 +119,9 @@ element child of this <CODE>TABLE</CODE> object. Return <CODE>undef</CODE> if no
 <P>
 <H3><A NAME="set_description($votable_description)"><CODE>set_description($votable_description)</CODE></A></H3>
 <P>Set the <CODE>VOTABLE::DESCRIPTION</CODE> object for the <CODE>DESCRIPTION</CODE> child
-element of this <CODE>TABLE</CODE> element to the specified object. Any existing
-<CODE>DESCRIPTION</CODE> child element is first removed. Return the new
+element of this <CODE>TABLE</CODE> element to the specified object. Use <CODE>undef</CODE>
+as the argument to clear any existing instance of the element. Any
+existing <CODE>DESCRIPTION</CODE> child element is first removed. Return the new
 <CODE>DESCRIPTION</CODE> object on success, or <CODE>undef</CODE> if an error occurs.</P>
 <P>
 <H3><A NAME="get_field"><CODE>get_field</CODE></A></H3>
@@ -124,9 +131,13 @@ empty list if no <CODE>FIELD</CODE> elements are found, or if an error occurs.</
 <P>
 <H3><A NAME="set_field(@votable_field)"><CODE>set_field(@votable_field)</CODE></A></H3>
 <P>Set the <CODE>FIELD</CODE> elements for this <CODE>TABLE</CODE> element using the supplied
-list of <CODE>VOTABLE::FIELD</CODE> objects. Any previously existing <CODE>FIELD</CODE>
-elements are first removed. Return the input list on success, or an
-empty list if an error occurs.</P>
+list of <CODE>VOTABLE::FIELD</CODE> objects. Use an empty list as the argument
+to clear any existing instances of the elements. Any previously
+existing <CODE>FIELD</CODE> elements are first removed. <CODE>FIELD</CODE> elements are
+stored in the <CODE>TABLE</CODE> element in the same order as provided in the
+<CODE>@votable_field</CODE> array (this is important for tables with binary
+data). Return the input list on success, or an empty list if an error
+occurs.</P>
 <P>
 <H3><A NAME="get_link"><CODE>get_link</CODE></A></H3>
 <P>Return a list of the <CODE>VOTABLE::LINK</CODE> objects for the <CODE>LINK</CODE> elements
@@ -135,9 +146,10 @@ if no <CODE>LINK</CODE> elements are found, or if an error occurs.</P>
 <P>
 <H3><A NAME="set_link(@votable_link)"><CODE>set_link(@votable_link)</CODE></A></H3>
 <P>Set the <CODE>LINK</CODE> elements for this <CODE>TABLE</CODE> element using the supplied
-list of <CODE>VOTABLE::LINK</CODE> objects. Any previously existing <CODE>LINK</CODE>
-elements are first removed. Return the input list on success, or an
-empty list if an error occurs.</P>
+list of <CODE>VOTABLE::LINK</CODE> objects. Use an empty list as the argument to
+clear any existing instances of the elements. Any previously existing
+<CODE>LINK</CODE> elements are first removed. Return the input list on success,
+or an empty list if an error occurs.</P>
 <P>
 <H3><A NAME="get_data"><CODE>get_data</CODE></A></H3>
 <P>Return the <CODE>VOTABLE::DATA</CODE> object for the <CODE>DATA</CODE> element child of
@@ -146,9 +158,20 @@ or if an error occurs.</P>
 <P>
 <H3><A NAME="set_data($votable_data)"><CODE>set_data($votable_data)</CODE></A></H3>
 <P>Set the <CODE>VOTABLE::DATA</CODE> object for the <CODE>DATA</CODE> child element of this
-<CODE>TABLE</CODE> element to the specified object. Any existing <CODE>DATA</CODE> child
-element is first removed. Return the new <CODE>DATA</CODE> object on success, or
-<CODE>undef</CODE> if an error occurs.</P>
+<CODE>TABLE</CODE> element to the specified object. Use <CODE>undef</CODE> as the argument
+to clear any existing instance of the element. Any existing <CODE>DATA</CODE>
+child element is first removed. Return the new <CODE>DATA</CODE> object on
+success, or <CODE>undef</CODE> if an error occurs.</P>
+<P>
+<H3><A NAME="get_row($rownum)"><CODE>get_row($rownum)</CODE></A></H3>
+<P>Return row <CODE>$rownum</CODE> of the data, as an array of values. The array
+elements should be interpreted in the same order as the <CODE>FIELD</CODE>
+elements in the <CODE>TABLE</CODE>. Return an empty list if an error occurs.</P>
+<P>
+<H3><A NAME="set_row($rownum, @values)"><CODE>set_row($rownum, @values)</CODE></A></H3>
+<P>Set the contents of row <CODE>$rownum</CODE> to the values provided in the
+<CODE>@values</CODE> array. Use an empty list as the argument to clear the
+row. Return the new values on success, or an empty list on error.</P>
 <P>
 <H2><A NAME="notes on class internals">Notes on class internals</A></H2>
 <UL>
@@ -160,7 +183,8 @@ class hierarchy.
 <LI>
 The names of the <CODE>get_XXX</CODE> and <CODE>set_XXX</CODE> accessors for attributes
 and elements are derived directly from the names of the attributes or
-elements. Attribute and element names containing embedded hyphens
+elements, with the attribute or element name replacing
+<CODE>XXX</CODE>. Attribute and element names containing embedded hyphens
 ('<CODE>-</CODE>') use accessors where the hyphen is mapped to an underscore
 ('<CODE>_</CODE>') in the name of the accessor method. This is a necessity,
 since the hyphen is not a valid name character in Perl.
@@ -172,12 +196,11 @@ since the hyphen is not a valid name character in Perl.
 <LI>
 This code (perhaps unwisely) assumes that object internal structure is
 always maintained. For example, this code assumes that every
-<CODE>VOTABLE::TABLEDATA</CODE> object <EM>always</EM> has an underlying
-<CODE>XML::DOM::Element</CODE> object. As long as the internal structure is
-manipulated only by the publicly-available methods, this should be an
-adequate assumption. If a method detects an aberrant case, a warning
-message is printed (using the <CODE>Carp::carp</CODE> subroutine), and the
-method fails.
+<CODE>VOTABLE</CODE> object <EM>always</EM> has an underlying <CODE>XML::DOM</CODE> object. As
+long as the internal structure is manipulated only by the
+publicly-available methods, this should be an adequate assumption. If
+a method detects an aberrant case, a warning message is printed (using
+the <CODE>Carp::carp</CODE> subroutine), and the method fails.
 <P></P>
 <LI>
 Similarly, this code assumes that <CODE>XML::DOM</CODE> methods always
@@ -202,7 +225,7 @@ acceptable values, as defined in the DTD.
 <P>
 <HR>
 <H1><A NAME="version">VERSION</A></H1>
-<P>$Id: TABLE.pm,v 1.1.1.9 2002/05/21 14:13:20 elwinter Exp $</P>
+<P>$Id: TABLE.pm,v 1.1.1.21 2002/06/09 21:13:08 elwinter Exp $</P>
 
 </BODY>
 

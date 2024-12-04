@@ -31,10 +31,10 @@ sub test_set_value();
 sub test_get();
 sub test_set();
 
+#########################
+
 # Create a factory document for building XML::DOM objects.
 my($factory) = new XML::DOM::Document;
-
-#########################
 
 # Test the constructor.
 ok(test_new, 1);
@@ -55,99 +55,170 @@ ok(test_set, 1);
 
 #########################
 
-# Supporting subroutines for testing.
+# Supporting subroutines for testing
 
 sub test_new()
 {
-    my($test_text) = 'This is a test.';
-    my($test_ID) = '12345';
-    my($votable_info) = new VOTABLE::INFO
+    my($votable_info);
+    my($test_str) = 'This is a test.';
+    my($test_ID) = '1';
+
+    $votable_info = new VOTABLE::INFO
 	or return(0);
-    $votable_info = new VOTABLE::INFO $test_text
+    $votable_info = new VOTABLE::INFO $test_str
 	or return(0);
-    $votable_info = new VOTABLE::INFO $test_text, ID => $test_ID
+    $votable_info = new VOTABLE::INFO $test_str , ID => $test_ID
 	or return(0);
     $votable_info = new VOTABLE::INFO $factory->createElement('INFO')
 	or return(0);
+    $votable_info = new VOTABLE::INFO $factory->createElement('INFO'),
+        ID => $test_ID
+	or return(0);
+    $votable_info = new VOTABLE::INFO ''
+	or return(0);
+
     return(1);
 }
 
 sub test_get_ID()
 {
-    my($test_ID) = '12345';;
-    my($votable_info) = new VOTABLE::INFO '', ID => $test_ID
+    my($votable_info);
+    my($test_ID) = '12345';
+
+    $votable_info = new VOTABLE::INFO
+	or return(0);
+    not defined($votable_info->get_ID)
+	or return(0);
+
+    $votable_info = new VOTABLE::INFO '', ID => $test_ID
 	or return(0);
     $votable_info->get_ID eq $test_ID
-        or return(0);
+	or return(0);
+
     return(1);
 }
 
 sub test_set_ID()
 {
+    my($votable_info);
     my($test_ID) = '12345';
-    my($votable_info) = new VOTABLE::INFO
+
+    $votable_info = new VOTABLE::INFO
 	or return(0);
     $votable_info->set_ID($test_ID) eq $test_ID
 	or return(0);
+    not defined($votable_info->set_ID(undef))
+	or return(0);
+
     return(1);
 }
 
 sub test_get_name()
 {
-    my($test_name) = 'My name is test.';
-    my($votable_info) = new VOTABLE::INFO '', name => $test_name
+    my($votable_info);
+    my($test_name) = 'testname';
+
+    $votable_info = new VOTABLE::INFO
+	or return(0);
+    not defined($votable_info->get_name)
+	or return(0);
+
+    $votable_info = new VOTABLE::INFO '', name => $test_name
 	or return(0);
     $votable_info->get_name eq $test_name
 	or return(0);
+
     return(1);
 }
 
 sub test_set_name()
 {
-    my($test_name) = 'My name is test.';
-    my($votable_info) = new VOTABLE::INFO
+    my($votable_info);
+    my($test_name) = 'testname';
+
+    $votable_info = new VOTABLE::INFO
 	or return(0);
     $votable_info->set_name($test_name) eq $test_name
 	or return(0);
+    not defined($votable_info->set_name(undef))
+	or return(0);
+
     return(1);
 }
 
 sub test_get_value()
 {
-    my($test_value) = '1000';
-    my($votable_info) = new VOTABLE::INFO '', value => $test_value
+    my($votable_info);
+    my($test_value) = '12345.6';
+
+    $votable_info = new VOTABLE::INFO
+	or return(0);
+    not defined($votable_info->get_value)
+	or return(0);
+
+    $votable_info = new VOTABLE::INFO '', value => $test_value
 	or return(0);
     $votable_info->get_value eq $test_value
 	or return(0);
+
     return(1);
 }
 
 sub test_set_value()
 {
-    my($test_value) = '1000';
-    my($votable_info) = new VOTABLE::INFO
+    my($votable_info);
+    my($test_value) = '12345.6';
+
+    $votable_info = new VOTABLE::INFO
 	or return(0);
     $votable_info->set_value($test_value) eq $test_value
 	or return(0);
+    not defined($votable_info->set_value(undef))
+	or return(0);
+
     return(1);
 }
 
 sub test_get()
 {
+    my($votable_info);
     my($test_text) = 'This is a test.';
-    my($this) = new VOTABLE::INFO $test_text
+    my($test_text2) = 'This is another test.';
+    my($textnode);
+
+    $votable_info = new VOTABLE::INFO
 	or return(0);
-    $this->get eq $test_text
-        or return(0);
+    not defined($votable_info->get)
+	or return(0);
+
+    $votable_info = new VOTABLE::INFO $test_text
+	or return(0);
+    $votable_info->get eq $test_text
+	or return(0);
+
+    $textnode = $factory->createTextNode($test_text2)
+	or return(0);
+    $textnode->setOwnerDocument($votable_info->
+				_get_XMLDOM->getOwnerDocument);
+    $votable_info->_get_XMLDOM->appendChild($textnode)
+	or return(0);
+    $votable_info->get eq ($test_text . $test_text2)
+	or return(0);
+
     return(1);
 }
 
 sub test_set()
 {
+    my($votable_info);
     my($test_text) = 'This is a test.';
-    my($this) = new VOTABLE::INFO
-	or return(0);
-    $this->set($test_text) eq $test_text
-	or return(0);
+
+    $votable_info = new VOTABLE::INFO
+ 	or return(0);
+    $votable_info->set($test_text) eq $test_text
+ 	or return(0);
+    not defined($votable_info->set(undef))
+ 	or return(0);
+
     return(1);
 }

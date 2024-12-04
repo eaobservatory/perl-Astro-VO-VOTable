@@ -1,16 +1,28 @@
-VOTABLE version 0.01
+VOTABLE version 0.03
 ====================
 
-The README is used to introduce the module and provide instructions on
-how to install the module, any machine dependencies it may have (for
-example C compilers and installed libraries) and any other information
-that should be provided before the module is installed.
+The VOTABLE package is a set of Perl modules which provide an
+object-oriented interface to VOTABLE-formatted XML files. The software
+is built atop the Perl XML::DOM module (although that decision will be
+revisited in a future release due to the high memory footprint of the
+XML::DOM code).
 
-A README file is required for CPAN modules since CPAN extracts the
-README file from a module distribution so that people browsing the
-archive can use it get an idea of the modules uses. It is usually a
-good idea to provide version information here so that people can
-decide whether fixes for the module are worth downloading.
+The VOTABLE software provides a class for each valid element defined
+in the VOTABLE DTD. The file VOTABLE.pm provides an overview of the
+software, and detailed descriptions of each module are provided in the
+POD header for each file.
+
+The programs in the 'samples' subdireectory are older examples that do
+not demonstrate some of the newer features of the software.
+
+This software is considered to be in the 'advanced alpha' stage. All
+questions and bug reports should be sent to:
+
+Eric Winter
+SSAI/NASA GSFC Laboratory for High-Energy Astrophysics
+elwinter@milkyway.gsfc.nasa.gov
+
+See the Changes file for a list of changes since the previous release.
 
 INSTALLATION
 
@@ -25,11 +37,20 @@ DEPENDENCIES
 
 This module requires these other modules and libraries:
 
-  blah blah blah
+Perl 5.6.1 or later, with complete standard module suite
+XML::DOM 1.38 or later
+XML::Parser 2.27 or later
+
+All Perl items are available freely from CPAN
+(http://www.cpan.org). There are other libraries required by these
+items, but I do not yet have a definitive list. You may encounter
+error messages when building the modules which indicate missing
+subsidirary libraries. If you do, drop me a line and I will help you
+track them down and install them.
 
 COPYRIGHT AND LICENCE
 
-Put the correct copyright and licence information here.
+Copyright (C) 2002 Laboratory for High-Energy Astrophysics, NASA GSFC
 
-Copyright (C) 2002 A. U. Thor blah blah blah
-
+This software may be freely distributed under the same terms as Perl
+itself.

@@ -118,7 +118,7 @@ Eric Winter, NASA GSFC (elwinter@milkyway.gsfc.nasa.gov)
 
 =head1 VERSION
 
-$Id: OPTION.pm,v 1.1.1.8 2002/05/21 14:12:00 elwinter Exp $
+$Id: OPTION.pm,v 1.1.1.10 2002/06/09 21:13:08 elwinter Exp $
 
 =cut
 
@@ -127,6 +127,12 @@ $Id: OPTION.pm,v 1.1.1.8 2002/05/21 14:12:00 elwinter Exp $
 # Revision history
 
 # $Log: OPTION.pm,v $
+# Revision 1.1.1.10  2002/06/09  21:13:08  elwinter
+# Sert version to 0.03.
+#
+# Revision 1.1.1.9  2002/06/09  19:50:50  elwinter
+# Changed required Perl version to 5.6.1.
+#
 # Revision 1.1.1.8  2002/05/21  14:12:00  elwinter
 # Incremented $VERSION to 0.02.
 #
@@ -156,7 +162,7 @@ $Id: OPTION.pm,v 1.1.1.8 2002/05/21 14:12:00 elwinter Exp $
 package VOTABLE::OPTION;
 
 # Specify the minimum acceptable Perl version.
-use 5.006;
+use 5.6.1;
 
 # Turn on strict syntax checking.
 use strict;
@@ -173,7 +179,7 @@ use warnings;
 our @ISA = qw();
 
 # Module version.
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 #------------------------------------------------------------------------------
 

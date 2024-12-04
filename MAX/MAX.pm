@@ -8,12 +8,12 @@ VOTABLE::MAX - VOTABLE MAX XML element class
 
 =head1 SYNOPSIS
 
-C<use VOTABLE::MAX;>
+ use VOTABLE::MAX;
 
 =head1 DESCRIPTION
 
 This class implements the C<MAX> element from the C<VOTABLE> DTD. This
-element is used to store maximum values for a numeric quantity.
+element is used to store a maximum value for a numeric quantity.
 
 The C<MAX> element is a Tier 0 element, and is described by the
 following excerpt from the C<VOTABLE> 1.0 DTD:
@@ -30,10 +30,10 @@ following excerpt from the C<VOTABLE> 1.0 DTD:
 
 Create a new C<VOTABLE::MAX> object, and return a reference to it. If
 the first argument (C<$str_or_ref>) is a string, it is used as the
-initial C<PCDATA> content of the C<MAX> element. If the first argument
-is a reference to a C<XML::DOM::Element> object, that object is used
-to initialize the new C<MAX> element (implicitly assuming that the
-C<XML::DOM::Element> object contains a valid C<MAX> element). The
+initial C<#PCDATA> content of the C<MAX> element. If the first
+argument is a reference to a C<XML::DOM::Element> object, that object
+is used to initialize the new C<MAX> element (implicitly assuming that
+the C<XML::DOM::Element> object contains a valid C<MAX> element). The
 C<%options> hash is used to set the attributes of the new element. If
 the first argument is missing or undefined, or an empty string, create
 and return an empty C<VOTABLE::MAX> object. Return C<undef> if an
@@ -47,8 +47,10 @@ attribute has not been set, or an error occurs.
 =head3 C<set_inclusive($inclusive)>
 
 Set the value of the C<inclusive> attribute to the specified
-value. Return the new value of the attribute on success, or C<undef>
-if an error occurs.
+value. The new value is checked for correctness against the list of
+allowed values. Use C<undef> as the argument to clear any existing
+value of the attribute. Return the new value of the attribute on
+success, or C<undef> if an error occurs.
 
 =head3 C<get_value>
 
@@ -57,20 +59,23 @@ attribute has not been set, or an error occurs.
 
 =head3 C<set_value($value)>
 
-Set the value of the C<value> attribute to the specified value. Return
-the new value of the attribute on success, or C<undef> if an error
-occurs.
+Set the value of the C<value> attribute to the specified value. Use
+C<undef> as the argument to clear any existing value of the
+attribute. Return the new value of the attribute on success, or
+C<undef> if an error occurs.
 
 =head3 C<get>
 
-Return a string containing the C<PCDATA> content of the C<MAX>
-element. Return C<undef> if the element has no C<PCDATA> content, or
+Return a string containing the C<#PCDATA> content of the C<MAX>
+element. Return C<undef> if the element has no C<#PCDATA> content, or
 an error occurs.
 
 =head3 C<set($str)>
 
-Set the C<PCDATA> content of the C<MAX> element to the specified
-string. Return the string on success, or C<undef> if an error occurs.
+Set the C<#PCDATA> content of the C<MAX> element to the specified
+string. Use C<undef> as the argument to clear any existing value of
+the text. Return the string on success, or C<undef> if an error
+occurs.
 
 =head2 Notes on class internals
 
@@ -86,7 +91,8 @@ class hierarchy.
 
 The names of the C<get_XXX> and C<set_XXX> accessors for attributes
 and elements are derived directly from the names of the attributes or
-elements. Attribute and element names containing embedded hyphens
+elements, with the attribute or element name replacing
+C<XXX>. Attribute and element names containing embedded hyphens
 ('C<->') use accessors where the hyphen is mapped to an underscore
 ('C<_>') in the name of the accessor method. This is a necessity,
 since the hyphen is not a valid name character in Perl.
@@ -101,12 +107,11 @@ since the hyphen is not a valid name character in Perl.
 
 This code (perhaps unwisely) assumes that object internal structure is
 always maintained. For example, this code assumes that every
-C<VOTABLE::MAX> object I<always> has an underlying
-C<XML::DOM::Element> object. As long as the internal structure is
-manipulated only by the publicly-available methods, this should be an
-adequate assumption. If a method detects an aberrant case, a warning
-message is printed (using the C<Carp::carp> subroutine), and the
-method fails.
+C<VOTABLE> object I<always> has an underlying C<XML::DOM::Element>
+object. As long as the internal structure is manipulated only by the
+publicly-available methods, this should be an adequate assumption. If
+a method detects an aberrant case, a warning message is printed (using
+the C<Carp::carp> subroutine), and the method fails.
 
 =item *
 
@@ -133,7 +138,7 @@ Eric Winter, NASA GSFC (elwinter@milkyway.gsfc.nasa.gov)
 
 =head1 VERSION
 
-$Id: MAX.pm,v 1.1.1.7 2002/05/21 14:11:32 elwinter Exp $
+$Id: MAX.pm,v 1.1.1.9 2002/06/09 21:13:08 elwinter Exp $
 
 =cut
 
@@ -142,6 +147,12 @@ $Id: MAX.pm,v 1.1.1.7 2002/05/21 14:11:32 elwinter Exp $
 # Revision history
 
 # $Log: MAX.pm,v $
+# Revision 1.1.1.9  2002/06/09  21:13:08  elwinter
+# Sert version to 0.03.
+#
+# Revision 1.1.1.8  2002/06/05  00:02:58  elwinter
+# Overhaul to reflect improved understanding of XML::DOM module.
+#
 # Revision 1.1.1.7  2002/05/21  14:11:32  elwinter
 # Incremented $VERSION to 0.02.
 #
@@ -167,7 +178,7 @@ $Id: MAX.pm,v 1.1.1.7 2002/05/21 14:11:32 elwinter Exp $
 package VOTABLE::MAX;
 
 # Specify the minimum acceptable Perl version.
-use 5.006;
+use 5.6.1;
 
 # Turn on strict syntax checking.
 use strict;
@@ -180,11 +191,11 @@ use warnings;
 
 #------------------------------------------------------------------------------
 
-# Set up the inheritance mexhanism.
+# Set up the inheritance mechanism.
 our @ISA = qw();
 
 # Module version.
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 #------------------------------------------------------------------------------
 
@@ -201,19 +212,22 @@ use XML::DOM;
 
 #------------------------------------------------------------------------------
 
-# Class constants.
+# Class constants
 
 # Name of XML tag for current class.
 my($TAG_NAME) = 'MAX';
 
 # Name of underlying XML::DOM object class.
-my($XMLDOM_BASE_CLASS) = 'XML::DOM::Element';
+my($XMLDOM_BASE) = 'XML::DOM::Element';
+
+# Name of XML::DOM text class.
+my($XMLDOM_TEXT) = 'XML::DOM::Text';
 
 # List of valid attributes for this element.
-my(@valid_attribute_names) = ('inclusive', 'value');
+my(@VALID_ATTRIBUTE_NAMES) = ('inclusive', 'value');
 
 # List of valid values for the 'type' attribute.
-my(@valid_inclusives) = ('no', 'yes');
+my(@VALID_INCLUSIVES) = ('no', 'yes');
 
 #------------------------------------------------------------------------------
 
@@ -257,12 +271,12 @@ sub INIT()
 
 # The first argument ($class) always contains the name of the class to
 # bless the new object into. This will usually be the name of the
-# current class (VOTABLE::MAX), unless this constructor is called for
-# an object that inherits from the current class.
+# current class, unless this constructor is called for an object that
+# inherits from the current class.
 
 # All remaining arguments are stored in the @options array. The first
 # additional argument, if it exists, contains either a string to use
-# to initialize the PCDATA content of the new object, or a reference
+# to initialize the #PCDATA content of the new object, or a reference
 # to an existing XML::DOM::Element object to use for the new
 # object. Any additional items in the @options array are assumed to be
 # keyword => value pairs to use to initialize the attributes of the
@@ -284,12 +298,12 @@ sub new()
 
     #--------------------------------------------------------------------------
 
-    # Local variables.
+    # Local variables
 
     # Reference to XML::DOM::Element object for the new object.
     my($xmldom_element_this);
 
-    # String with initial text for the PCDATA content of the element.
+    # String with initial text for the #PCDATA content of the element.
     my($str);
 
     # Hash containing keyword-value pairs to initialize attributes.
@@ -304,7 +318,7 @@ sub new()
     # Reference to new object.
     my($this);
 
-    # XML::DOM::Text object for the PCDATA content.
+    # XML::DOM::Text object for the #PCDATA content.
     my($xmldom_text);
 
     # Code string for eval.
@@ -315,28 +329,26 @@ sub new()
     # Process the options.
     if (@options) {
  	if (ref($options[0])) {
- 	    if (ref($options[0]) ne $XMLDOM_BASE_CLASS) {
+ 	    if (ref($options[0]) ne $XMLDOM_BASE) {
  		carp('Bad input class: ', ref($options[0]));
  		return(undef);
  	    }
  	    ($xmldom_element_this, %attributes) = @options;
+	    if ($xmldom_element_this) {
+		$tag_name = $xmldom_element_this->getTagName;
+		if ($tag_name ne $TAG_NAME) {
+		    carp("Invalid tag name: $tag_name");
+		    return(undef);
+		}
+	    }
  	} else {
  	    ($str, %attributes) = @options;
  	}
     }
 
-    # Make sure the specified element (if any) is the correct type.
-    if ($xmldom_element_this) {
-	$tag_name = $xmldom_element_this->getTagName;
-	if ($tag_name ne $TAG_NAME) {
-	    carp("Invalid tag name: $tag_name");
-	    return(undef);
-	}
-    }
-
     # Make sure only valid attributes were specified.
     foreach $attribute_name (keys(%attributes)) {
-	if (not grep(/$attribute_name/, @valid_attribute_names)) {
+	if (not grep(/$attribute_name/, @VALID_ATTRIBUTE_NAMES)) {
 	    carp("Invalid attribute name: $attribute_name");
 	    return(undef);
 	}
@@ -355,26 +367,26 @@ sub new()
 
 	# Save the specified XML::DOM::Element.
 
-    } elsif ($str) {
+    } elsif (defined($str)) {
 
 	# Create a new XML::DOM::Element object.
 	$xmldom_element_this =
 	    $xmldom_document_factory->createElement($TAG_NAME);
 	if (not $xmldom_element_this) {
-	    carp('Unable to create XML::DOM::Element.');
+	    carp("Unable to create $XMLDOM_BASE.");
 	    return(undef);
 	}
 
 	# Create a text node for the content.
 	$xmldom_text = $xmldom_document_factory->createTextNode($str);
 	if (not $xmldom_element_this) {
-	    carp("Unable to create XML::DOM::Text for string '$str'.");
+	    carp("Unable to create $XMLDOM_TEXT for string '$str'.");
 	    return(undef);
 	}
 
 	# Add the text node to the element.
 	if ($xmldom_element_this->appendChild($xmldom_text) ne $xmldom_text) {
-	    carp('Unable to append XML::DOM::Text to XML::DOM::Element.');
+	    carp("Unable to append $XMLDOM_TEXT to $XMLDOM_BASE.");
 	    return(undef);
 	}
 
@@ -384,7 +396,7 @@ sub new()
 	$xmldom_element_this =
 	    $xmldom_document_factory->createElement($TAG_NAME);
 	if (not $xmldom_element_this) {
-	    carp('Unable to create XML::DOM::Element.');
+	    carp("Unable to create $XMLDOM_BASE.");
 	    return(undef);
 	}
 
@@ -392,25 +404,32 @@ sub new()
 
     # Save the new XML::DOM::Element.
     if ($this->_set_XMLDOM($xmldom_element_this) ne $xmldom_element_this) {
-	carp("Unable to set $XMLDOM_BASE_CLASS.");
+	carp("Unable to set $XMLDOM_BASE.");
 	return(undef);
     }
 
     # Process any specified attributes.
     while (($attribute_name, $attribute_value) = each(%attributes)) {
+
+	# Map the attribute name to a valid Perl name.
 	$attribute_name =~ s/-/_/;
+
+	# Create a string of code to evaluate to set the attribute
+	# value.
 	$set_attribute = "\$this->set_${attribute_name}(\$attribute_value)";
+
+	# Evalute the attribute-setting code and check for errors.
 	eval($set_attribute);
 	if ($EVAL_ERROR) {
 	    carp("Error evaluating '$set_attribute': $EVAL_ERROR!");
 	    return(undef);
 	}
+
     }
 
-    # Construct the VOTABLE::MAX object from the XML::DOM::Element
-    # object.
+    # Construct the VOTABLE object from the XML::DOM::Element object.
     if (not $this->_build_from_XMLDOM) {
-	carp("Unable to build VOTABLE::$TAG_NAME from XML::DOM::Element.");
+	carp("Unable to build VOTABLE::$TAG_NAME from $XMLDOM_BASE.");
 	return(undef);
     }
 
@@ -423,35 +442,58 @@ sub new()
 
 # Attribute accessor methods
 
+# Attribute values are stored in the underlying XML::DOM::Element
+# object, and are accessed using the XML::DOM::Element getAttribute()
+# and setAttribute() methods. The getAttribute() method returns an
+# empty string ('') when the attribute has no value, so the return
+# value must be checked for that, and set to undef if it is empty. The
+# setAttribute() method will use the removeAttribute() method to clear
+# the existing value if undef is passed as the new value of an
+# attribute.
+
 #------------------------------------------------------------------------------
 
 sub get_inclusive()
 {
     my($this) = @_;
-    return($this->_get_XMLDOM->getAttribute('inclusive'));
+    my($inclusive);
+    $inclusive = $this->_get_XMLDOM->getAttribute('inclusive');
+    $inclusive = undef if (length($inclusive) == 0);
+    return($inclusive);
 }
 
 sub set_inclusive()
 {
     my($this, $inclusive) = @_;
-    if (not grep(/$inclusive/, @valid_inclusives)) {
-	carp("Invalid $TAG_NAME 'inclusive' attribute value: $inclusive!");
-	return(undef);
+    if (defined($inclusive)) {
+	if (not grep(/$inclusive/, @VALID_INCLUSIVES)) {
+	    carp("Invalid $TAG_NAME 'inclusive' attribute value: $inclusive!");
+	    return(undef);
+	}
+	$this->_get_XMLDOM->setAttribute('inclusive', $inclusive);
+    } else {
+	$this->_get_XMLDOM->removeAttribute('inclusive', $inclusive);
     }
-    $this->_get_XMLDOM->setAttribute('inclusive', $inclusive);
     return($this->get_inclusive);
 }
 
 sub get_value()
 {
     my($this) = @_;
-    return($this->_get_XMLDOM->getAttribute('value'));
+    my($value);
+    $value = $this->_get_XMLDOM->getAttribute('value');
+    $value = undef if (length($value) == 0);
+    return($value);
 }
 
 sub set_value()
 {
     my($this, $value) = @_;
-    $this->_get_XMLDOM->setAttribute('value', $value);
+    if (defined($value)) {
+	$this->_get_XMLDOM->setAttribute('value', $value);
+    } else {
+	$this->_get_XMLDOM->removeAttribute('value');
+    }
     return($this->get_value);
 }
 
@@ -461,7 +503,7 @@ sub set_value()
 
 #------------------------------------------------------------------------------
 
-# PCDATA content accessor methods
+# #PCDATA content accessor methods
 
 #------------------------------------------------------------------------------
 
@@ -478,24 +520,30 @@ sub get()
     # Reference to XML::DOM::Element object for this object.
     my($xmldom_element_this);
 
-    # Reference to XML::DOM::Text object containing the PCDATA.
-    my($xmldom_text);
+    # String to hold the returned text.
+    my($str);
+
+    # Array of child nodes.
+    my(@xmldom_nodes);
 
     #--------------------------------------------------------------------------
 
     # Fetch the underlying XML::DOM::Element object.
     $xmldom_element_this = $this->_get_XMLDOM;
 
-    # If there are any child nodes, there should be only one, and it
-    # should be a text node. If so, fetch the content of the text
-    # node. Otherwise, not text has been defined for this element, so
-    # return undef.
-    if ($xmldom_element_this->hasChildNodes) {
- 	$xmldom_text = $xmldom_element_this->getFirstChild;
- 	return($xmldom_text->getData);
-    } else {
- 	return(undef);
-    }
+    # This object can have 0 or more text nodes representing the
+    # #PCDATA content. Multiple nodes may be used to allow for embedded
+    # comments. To return the entire #PCDATA content, the contents of
+    # each of these text nodes must be merged and returned
+    # together. If no text nodes are found, return undef. Note that if
+    # there are child elements but none of them are text nodes, undef
+    # is still returned.
+    @xmldom_nodes = $xmldom_element_this->getChildNodes;
+    local($_);
+    map({$str .= $_->getData if ($_->getNodeName eq '#text')} @xmldom_nodes);
+
+    # Return the string.
+    return($str);
 
 }
 
@@ -512,7 +560,16 @@ sub set()
     # Reference to XML::DOM::Element object for this object.
     my($xmldom_element_this);
 
-    # Reference to XML::DOM::Text object containing the PCDATA.
+    # List of child nodes.
+    my(@xmldom_nodes);
+
+    # Current node.
+    my($xmldom_node);
+
+    # Array of child nodes to remove.
+    my(@xmldom_nodes_to_remove);
+
+    # XML::DOM text node for new data.
     my($xmldom_text);
 
     #--------------------------------------------------------------------------
@@ -520,25 +577,33 @@ sub set()
     # Fetch the underlying XML::DOM::Element object.
     $xmldom_element_this = $this->_get_XMLDOM;
 
-    # If the text node exists, use it. Otherwise, create a new
-    # one. Note that this object should have at most one child node,
-    # and it can only be a text node.
-    if ($xmldom_element_this->hasChildNodes) {
-	$xmldom_text = $xmldom_element_this->getFirstChild;
-	$xmldom_text->setData($str);
-    } else {
-	$xmldom_text = $xmldom_document_factory->createTextNode($str);
-	if (not $xmldom_text) {
-	    carp("Unable to create XML::DOM::Text for '$str'.");
-	    return(undef);
-	}
-	if ($xmldom_element_this->appendChild($xmldom_text) ne $xmldom_text) {
-	    carp('Unable to append XML::DOM::Text.');
+    # Make a list of the existing text nodes.
+    @xmldom_nodes = $xmldom_element_this->getChildNodes;
+    foreach $xmldom_node (@xmldom_nodes) {
+	push(@xmldom_nodes_to_remove, $xmldom_node)
+	    if $xmldom_node->getNodeName eq '#text';
+    }
+
+    # Remove the existing text nodes.
+    foreach $xmldom_node (@xmldom_nodes_to_remove) {
+	if ($xmldom_element_this->removeChild($xmldom_node) ne $xmldom_node) {
+	    carp('Unable to remove child node.');
 	    return(undef);
 	}
     }
 
-    # Return the string.
+    # Create the new node if needed, and add it.
+    if (defined($str)) {
+	$xmldom_text = $xmldom_document_factory->createTextNode($str);
+	if (not $xmldom_text) {
+	    carp("Unable to create $XMLDOM_TEXT.");
+	    return(undef);
+	}
+	$xmldom_text->setOwnerDocument($xmldom_element_this->getOwnerDocument);
+	$xmldom_element_this->appendChild($xmldom_text);
+    }
+
+    # Return the new content.
     return($this->get);
 
 }
@@ -549,15 +614,15 @@ sub set()
 
 # These methods should ONLY be used by this class, and other classes
 # within the VOTABLE hierarchy, since these methods assume integrity
-# of their arguments, the VOTABLE::MAX object and the underlying
-# XML::DOM::Element object.
+# of their arguments, the VOTABLE objects, and the underlying XML::DOM
+# objects.
 
 #------------------------------------------------------------------------------
 
 # _build_from_XMLDOM()
 
-# This internal method is used to assemble a VOTABLE::MAX object from
-# a XML::DOM::Element object. Return 1 on success, or 0 on failure.
+# This internal method is used to assemble a VOTABLE object from a
+# XML::DOM::Element object. Return 1 on success, or 0 on failure.
 
 # Since the MAX element is a Tier 0 element, there is nothing for this
 # method to do, other than return true (1) to indicate success.
@@ -577,7 +642,7 @@ sub _build_from_XMLDOM()
 sub _get_XMLDOM()
 {
     my($this) = @_;
-    return($this->{$XMLDOM_BASE_CLASS});
+    return($this->{$XMLDOM_BASE});
 }
 
 #------------------------------------------------------------------------------
@@ -591,8 +656,8 @@ sub _get_XMLDOM()
 sub _set_XMLDOM()
 {
     my($this, $xmldom_element) = @_;
-    $this->{$XMLDOM_BASE_CLASS} = $xmldom_element;
-    return($this->{$XMLDOM_BASE_CLASS});
+    $this->{$XMLDOM_BASE} = $xmldom_element;
+    return($this->{$XMLDOM_BASE});
 }
 
 #******************************************************************************

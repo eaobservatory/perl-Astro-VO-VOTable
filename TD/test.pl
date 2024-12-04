@@ -25,10 +25,10 @@ sub test_set();
 sub test_get_ref();
 sub test_set_ref();
 
-# Create a factory document for building XML::DOM objects.
-my($factory) = new XML::DOM::Document or die;
-
 #########################
+
+# Create a factory document for building XML::DOM objects.
+my($factory) = new XML::DOM::Document;
 
 # Test the constructor.
 ok(test_new, 1);
@@ -48,53 +48,93 @@ ok(test_set, 1);
 sub test_new()
 {
     my($votable_td);
+    my($test_str) = 'This is a test.';
+    my($test_ref) = 'somewhere';
+
     $votable_td = new VOTABLE::TD
 	or return(0);
-    $votable_td = new VOTABLE::TD 'Test string'
+    $votable_td = new VOTABLE::TD $test_str
 	or return(0);
-    $votable_td = new VOTABLE::TD 'Test string', ref => 'a ref'
+    $votable_td = new VOTABLE::TD $test_str, ref => $test_ref
 	or return(0);
     $votable_td = new VOTABLE::TD $factory->createElement('TD')
 	or return(0);
+
     return(1);
 }
 
 sub test_get_ref()
 {
-    my($test_ref) = "a ref";
-    my($votable_td) = new VOTABLE::TD '', ref => $test_ref
+    my($votable_td);
+    my($test_ref) = 'somewhere';
+
+    $votable_td = new VOTABLE::TD
+	or return(0);
+    not defined($votable_td->get_ref)
+	or return(0);
+
+    $votable_td = new VOTABLE::TD '', ref => $test_ref
 	or return(0);
     $votable_td->get_ref eq $test_ref
 	or return(0);
+
     return(1);
 }
 
 sub test_set_ref()
 {
-    my($test_ref) = "a ref";
-    my($votable_td) = new VOTABLE::TD
+    my($votable_td);
+    my($test_ref) = 'somewhere';
+
+    $votable_td = new VOTABLE::TD
 	or return(0);
     $votable_td->set_ref($test_ref) eq $test_ref
 	or return(0);
+    not defined($votable_td->set_ref(undef))
+	or return(0);
+
     return(1);
 }
 
 sub test_get()
 {
+    my($votable_td);
     my($test_text) = 'This is a test.';
-    my($votable_td) = new VOTABLE::TD $test_text
+    my($test_text2) = 'This is another test.';
+    my($textnode);
+
+    $votable_td = new VOTABLE::TD
 	or return(0);
-    $votable_td->get() eq $test_text
+    not defined($votable_td->get)
 	or return(0);
+
+    $votable_td = new VOTABLE::TD $test_text
+	or return(0);
+    $votable_td->get eq $test_text
+	or return(0);
+
+    $textnode = $factory->createTextNode($test_text2)
+	or return(0);
+    $textnode->setOwnerDocument($votable_td->_get_XMLDOM->getOwnerDocument);
+    $votable_td->_get_XMLDOM->appendChild($textnode)
+	or return(0);
+    $votable_td->get eq ($test_text . $test_text2)
+	or return(0);
+
     return(1);
 }
 
 sub test_set()
 {
+    my($votable_td);
     my($test_text) = 'This is a test.';
-    my($votable_td) = new VOTABLE::TD
-	or return(0);
+
+    $votable_td = new VOTABLE::TD
+ 	or return(0);
     $votable_td->set($test_text) eq $test_text
-	or return(0);
+ 	or return(0);
+    not defined($votable_td->set(undef))
+ 	or return(0);
+
     return(1);
 }

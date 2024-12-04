@@ -8,7 +8,7 @@ VOTABLE::TABLE - VOTABLE TABLE XML element class
 
 =head1 SYNOPSIS
 
-C<use VOTABLE::TABLE;>
+ use VOTABLE::TABLE;
 
 =head1 DESCRIPTION
 
@@ -42,9 +42,10 @@ attribute has not been set, or an error occurs.
 
 =head3 C<set_ID($id)>
 
-Set the value of the C<ID> attribute to the specified value. Return
-the new value of the attribute on success, or C<undef> if an error
-occurs.
+Set the value of the C<ID> attribute to the specified value. Use
+C<undef> as the argument to clear any existing value of the
+attribute. Return the new value of the attribute on success, or
+C<undef> if an error occurs.
 
 =head3 C<get_name>
 
@@ -53,9 +54,10 @@ attribute has not been set, or an error occurs.
 
 =head3 C<set_name($name)>
 
-Set the value of the C<name> attribute to the specified value. Return
-the new value of the attribute on success, or C<undef> if an error
-occurs.
+Set the value of the C<name> attribute to the specified value. Use
+C<undef> as the argument to clear any existing value of the
+attribute. Return the new value of the attribute on success, or
+C<undef> if an error occurs.
 
 =head3 C<get_ref>
 
@@ -64,9 +66,10 @@ attribute has not been set, or an error occurs.
 
 =head3 C<set_ref($ref)>
 
-Set the value of the C<ref> attribute to the specified value. Return
-the new value of the attribute on success,or C<undef> if an error
-occurs.
+Set the value of the C<ref> attribute to the specified value. Use
+C<undef> as the argument to clear any existing value of the
+attribute. Return the new value of the attribute on success,or
+C<undef> if an error occurs.
 
 =head3 C<get_description>
 
@@ -77,8 +80,9 @@ C<DESCRIPTION> element is found, or if an error occurs.
 =head3 C<set_description($votable_description)>
 
 Set the C<VOTABLE::DESCRIPTION> object for the C<DESCRIPTION> child
-element of this C<TABLE> element to the specified object. Any existing
-C<DESCRIPTION> child element is first removed. Return the new
+element of this C<TABLE> element to the specified object. Use C<undef>
+as the argument to clear any existing instance of the element. Any
+existing C<DESCRIPTION> child element is first removed. Return the new
 C<DESCRIPTION> object on success, or C<undef> if an error occurs.
 
 =head3 C<get_field>
@@ -90,9 +94,13 @@ empty list if no C<FIELD> elements are found, or if an error occurs.
 =head3 C<set_field(@votable_field)>
 
 Set the C<FIELD> elements for this C<TABLE> element using the supplied
-list of C<VOTABLE::FIELD> objects. Any previously existing C<FIELD>
-elements are first removed. Return the input list on success, or an
-empty list if an error occurs.
+list of C<VOTABLE::FIELD> objects. Use an empty list as the argument
+to clear any existing instances of the elements. Any previously
+existing C<FIELD> elements are first removed. C<FIELD> elements are
+stored in the C<TABLE> element in the same order as provided in the
+C<@votable_field> array (this is important for tables with binary
+data). Return the input list on success, or an empty list if an error
+occurs.
 
 =head3 C<get_link>
 
@@ -103,9 +111,10 @@ if no C<LINK> elements are found, or if an error occurs.
 =head3 C<set_link(@votable_link)>
 
 Set the C<LINK> elements for this C<TABLE> element using the supplied
-list of C<VOTABLE::LINK> objects. Any previously existing C<LINK>
-elements are first removed. Return the input list on success, or an
-empty list if an error occurs.
+list of C<VOTABLE::LINK> objects. Use an empty list as the argument to
+clear any existing instances of the elements. Any previously existing
+C<LINK> elements are first removed. Return the input list on success,
+or an empty list if an error occurs.
 
 =head3 C<get_data>
 
@@ -116,9 +125,22 @@ or if an error occurs.
 =head3 C<set_data($votable_data)>
 
 Set the C<VOTABLE::DATA> object for the C<DATA> child element of this
-C<TABLE> element to the specified object. Any existing C<DATA> child
-element is first removed. Return the new C<DATA> object on success, or
-C<undef> if an error occurs.
+C<TABLE> element to the specified object. Use C<undef> as the argument
+to clear any existing instance of the element. Any existing C<DATA>
+child element is first removed. Return the new C<DATA> object on
+success, or C<undef> if an error occurs.
+
+=head3 C<get_row($rownum)>
+
+Return row C<$rownum> of the data, as an array of values. The array
+elements should be interpreted in the same order as the C<FIELD>
+elements in the C<TABLE>. Return an empty list if an error occurs.
+
+=head3 C<set_row($rownum, @values)>
+
+Set the contents of row C<$rownum> to the values provided in the
+C<@values> array. Use an empty list as the argument to clear the
+row. Return the new values on success, or an empty list on error.
 
 =head2 Notes on class internals
 
@@ -134,7 +156,8 @@ class hierarchy.
 
 The names of the C<get_XXX> and C<set_XXX> accessors for attributes
 and elements are derived directly from the names of the attributes or
-elements. Attribute and element names containing embedded hyphens
+elements, with the attribute or element name replacing
+C<XXX>. Attribute and element names containing embedded hyphens
 ('C<->') use accessors where the hyphen is mapped to an underscore
 ('C<_>') in the name of the accessor method. This is a necessity,
 since the hyphen is not a valid name character in Perl.
@@ -149,12 +172,11 @@ since the hyphen is not a valid name character in Perl.
 
 This code (perhaps unwisely) assumes that object internal structure is
 always maintained. For example, this code assumes that every
-C<VOTABLE::TABLEDATA> object I<always> has an underlying
-C<XML::DOM::Element> object. As long as the internal structure is
-manipulated only by the publicly-available methods, this should be an
-adequate assumption. If a method detects an aberrant case, a warning
-message is printed (using the C<Carp::carp> subroutine), and the
-method fails.
+C<VOTABLE> object I<always> has an underlying C<XML::DOM> object. As
+long as the internal structure is manipulated only by the
+publicly-available methods, this should be an adequate assumption. If
+a method detects an aberrant case, a warning message is printed (using
+the C<Carp::carp> subroutine), and the method fails.
 
 =item *
 
@@ -182,7 +204,7 @@ Eric Winter, NASA GSFC (elwinter@milkyway.gsfc.nasa.gov)
 
 =head1 VERSION
 
-$Id: TABLE.pm,v 1.1.1.9 2002/05/21 14:13:20 elwinter Exp $
+$Id: TABLE.pm,v 1.1.1.21 2002/06/09 21:13:08 elwinter Exp $
 
 =cut
 
@@ -191,6 +213,44 @@ $Id: TABLE.pm,v 1.1.1.9 2002/05/21 14:13:20 elwinter Exp $
 # Revision history
 
 # $Log: TABLE.pm,v $
+# Revision 1.1.1.21  2002/06/09  21:13:08  elwinter
+# Sert version to 0.03.
+#
+# Revision 1.1.1.20  2002/06/08  21:00:31  elwinter
+# Fixed bugs in element insertion order.
+#
+# Revision 1.1.1.19  2002/06/06  19:23:24  elwinter
+# Fixed bug in FIELD element insertion order.
+#
+# Revision 1.1.1.18  2002/06/05  13:49:16  elwinter
+# Fixed bugs in binary handling and element ordering.
+#
+# Revision 1.1.1.17  2002/05/28  16:04:42  elwinter
+# Added BINARY version of set_row().
+#
+# Revision 1.1.1.16  2002/05/28  15:15:11  elwinter
+# Changed _get_binary_row() to use bytes reference.
+#
+# Revision 1.1.1.15  2002/05/24  15:08:23  elwinter
+# Added TABLEDATA version of set_row().
+#
+# Revision 1.1.1.14  2002/05/23  20:27:18  elwinter
+# Removed debugging code.
+#
+# Revision 1.1.1.13  2002/05/23  20:16:28  elwinter
+# Added support for string length specified by arraysize attribute of FIELD
+# elements.
+# .,
+#
+# Revision 1.1.1.12  2002/05/23  19:35:57  elwinter
+# Removed some debugging code.
+#
+# Revision 1.1.1.11  2002/05/23  19:34:19  elwinter
+# Added support for simple BINARY elements in the DATA element.
+#
+# Revision 1.1.1.10  2002/05/23  13:12:04  elwinter
+# Added get_row() method.
+#
 # Revision 1.1.1.9  2002/05/21  14:13:20  elwinter
 # Incremented $VERSION to 0.02.
 #
@@ -219,7 +279,7 @@ $Id: TABLE.pm,v 1.1.1.9 2002/05/21 14:13:20 elwinter Exp $
 package VOTABLE::TABLE;
 
 # Specify the minimum acceptable Perl version.
-use 5.006;
+use 5.6.1;
 
 # Turn on strict syntax checking.
 use strict;
@@ -232,24 +292,24 @@ use warnings;
 
 #------------------------------------------------------------------------------
 
-# Set up the inheritance mexhanism.
+# Set up the inheritance mechanism.
 our @ISA = qw();
 
-# Module version.
-our $VERSION = '0.02';
+# Module version
+our $VERSION = '0.03';
 
 #------------------------------------------------------------------------------
 
 # Specify external modules to use.
 
-# Standard modules.
+# Standard modules
 use Carp;
 use English;
 use XML::DOM;
 
-# Third-party modules.
+# Third-party modules
 
-# Project modules.
+# Project modules
 use VOTABLE::DATA;
 use VOTABLE::DESCRIPTION;
 use VOTABLE::FIELD;
@@ -257,16 +317,31 @@ use VOTABLE::LINK;
 
 #------------------------------------------------------------------------------
 
-# Class constants.
+# Class constants
 
 # Name of XML tag for current class.
 my($TAG_NAME) = 'TABLE';
 
 # Name of underlying XML::DOM object class.
-my($XMLDOM_BASE_CLASS) = 'XML::DOM::Element';
+my($XMLDOM_BASE) = 'XML::DOM::Element';
 
 # List of valid attributes for this element.
-my(@valid_attribute_names) = ('ID', 'name', 'ref');
+my(@VALID_ATTRIBUTE_NAMES) = ('ID', 'name', 'ref');
+
+# Hash to map VOTABLE datatype attributes (from FIELD elements) to
+# equivalent format codes for the Perl subroutines pack() and
+# unpack(), and the corresponding byte sizes.
+my(%TYPE_MAP) =
+    (
+     boolean      => {code => 'a', size => 1},
+     char         => {code => 'a', size => 1},
+     double       => {code => 'd', size => 8},
+     float        => {code => 'f', size => 4},
+     int          => {code => 'l', size => 4},
+     long         => {code => 'q', size => 8},
+     short        => {code => 's', size => 2},
+     unsignedByte => {code => 'C', size => 1},
+     );
 
 #------------------------------------------------------------------------------
 
@@ -359,27 +434,25 @@ sub new()
     # Process the options.
     if (@options) {
 	if (ref($options[0])) {
-	    if (ref($options[0]) ne $XMLDOM_BASE_CLASS) {
+	    if (ref($options[0]) ne $XMLDOM_BASE) {
  		carp('Bad input class: ', ref($options[0]));
  		return(undef);
  	    }
 	}
 	($xmldom_element_this, %attributes) = @options;
-    }
-
-    # Make sure the specified element (if any) is the correct type.
-    if ($xmldom_element_this) {
-	$tag_name = $xmldom_element_this->getTagName;
-	if ($tag_name ne $TAG_NAME) {
-	    carp("Invalid tag name: $tag_name!");
-	    return(undef);
+	if ($xmldom_element_this) {
+	    $tag_name = $xmldom_element_this->getTagName;
+	    if ($tag_name ne $TAG_NAME) {
+		carp("Invalid tag name: $tag_name");
+		return(undef);
+	    }
 	}
     }
 
     # Make sure only valid attributes were specified.
     foreach $attribute_name (keys(%attributes)) {
-	if (not grep(/$attribute_name/, @valid_attribute_names)) {
-	    carp("Invalid attribute name: $attribute_name!");
+	if (not grep(/$attribute_name/, @VALID_ATTRIBUTE_NAMES)) {
+	    carp("Invalid attribute name: $attribute_name");
 	    return(undef);
 	}
     }
@@ -390,7 +463,7 @@ sub new()
     $this = {};
 
     # Bless the object.
-    bless $this, $class;
+    bless $this => $class;
 
     # Fill in the object.
     if ($xmldom_element_this) {
@@ -403,7 +476,7 @@ sub new()
 	$xmldom_element_this =
 	    $xmldom_document_factory->createElement($TAG_NAME);
 	if (not $xmldom_element_this) {
-	    carp('Unable to create XML::DOM::Element.');
+	    carp("Unable to create $XMLDOM_BASE.");
 	    return(undef);
 	}
 
@@ -411,7 +484,7 @@ sub new()
 
     # Save the new XML::DOM::Element.
     if ($this->_set_XMLDOM($xmldom_element_this) ne $xmldom_element_this) {
-	carp("Unable to set $XMLDOM_BASE_CLASS.");
+	carp("Unable to set $XMLDOM_BASE.");
 	return(undef);
     }
 
@@ -421,15 +494,14 @@ sub new()
 	$set_attribute = "\$this->set_${attribute_name}(\$attribute_value)";
 	eval($set_attribute);
 	if ($EVAL_ERROR) {
-	    carp("Error evaluating '$set_attribute': $EVAL_ERROR!");
+	    carp("Error evaluating '$set_attribute': $EVAL_ERROR");
 	    return(undef);
 	}
     }
 
-    # Construct the VOTABLE::TABLE object from the XML::DOM object.
+    # Construct the VOTABLE object from the XML::DOM object.
     if (not $this->_build_from_XMLDOM) {
-	carp("Unable to build VOTABLE::$TAG_NAME object from " .
-	     "XML::DOM::Element!");
+	carp("Unable to build VOTABLE::$TAG_NAME object from $XMLDOM_BASE.");
 	return(undef);
     }
 
@@ -440,46 +512,173 @@ sub new()
 
 #------------------------------------------------------------------------------
 
+# get_row()
+
+# Fetch a single row from the data table and return an array
+# containing its values.
+
+sub get_row()
+{
+
+    # Save arguments.
+    my($this, $rownum) = @_;
+
+    #--------------------------------------------------------------------------
+
+    # Local variables.
+
+    # Reference to underlying VOTABLE::DATA object.
+    my($votable_data);
+
+    # Row of results.
+    my(@row);
+
+    #--------------------------------------------------------------------------
+
+    # Get the DATA, return if no data for this table yet.
+    $votable_data = $this->get_data;
+    if (not $votable_data) {
+	carp('No DATA for TABLE.');
+	return(());
+    }
+
+    # Extract the row based on the underlying data format.
+    if ($votable_data->get_tabledata) {
+	@row = $this->_get_tabledata_row($rownum);
+    } elsif ($votable_data->get_binary) {
+	@row = $this->_get_binary_row($rownum);
+    } elsif ($votable_data->get_fits) {
+	carp('Not supported yet!');
+	return(());
+    } else {
+	carp('No data found!');
+	return(());
+    }
+
+    # Return the row.
+    return(@row);
+
+}
+
+#------------------------------------------------------------------------------
+
+# set_row()
+
+# Set a single row from the data table and return an array containing
+# its values.
+
+sub set_row()
+{
+
+    # Save arguments.
+    my($this, $rownum, @values) = @_;
+
+    #--------------------------------------------------------------------------
+
+    # Local variables.
+
+    # Reference to underlying VOTABLE::DATA object.
+    my($votable_data);
+
+    #--------------------------------------------------------------------------
+
+    # Get the DATA, return if no data for this table yet.
+    $votable_data = $this->get_data;
+    if (not $votable_data) {
+	carp('No DATA for TABLE.');
+	return(());
+    }
+
+    # Set the row based on the underlying data format.
+    if ($votable_data->get_tabledata) {
+	$this->_set_tabledata_row($rownum, @values);
+    } elsif ($votable_data->get_binary) {
+	$this->_set_binary_row($rownum, @values);
+    } elsif ($votable_data->get_fits) {
+	carp('Not supported yet!');
+	return(());
+    } else {
+	carp('No data found!');
+	return(());
+    }
+
+    # Return the row.
+    return($this->get_row($rownum));
+
+}
+
+#------------------------------------------------------------------------------
+
 # Attribute accessor methods
+
+# Attribute values are stored in the underlying XML::DOM::Element
+# object, and are accessed using the XML::DOM::Element getAttribute()
+# and setAttribute() methods. The getAttribute() method returns an
+# empty string ('') when the attribute has no value, so the return
+# value must be checked for that, and set to undef if it is empty. The
+# setAttribute() method will use the removeAttribute() method to clear
+# the existing value if undef is passed as the new value of an
+# attribute.
 
 #------------------------------------------------------------------------------
 
 sub get_ID()
 {
     my($this) = @_;
-    $this->_get_XMLDOM->getAttribute('ID');
+    my($id);
+    $id = $this->_get_XMLDOM->getAttribute('ID');
+    $id = undef if (length($id) == 0);
+    return($id);
 }
 
 sub set_ID()
 {
     my($this, $id) = @_;
-    $this->_get_XMLDOM->setAttribute('ID', $id);
+    if (defined($id)) {
+	$this->_get_XMLDOM->setAttribute('ID', $id);
+    } else {
+	$this->_get_XMLDOM->removeAttribute('ID');
+    }
     return($this->get_ID);
 }
 
 sub get_name()
 {
     my($this) = @_;
-    $this->_get_XMLDOM->getAttribute('name');
+    my($name);
+    $name = $this->_get_XMLDOM->getAttribute('name');
+    $name = undef if (length($name) == 0);
+    return($name);
 }
 
 sub set_name()
 {
     my($this, $name) = @_;
-    $this->_get_XMLDOM->setAttribute('name', $name);
+    if (defined($name)) {
+	$this->_get_XMLDOM->setAttribute('name', $name);
+    } else {
+	$this->_get_XMLDOM->removeAttribute('name');
+    }
     return($this->get_name);
 }
 
 sub get_ref()
 {
     my($this) = @_;
-    $this->_get_XMLDOM->getAttribute('ref');
+    my($ref);
+    $ref = $this->_get_XMLDOM->getAttribute('ref');
+    $ref = undef if (length($ref) == 0);
+    return($ref);
 }
 
 sub set_ref()
 {
     my($this, $ref) = @_;
-    $this->_get_XMLDOM->setAttribute('ref', $ref);
+    if (defined($ref)) {
+	$this->_get_XMLDOM->setAttribute('ref', $ref);
+    } else {
+	$this->_get_XMLDOM->removeAttribute('ref');
+    }
     return($this->get_ref);
 }
 
@@ -522,7 +721,11 @@ sub set_description()
     #--------------------------------------------------------------------------
 
     # Link the objects at the VOTABLE level.
-    $this->{'DESCRIPTION'} = $votable_description;
+    if ($votable_description) {
+	$this->{'DESCRIPTION'} = $votable_description;
+    } else {
+	delete($this->{'DESCRIPTION'});
+    }
 
     #--------------------------------------------------------------------------
 
@@ -531,162 +734,41 @@ sub set_description()
     # Get the XML::DOM::Element for this object.
     $xmldom_element_this = $this->_get_XMLDOM;
 
-    # Get the XML::DOM::Element for the new object.
-    $xmldom_element_description =
-	$votable_description->_get_XMLDOM;
-    if (not $xmldom_element_description) {
-	carp('Unable to find XML::DOM::Element!');
-	return(undef);
-    }
-
     # If this TABLE element already has a DESCRIPTION element, remove
-    # the DESCRIPTION element.
+    # the DESCRIPTION element (assumed to be only 1).
     @xmldom_elements =
 	$xmldom_element_this->getElementsByTagName('DESCRIPTION', 0);
     if (@xmldom_elements) {
 	$xmldom_element_this->removeChild($xmldom_elements[0]);
     }
 
-    # Attach the new object to the owner document for this object.
-    $xmldom_element_description->
-	setOwnerDocument($xmldom_element_this->getOwnerDocument);
+    # Connect the new element, if needed.
+    if ($xmldom_element_description) {
 
-    # If any child nodes exist for the this object, insert the new
-    # DESCRIPTION element as the first child element of this
-    # object. Otherwise, just add the DESCRIPTION element as the first
-    # child.
-    if ($xmldom_element_this->hasChildNodes) {
-	$xmldom_element_this->
-	    insertBefore($xmldom_element_description,
-			 $xmldom_element_this->getFirstChild);
-    } else {
-	$xmldom_element_this->appendChild($xmldom_element_description);
+	# Get the XML::DOM::Element for the new object.
+	$xmldom_element_description = $votable_description->_get_XMLDOM;
+	if (not $xmldom_element_description) {
+	    carp("Unable to find $XMLDOM_BASE.");
+	    return(undef);
+	}
+
+	# Attach the new object to the owner document for this object.
+	$xmldom_element_description->
+	    setOwnerDocument($xmldom_element_this->getOwnerDocument);
+
+	# Add the DESCRIPTION element as the first child.
+	if ($xmldom_element_this->hasChildNodes) {
+	    $xmldom_element_this->
+		insertBefore($xmldom_element_description,
+			     $xmldom_element_this->getFirstChild);
+	} else {
+	    $xmldom_element_this->appendChild($xmldom_element_description);
+	}
+
     }
 
     # Return the new object.
     return($this->get_description);
-
-}
-
-sub get_link()
-{
-    my($this) = @_;
-    if (exists($this->{'LINK'})) {
-	return(@{$this->{'LINK'}});
-    } else {
-	return(());
-    }
-}
-
-sub set_link()
-{
-
-    # Save arguments.
-    # $this is a reference to the current object.
-    # @votable_link is a list of references to the VOTABLE::LINKs to
-    # add to this object.
-    my($this, @votable_link) = @_;
-
-    #--------------------------------------------------------------------------
-
-    # Local variables.
-
-    # Reference to the XML::DOM::Element object for this object.
-    my($xmldom_element_this);
-
-    # Reference to a single new VOTABLE::LINK.
-    my($votable_link);
-
-    # Reference to XML::DOM::Element object for the current
-    # VOTABLE::LINK object.
-    my($xmldom_element_link);
-
-    # Temporary array of XML::DOM::Element objects, and a single.
-    my(@xmldom_elements);
-    my($xmldom_element);
-
-    #--------------------------------------------------------------------------
-
-    # Link the objects at the VOTABLE level.
-    $this->{'LINK'} = [@votable_link];
-
-    #--------------------------------------------------------------------------
-
-    # Link the objects at the XML::DOM level.
-
-    # Get the XML::DOM::Element for this object.
-    $xmldom_element_this = $this->_get_XMLDOM;
-
-    # If any LINK elements exist for the this object, delete them.
-    if ($xmldom_element_this->hasChildNodes) {
-	if (@xmldom_elements =
-	    $xmldom_element_this->getElementsByTagName('LINK', 0)) {
-	    foreach $xmldom_element (@xmldom_elements) {
-		$xmldom_element_this->removeChild($xmldom_element);
-	    }
-	}
-    }
-
-    # Set the owner XML::DOM::Document of the XML::DOM::Element of the
-    # new VOTABLE::LINKs to the owner XML::DOM::Document of the
-    # XML::DOM::Element of this object.
-    foreach $votable_link (@votable_link) {
-	$xmldom_element_link = $votable_link->_get_XMLDOM;
-	$xmldom_element_link->setOwnerDocument($xmldom_element_this->
-					       getOwnerDocument);
-    }
-
-    # If any child nodes exist for the this object, insert the new
-    # LINK elements as the first child elements of this object after
-    # any DESCRIPTION. Otherwise, just add the LINK elements as the
-    # first children.
-    if ($xmldom_element_this->hasChildNodes) {
-	if (@xmldom_elements =
-	    $xmldom_element_this->getElementsByTagName('DESCRIPTION', 0)) {
-
-	    # If this DESCRIPTION element is not the last child,
-	    # insert the LINK elements right after it. Otherwise,
-	    # append the LINK elements.
-	    if ($xmldom_elements[0] ne $xmldom_element_this->getLastChild) {
-		foreach $votable_link (@votable_link) {
-		    $xmldom_element_link = $votable_link->_get_XMLDOM;
-		    $xmldom_element_this->
-			insertBefore($xmldom_element_link,
-				     $xmldom_elements[0]->getNextSibling);
-		}
-	    } else {
-		foreach $votable_link (@votable_link) {
-		    $xmldom_element_link = $votable_link->_get_XMLDOM;
-		    $xmldom_element_this->appendChild($xmldom_element_link);
-		}
-	    }
-
-	} else {
-
-	    # No DESCRIPTION element found, so insert the LINK
-	    # elements as the first children.
-	    foreach $votable_link (@votable_link) {
-		$xmldom_element_link = $votable_link->_get_XMLDOM;
-		$xmldom_element_this->
-		    insertBefore($xmldom_element_link,
-				 $xmldom_element_this->getFirstChild);
-	    }
-
-	}
-
-    } else {
-
-	# No existing children, so the LINKS become the first
-	# children.
-	foreach $votable_link (@votable_link) {
-	    $xmldom_element_link = $votable_link->_get_XMLDOM; 
-	    $xmldom_element_this->appendChild($xmldom_element_link);
-	}
-
-    }
-
-    # Return the new objects.
-    return($this->get_link);
 
 }
 
@@ -704,9 +786,6 @@ sub set_field()
 {
 
     # Save arguments.
-    # $this is a reference to the current object.
-    # @votable_field is a list of references to the VOTABLE::FIELDs to
-    # add to this object.
     my($this, @votable_field) = @_;
 
     #--------------------------------------------------------------------------
@@ -730,7 +809,11 @@ sub set_field()
     #--------------------------------------------------------------------------
 
     # Link the objects at the VOTABLE level.
-    $this->{'FIELD'} = [@votable_field];
+    if (@votable_field) {
+	$this->{'FIELD'} = [@votable_field];
+    } else {
+	delete($this->{'FIELD'});
+    }
 
     #--------------------------------------------------------------------------
 
@@ -740,57 +823,33 @@ sub set_field()
     $xmldom_element_this = $this->_get_XMLDOM;
 
     # If any FIELD elements exist for the this object, delete them.
-    if ($xmldom_element_this->hasChildNodes) {
-	if (@xmldom_elements =
-	    $xmldom_element_this->getElementsByTagName('FIELD', 0)) {
-	    foreach $xmldom_element (@xmldom_elements) {
-		$xmldom_element_this->removeChild($xmldom_element);
-	    }
+    @xmldom_elements = $xmldom_element_this->getElementsByTagName('FIELD', 0);
+    foreach $xmldom_element (@xmldom_elements) {
+	$xmldom_element_this->removeChild($xmldom_element);
+    }
+
+    # Connect the new elements if needed.
+    if (@votable_field) {
+
+	# Attach the new objects to the owner document for this
+	# object.
+	foreach $votable_field (@votable_field) {
+	    $xmldom_element_field = $votable_field->_get_XMLDOM;
+	    $xmldom_element_field->
+		setOwnerDocument($xmldom_element_this->getOwnerDocument);
 	}
-    }
 
-    # Set the owner XML::DOM::Document of the XML::DOM::Element of the
-    # new VOTABLE::FIELDs to the owner XML::DOM::Document of the
-    # XML::DOM::Element of this object.
-    foreach $votable_field (@votable_field) {
-	$xmldom_element_field = $votable_field->_get_XMLDOM;
-	$xmldom_element_field->setOwnerDocument($xmldom_element_this->
-						getOwnerDocument);
-    }
-
-    # If any child nodes exist for the this object, insert the new
-    # FIELD elements as the first child elements of this object after
-    # any LINK, then any DESCRIPTION. Otherwise, just add the FIELD
-    # elements as the first children.
-    if ($xmldom_element_this->hasChildNodes) {
+	# Insert the new FIELD elements as the first child elements of
+	# this object after any DESCRIPTION. Otherwise, just add the
+	# FIELD elements as the first children.
 	if (@xmldom_elements =
-	    $xmldom_element_this->getElementsByTagName('LINK', 0)) {
-
-	    # If this LINK element is not the last child, insert the
-	    # FIELD elements right after it. Otherwise, append the
-	    # FIELD elements.
-	    if ($xmldom_elements[0] ne $xmldom_element_this->getLastChild) {
-		foreach $votable_field (@votable_field) {
-		    $xmldom_element_field = $votable_field->_get_XMLDOM;
-		    $xmldom_element_this->
-			insertBefore($xmldom_element_field,
-				     $xmldom_elements[0]->getNextSibling);
-		}
-	    } else {
-		foreach $votable_field (@votable_field) {
-		    $xmldom_element_field = $votable_field->_get_XMLDOM;
-		    $xmldom_element_this->appendChild($xmldom_element_field);
-		}
-	    }
-
-	} elsif (@xmldom_elements = $xmldom_element_this->
-		 getElementsByTagName('DESCRIPTION', 0)) {
+	    $xmldom_element_this->getElementsByTagName('DESCRIPTION', 0)) {
 
 	    # If this DESCRIPTION element is not the last child,
 	    # insert the FIELD elements right after it. Otherwise,
 	    # append the FIELD elements.
 	    if ($xmldom_elements[0] ne $xmldom_element_this->getLastChild) {
-		foreach $votable_field (@votable_field) {
+		foreach $votable_field (reverse(@votable_field)) {
 		    $xmldom_element_field = $votable_field->_get_XMLDOM;
 		    $xmldom_element_this->
 			insertBefore($xmldom_element_field,
@@ -803,32 +862,172 @@ sub set_field()
 		}
 	    }
 
-	} else {
+	} elsif ($xmldom_element_this->hasChildNodes) {
 
-	    # No DESCRIPTION or LINK element found, so insert the
-	    # FIELD elements as the first children.
-	    foreach $votable_field (@votable_field) {
+	    # No DESCRIPTION element found, so insert the FIELD
+	    # elements as the first children.
+	    foreach $votable_field (reverse(@votable_field)) {
 		$xmldom_element_field = $votable_field->_get_XMLDOM;
 		$xmldom_element_this->
 		    insertBefore($xmldom_element_field,
 				 $xmldom_element_this->getFirstChild);
 	    }
 
-	}
+	} else {
 
-    } else {
+	    # No existing children, so the FIELDS become the first
+	    # children.
+	    foreach $votable_field (@votable_field) {
+		$xmldom_element_field = $votable_field->_get_XMLDOM; 
+		$xmldom_element_this->appendChild($xmldom_element_field);
+	    }
 
-	# No existing children, so the FIELDS become the first
-	# children.
-	foreach $votable_field (@votable_field) {
-	    $xmldom_element_field = $votable_field->_get_XMLDOM; 
-	    $xmldom_element_this->appendChild($xmldom_element_field);
 	}
 
     }
 
     # Return the new objects.
     return($this->get_field);
+
+}
+
+sub get_link()
+{
+    my($this) = @_;
+    if (exists($this->{'LINK'})) {
+	return(@{$this->{'LINK'}});
+    } else {
+	return(());
+    }
+}
+
+sub set_link()
+{
+
+    # Save arguments.
+    my($this, @votable_link) = @_;
+
+    #--------------------------------------------------------------------------
+
+    # Local variables.
+
+    # Reference to the XML::DOM::Element object for this object.
+    my($xmldom_element_this);
+
+    # Reference to a single new VOTABLE::LINK.
+    my($votable_link);
+
+    # Reference to XML::DOM::Element object for the current
+    # VOTABLE::LINK object.
+    my($xmldom_element_link);
+
+    # Temporary array of XML::DOM::Element objects, and a single.
+    my(@xmldom_elements);
+    my($xmldom_element);
+
+    #--------------------------------------------------------------------------
+
+    # Link the objects at the VOTABLE level.
+    if (@votable_link) {
+	$this->{'LINK'} = [@votable_link];
+    } else {
+	delete($this->{'LINK'});
+    }
+
+    #--------------------------------------------------------------------------
+
+    # Link the objects at the XML::DOM level.
+
+    # Get the XML::DOM::Element for this object.
+    $xmldom_element_this = $this->_get_XMLDOM;
+
+    # If any LINK elements exist for the this object, delete them.
+    @xmldom_elements = $xmldom_element_this->getElementsByTagName('LINK', 0);
+    foreach $xmldom_element (@xmldom_elements) {
+	$xmldom_element_this->removeChild($xmldom_element);
+    }
+
+    # Connect the new elements if needed.
+    if (@votable_link) {
+
+	# Attach the new objects to the owner document for this
+	# object.
+	foreach $votable_link (@votable_link) {
+	    $xmldom_element_link = $votable_link->_get_XMLDOM;
+	    $xmldom_element_link->
+		setOwnerDocument($xmldom_element_this->getOwnerDocument);
+	}
+
+	# Insert the new LINK elements as the first child elements of
+	# this object after any DESCRIPTION or FIELD. Otherwise, just
+	# add the LINK elements as the first children.
+	if (@xmldom_elements =
+	    $xmldom_element_this->getElementsByTagName('FIELD', 0)) {
+
+	    # If the last FIELD element is not the last child, insert
+	    # the LINK elements right after it. Otherwise, append the
+	    # LINK elements.
+	    if ($xmldom_elements[-1] ne $xmldom_element_this->getLastChild) {
+		foreach $votable_link (reverse(@votable_link)) {
+		    $xmldom_element_link = $votable_link->_get_XMLDOM;
+		    $xmldom_element_this->
+			insertBefore($xmldom_element_link,
+				     $xmldom_elements[-1]->getNextSibling);
+		}
+	    } else {
+		foreach $votable_link (@votable_link) {
+		    $xmldom_element_link = $votable_link->_get_XMLDOM;
+		    $xmldom_element_this->appendChild($xmldom_element_link);
+		}
+	    }
+
+	} elsif (@xmldom_elements =
+		 $xmldom_element_this->
+		 getElementsByTagName('DESCRIPTION', 0)) {
+
+	    # If the DESCRIPTION element is not the last child, insert
+	    # the new LINK elements right after it. Otherwise, append
+	    # the new elements.
+	    if ($xmldom_elements[-1] ne $xmldom_element_this->getLastChild) {
+		foreach $votable_link (reverse(@votable_link)) {
+		    $xmldom_element_link = $votable_link->_get_XMLDOM;
+		    $xmldom_element_this->
+			insertBefore($xmldom_element_link,
+				     $xmldom_elements[-1]->getNextSibling);
+		}
+	    } else {
+		foreach $votable_link (@votable_link) {
+		    $xmldom_element_link = $votable_link->_get_XMLDOM;
+		    $xmldom_element_this->appendChild($xmldom_element_link);
+		}
+	    }
+
+	} elsif ($xmldom_element_this->hasChildNodes) {
+
+	    # No DESCRIPTION or FIELD elements found, so insert the
+	    # LINK elements as the first children.
+	    foreach $votable_link (reverse(@votable_link)) {
+		$xmldom_element_link = $votable_link->_get_XMLDOM;
+		$xmldom_element_this->
+		    insertBefore($xmldom_element_link,
+				 $xmldom_element_this->getFirstChild);
+	    }
+
+	} else {
+
+	    # No existing children, so the LINKS become the first
+	    # children.
+	    foreach $votable_link (@votable_link) {
+		$xmldom_element_link = $votable_link->_get_XMLDOM; 
+		$xmldom_element_this->appendChild($xmldom_element_link);
+	    }
+
+	}
+
+    }
+
+    # Return the new objects.
+    return($this->get_link);
 
 }
 
@@ -846,9 +1045,6 @@ sub set_data()
 {
 
     # Save arguments.
-    # $this is a reference to the current object.
-    # @votable_data is a list of references to the VOTABLE::DATAs to
-    # add to this object.
     my($this, $votable_data) = @_;
 
     #--------------------------------------------------------------------------
@@ -871,7 +1067,11 @@ sub set_data()
     #--------------------------------------------------------------------------
 
     # Link the objects at the VOTABLE level.
-    $this->{'DATA'} = $votable_data;
+    if ($votable_data) {
+	$this->{'DATA'} = $votable_data;
+    } else {
+	delete($this->{'DATA'});
+    }
 
     #--------------------------------------------------------------------------
 
@@ -880,27 +1080,28 @@ sub set_data()
     # Get the XML::DOM::Element for this PARAM.
     $xmldom_element_this = $this->_get_XMLDOM;
 
-    # Get the underlying XML::DOM::Element for this DATA.
-    $xmldom_element_data = $votable_data->_get_XMLDOM;
-
     # If any DATA elements exist for the this object, delete them.
-    if ($xmldom_element_this->hasChildNodes) {
-	if (@xmldom_elements =
-	    $xmldom_element_this->getElementsByTagName('DATA', 0)) {
-	    for ($i = 0; $i < @xmldom_elements; $i++) {
-		$xmldom_element_this->removeChild($xmldom_elements[$i]);
-	    }
+    @xmldom_elements = $xmldom_element_this->getElementsByTagName('DATA', 0);
+    if (@xmldom_elements) {
+	for ($i = 0; $i < @xmldom_elements; $i++) {
+	    $xmldom_element_this->removeChild($xmldom_elements[$i]);
 	}
     }
 
-    # Set the owner XML::DOM::Document of the XML::DOM::Element of the
-    # new VOTABLE::DATA to the owner XML::DOM::Document of the
-    # XML::DOM::Element of this VOTABLE::TABLE.
-    $xmldom_element_data->setOwnerDocument($xmldom_element_this->
-					   getOwnerDocument);
+    # Connect the objects if needed.
+    if ($votable_data) {
 
-    # Append the DATA to the TABLE.
-    $xmldom_element_this->appendChild($votable_data->_get_XMLDOM);
+	# Get the underlying XML::DOM::Element for this DATA.
+	$xmldom_element_data = $votable_data->_get_XMLDOM;
+
+	# Attach to the current owner document.
+	$xmldom_element_data->
+	    setOwnerDocument($xmldom_element_this->getOwnerDocument);
+
+	# Append the DATA to the TABLE.
+	$xmldom_element_this->appendChild($votable_data->_get_XMLDOM);
+
+    }
 
     # Return the new objects.
     return($this->get_data);
@@ -964,20 +1165,6 @@ sub _build_from_XMLDOM()
 
     #--------------------------------------------------------------------------
 
-    # LINK
-
-    # Get a list of all LINK elements.
-    if (@xmldom_elements =
-	$xmldom_element_this->getElementsByTagName('LINK', 0)) {
-	for ($i = 0; $i < @xmldom_elements; $i++) {
-	    $votable_link = new VOTABLE::LINK $xmldom_elements[$i];
-	    push(@votable_link, $votable_link);
-	}
-	$this->set_link(@votable_link);
-    }
-
-    #--------------------------------------------------------------------------
-
     # FIELD
 
     # Get a list of all FIELD elements.
@@ -988,6 +1175,20 @@ sub _build_from_XMLDOM()
 	    push(@votable_field, $votable_field);
 	}
 	$this->set_field(@votable_field);
+    }
+
+    #--------------------------------------------------------------------------
+
+    # LINK
+
+    # Get a list of all LINK elements.
+    if (@xmldom_elements =
+	$xmldom_element_this->getElementsByTagName('LINK', 0)) {
+	for ($i = 0; $i < @xmldom_elements; $i++) {
+	    $votable_link = new VOTABLE::LINK $xmldom_elements[$i];
+	    push(@votable_link, $votable_link);
+	}
+	$this->set_link(@votable_link);
     }
 
     #--------------------------------------------------------------------------
@@ -1018,7 +1219,7 @@ sub _build_from_XMLDOM()
 sub _get_XMLDOM()
 {
     my($this) = @_;
-    return($this->{$XMLDOM_BASE_CLASS});
+    return($this->{$XMLDOM_BASE});
 }
 
 #------------------------------------------------------------------------------
@@ -1032,8 +1233,280 @@ sub _get_XMLDOM()
 sub _set_XMLDOM()
 {
     my($this, $xmldom_element) = @_;
-    $this->{$XMLDOM_BASE_CLASS} = $xmldom_element;
-    return($this->{$XMLDOM_BASE_CLASS});
+    $this->{$XMLDOM_BASE} = $xmldom_element;
+    return($this->{$XMLDOM_BASE});
+}
+
+#------------------------------------------------------------------------------
+
+# _get_tabledata_row()
+
+# Fetch the specified row of the table assuming it is held in a
+# TABLEDATA element. Return the results as an array, or an empty list
+# if an error occurs.
+
+sub _get_tabledata_row()
+{
+
+    # Save arguments.
+    my($this, $rownum) = @_;
+
+    #--------------------------------------------------------------------------
+
+    # Local variables
+
+    # Reference to DATA element for this TABLE.
+    my($votable_data);
+
+    # Reference to TABLEDATA element for this DATA.
+    my($votable_tabledata);
+
+    # Array to hold row contents.
+    my(@row);
+
+    #--------------------------------------------------------------------------
+
+    # Get the DATA, return if no data for this table yet.
+    $votable_data = $this->get_data;
+
+    # Get the TABLEDATA.
+    $votable_tabledata = $votable_data->get_tabledata;
+
+    # Get the row values as an array.
+    @row = $votable_tabledata->get_row($rownum);
+
+    # Return the row.
+    return(@row);
+
+}
+
+#------------------------------------------------------------------------------
+
+# _set_tabledata_row()
+
+# Set the specified row of the table assuming it is held in a
+# TABLEDATA element. Return the results as an array, or an empty list
+# if an error occurs.
+
+sub _set_tabledata_row()
+{
+
+    # Save arguments.
+    my($this, $rownum, @values) = @_;
+
+    #--------------------------------------------------------------------------
+
+    # Local variables
+
+    # Reference to DATA element for this TABLE.
+    my($votable_data);
+
+    # Reference to TABLEDATA element for this DATA.
+    my($votable_tabledata);
+
+    #--------------------------------------------------------------------------
+
+    # Get the DATA, return if no data for this table yet.
+    $votable_data = $this->get_data;
+
+    # Get the TABLEDATA.
+    $votable_tabledata = $votable_data->get_tabledata;
+
+    # Set the row values.
+    $votable_tabledata->set_row($rownum, @values);
+
+    # Return the row.
+    return(@values);
+
+}
+
+#------------------------------------------------------------------------------
+
+# _get_binary_row()
+
+# Fetch the specified row of the table assuming it is held in a BINARY
+# element. Return the results as an array, or an empty list if an
+# error occurs.
+
+sub _get_binary_row()
+{
+
+    # Save arguments.
+    my($this, $rownum) = @_;
+
+    #--------------------------------------------------------------------------
+
+    # Local variables
+
+    # Reference to DATA element for this TABLE.
+    my($votable_data);
+
+    # Reference to BINARY element for this DATA.
+    my($votable_binary);
+
+    # String of bytes for the BINARY.
+    my($bytes);
+
+    # List of FIELD elements for this TABLE.
+    my(@votable_field);
+
+    # Array to hold row contents.
+    my(@row);
+
+    # Format string for record, usable in pack() and unpack().
+    my($record_format);
+
+    # Record size (bytes).
+    my($record_size);
+
+    # VOTABLE datatype of current field.
+    my($datatype);
+
+    # VOTABLE arraysize of current field.
+    my($arraysize);
+
+    # Byte offset of current record in byte stream.
+    my($offset);
+
+    # Loop counter.
+    my($i);
+
+    #--------------------------------------------------------------------------
+
+    # Get the DATA, return if no data for this table yet.
+    $votable_data = $this->get_data;
+
+    # Get the BINARY.
+    $votable_binary = $votable_data->get_binary;
+
+    # Get the string of bytes.
+    $bytes = $votable_binary->get_content;
+
+    # Get a list of fields for this table.
+    @votable_field = $this->get_field;
+
+    # Compute the record format and size for this table.
+    $record_format = '';
+    $record_size = 0;
+    for ($i = 0; $i < @votable_field; $i++) {
+	$datatype = $votable_field[$i]->get_datatype;
+	$arraysize = $votable_field[$i]->get_arraysize;
+	if ($arraysize) {
+	    $record_format .= $TYPE_MAP{$datatype}{code} . $arraysize;
+	    $record_size += $TYPE_MAP{$datatype}{size} * $arraysize;
+	} else {
+	    $record_format .= $TYPE_MAP{$datatype}{code};
+	    $record_size += $TYPE_MAP{$datatype}{size};
+	}
+    }
+
+    # Compute the offset for the desired record.
+    $offset = $rownum * $record_size;
+
+    # Extract the record.
+    @row = unpack("x$offset $record_format", $bytes);
+
+    # Return the row.
+    return(@row);
+
+}
+
+#------------------------------------------------------------------------------
+
+# _set_binary_row()
+
+# Set the specified row of the table assuming it is held in a BINARY
+# element. Return the results as an array, or an empty list if an
+# error occurs.
+
+sub _set_binary_row()
+{
+
+    # Save arguments.
+    my($this, $rownum, @values) = @_;
+
+    #--------------------------------------------------------------------------
+
+    # Local variables
+
+    # Reference to DATA element for this TABLE.
+    my($votable_data);
+
+    # Reference to BINARY element for this DATA.
+    my($votable_binary);
+
+    # String of bytes for the BINARY.
+    my($bytes);
+
+    # List of FIELD elements for this TABLE.
+    my(@votable_field);
+
+    # Array to hold row contents.
+    my(@row);
+
+    # Format string for record, usable in pack() and unpack().
+    my($record_format);
+
+    # Record size (bytes).
+    my($record_size);
+
+    # VOTABLE datatype of current field.
+    my($datatype);
+
+    # VOTABLE arraysize of current field.
+    my($arraysize);
+
+    # Byte offset of current record in byte stream.
+    my($offset);
+
+    # Byte string for current row.
+    my($row_bytes);
+
+    # Loop counter.
+    my($i);
+
+    #--------------------------------------------------------------------------
+
+    # Get the DATA, return if no data for this table yet.
+    $votable_data = $this->get_data;
+
+    # Get the BINARY.
+    $votable_binary = $votable_data->get_binary;
+
+    # Get the reference to the string of bytes.
+    $bytes = $votable_binary->get_content;
+
+    # Get a list of fields for this table.
+    @votable_field = $this->get_field;
+
+    # Compute the record format and size for this table.
+    $record_format = '';
+    $record_size = 0;
+    for ($i = 0; $i < @votable_field; $i++) {
+	$datatype = $votable_field[$i]->get_datatype;
+	$arraysize = $votable_field[$i]->get_arraysize;
+	if ($arraysize) {
+	    $record_format .= $TYPE_MAP{$datatype}{code} . $arraysize;
+	    $record_size += $TYPE_MAP{$datatype}{size} * $arraysize;
+	} else {
+	    $record_format .= $TYPE_MAP{$datatype}{code};
+	    $record_size += $TYPE_MAP{$datatype}{size};
+	}
+    }
+
+    # Compute the offset for the desired record.
+    $offset = $rownum * $record_size;
+
+    # Compute the byte string for the current row.
+    $row_bytes = pack($record_format, @values);
+
+    # Update the record.
+    substr($bytes, $offset) = $row_bytes;
+    $votable_binary->set_content($bytes);
+
+    # Return the row.
+    return(@row);
+
 }
 
 #******************************************************************************

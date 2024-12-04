@@ -50,7 +50,8 @@
 <P>
 <HR>
 <H1><A NAME="synopsis">SYNOPSIS</A></H1>
-<P><CODE>use VOTABLE::COOSYS;</CODE></P>
+<PRE>
+ use VOTABLE::COOSYS;</PRE>
 <P>
 <HR>
 <H1><A NAME="description">DESCRIPTION</A></H1>
@@ -78,7 +79,7 @@ following excerpt from the <CODE>VOTABLE</CODE> 1.0 DTD:</P>
 <H3><A NAME="new($str_or_ref, %options)"><CODE>new($str_or_ref, %options)</CODE></A></H3>
 <P>Create a new <CODE>VOTABLE::COOSYS</CODE> object, and return a reference to
 it. If the first argument (<CODE>$str_or_ref</CODE>) is a string, it is used as
-the initial <CODE>PCDATA</CODE> content of the <CODE>COOSYS</CODE> element. If the first
+the initial <CODE>#PCDATA</CODE> content of the <CODE>COOSYS</CODE> element. If the first
 argument is a reference to a <CODE>XML::DOM::Element</CODE> object, that object
 is used to initialize the new <CODE>COOSYS</CODE> element (implicitly assuming
 that the <CODE>XML::DOM::Element</CODE> object contains a valid <CODE>COOSYS</CODE>
@@ -92,45 +93,53 @@ object. Return <CODE>undef</CODE> if an error occurs.</P>
 attribute has not been set, or an error occurs.</P>
 <P>
 <H3><A NAME="set_id($id)"><CODE>set_ID($id)</CODE></A></H3>
-<P>Set the value of the <CODE>ID</CODE> attribute to the specified value. Return
-the new value of the attribute on success, or <CODE>undef</CODE> if an error
-occurs.</P>
+<P>Set the value of the <CODE>ID</CODE> attribute to the specified value. Use
+<CODE>undef</CODE> as the argument to clear any existing value of the
+attribute. Return the new value of the attribute on success, or
+<CODE>undef</CODE> if an error occurs.</P>
 <P>
 <H3><A NAME="get_epoch"><CODE>get_epoch</CODE></A></H3>
 <P>Return the value of the <CODE>epoch</CODE> attribute. Return <CODE>undef</CODE> if the
 attribute has not been set, or an error occurs.</P>
 <P>
 <H3><A NAME="set_epoch($epoch)"><CODE>set_epoch($epoch)</CODE></A></H3>
-<P>Set the value of the <CODE>epoch</CODE> attribute to the specified value. Return
-the new value of the attribute on success, or <CODE>undef</CODE> if an error
-occurs.</P>
+<P>Set the value of the <CODE>epoch</CODE> attribute to the specified value. Use
+<CODE>undef</CODE> as the argument to clear any existing value of the
+attribute. Return the new value of the attribute on success, or
+<CODE>undef</CODE> if an error occurs.</P>
 <P>
 <H3><A NAME="get_equinox"><CODE>get_equinox</CODE></A></H3>
 <P>Return the value of the <CODE>equinox</CODE> attribute. Return <CODE>undef</CODE> if the
 attribute has not been set, or an error occurs.</P>
 <P>
 <H3><A NAME="set_equinox($equinox)"><CODE>set_equinox($equinox)</CODE></A></H3>
-<P>Set the value of the <CODE>equinox</CODE> attribute to the specified
-value. Return the new value of the attribute on success, or <CODE>undef</CODE>
-if an error occurs.</P>
+<P>Set the value of the <CODE>equinox</CODE> attribute to the specified value. Use
+<CODE>undef</CODE> as the argument to clear any existing value of the
+attribute. Return the new value of the attribute on success, or
+<CODE>undef</CODE> if an error occurs.</P>
 <P>
 <H3><A NAME="get_system"><CODE>get_system</CODE></A></H3>
-<P>Return the value of the <CODE>system</CODE> attribute. Return <CODE>undef</CODE> if the
-attribute has not been set, or an error occurs.</P>
+<P>Return the value of the <CODE>system</CODE> attribute. Return the default value
+(<CODE>eq_FK5</CODE>) if the attribute has not been set. Return <CODE>undef</CODE> if an
+error occurs.</P>
 <P>
 <H3><A NAME="set_system($system)"><CODE>set_system($system)</CODE></A></H3>
-<P>Set the value of the <CODE>system</CODE> attribute to the specified
-value. Return the new value of the attribute on success, or <CODE>undef</CODE>
-if an error occurs.</P>
+<P>Set the value of the <CODE>system</CODE> attribute to the specified value. The
+new value is checked for correctness against the list of allowed
+values. Use <CODE>undef</CODE> as the argument to clear any existing value of
+the attribute. Return the new value of the attribute on success, or
+<CODE>undef</CODE> if an error occurs.</P>
 <P>
 <H3><A NAME="get"><CODE>get</CODE></A></H3>
-<P>Return a string containing the <CODE>PCDATA</CODE> content of the <CODE>COOSYS</CODE>
-element. Return <CODE>undef</CODE> if the element has no <CODE>PCDATA</CODE> content, or
+<P>Return a string containing the <CODE>#PCDATA</CODE> content of the <CODE>COOSYS</CODE>
+element. Return <CODE>undef</CODE> if the element has no <CODE>#PCDATA</CODE> content, or
 an error occurs.</P>
 <P>
 <H3><A NAME="set($str)"><CODE>set($str)</CODE></A></H3>
-<P>Set the <CODE>PCDATA</CODE> content of the <CODE>COOSYS</CODE> element to the specified
-string. Return the string on success, or <CODE>undef</CODE> if an error occurs.</P>
+<P>Set the <CODE>#PCDATA</CODE> content of the <CODE>COOSYS</CODE> element to the specified
+string. Use <CODE>undef</CODE> as the argument to clear any existing value of
+the text. Return the string on success, or <CODE>undef</CODE> if an error
+occurs.</P>
 <P>
 <H2><A NAME="notes on class internals">Notes on class internals</A></H2>
 <UL>
@@ -142,7 +151,8 @@ class hierarchy.
 <LI>
 The names of the <CODE>get_XXX</CODE> and <CODE>set_XXX</CODE> accessors for attributes
 and elements are derived directly from the names of the attributes or
-elements. Attribute and element names containing embedded hyphens
+elements, with the attribute or element name replacing
+<CODE>XXX</CODE>. Attribute and element names containing embedded hyphens
 ('<CODE>-</CODE>') use accessors where the hyphen is mapped to an underscore
 ('<CODE>_</CODE>') in the name of the accessor method. This is a necessity,
 since the hyphen is not a valid name character in Perl.
@@ -154,12 +164,11 @@ since the hyphen is not a valid name character in Perl.
 <LI>
 This code (perhaps unwisely) assumes that object internal structure is
 always maintained. For example, this code assumes that every
-<CODE>VOTABLE::COOSYS</CODE> object <EM>always</EM> has an underlying
-<CODE>XML::DOM::Element</CODE> object. As long as the internal structure is
-manipulated only by the publicly-available methods, this should be an
-adequate assumption. If a method detects an aberrant case, a warning
-message is printed (using the <CODE>Carp::carp</CODE> subroutine), and the
-method fails.
+<CODE>VOTABLE</CODE> object <EM>always</EM> has an underlying <CODE>XML::DOM::Element</CODE>
+object. As long as the internal structure is manipulated only by the
+publicly-available methods, this should be a safe assumption. If a
+method detects an aberrant case, a warning message is printed (using
+the <CODE>Carp::carp</CODE> subroutine), and the method fails.
 <P></P>
 <LI>
 Similarly, this code assumes that <CODE>XML::DOM</CODE> methods always
@@ -183,7 +192,7 @@ acceptable values, as defined in the DTD.
 <P>
 <HR>
 <H1><A NAME="version">VERSION</A></H1>
-<P>$Id: COOSYS.pm,v 1.1.1.8 2002/05/21 14:08:05 elwinter Exp $</P>
+<P>$Id: COOSYS.pm,v 1.1.1.11 2002/06/09 21:13:08 elwinter Exp $</P>
 
 </BODY>
 

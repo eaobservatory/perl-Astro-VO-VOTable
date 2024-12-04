@@ -26,9 +26,9 @@
 			<LI><A HREF="#set_fits($votable_fits)"><CODE>set_fits($votable_fits)</CODE></A></LI>
 			<LI><A HREF="#get_tabledata"><CODE>get_tabledata</CODE></A></LI>
 			<LI><A HREF="#set_tabledata($votable_tabledata)"><CODE>set_tabledata($votable_tabledata)</CODE></A></LI>
+			<LI><A HREF="#get_content"><CODE>get_content</CODE></A></LI>
 		</UL>
 
-		<LI><A HREF="#notes on class internals">Notes on class internals</A></LI>
 	</UL>
 
 	<LI><A HREF="#warnings">WARNINGS</A></LI>
@@ -104,7 +104,10 @@ supplied <CODE>VOTABLE::TABLEDATA</CODE> object. Any existing <CODE>BINARY</CODE
 by the new <CODE>TABLEDATA</CODE> element. Return the <CODE>VOTABLE::TABLEDATA</CODE>
 object on success, or <CODE>undef</CODE> if an error occurs.</P>
 <P>
-<H2><A NAME="notes on class internals">Notes on class internals</A></H2>
+<H3><A NAME="get_content"><CODE>get_content</CODE></A></H3>
+<P>Read the data described by the underlying elements for this <CODE>DATA</CODE>
+element, and return the content as a string. Return <CODE>undef</CODE> if an
+error occurs.</P>
 <UL>
 <LI>
 Method names that begin with a leading underscore ('<CODE>_</CODE>') are for
@@ -156,7 +159,7 @@ acceptable values, as defined in the DTD.
 <P>
 <HR>
 <H1><A NAME="version">VERSION</A></H1>
-<P>$Id: DATA.pm,v 1.1.1.7 2002/05/21 14:08:54 elwinter Exp $</P>
+<P>$Id: DATA.pm,v 1.1.1.10 2002/06/09 21:13:08 elwinter Exp $</P>
 
 </BODY>
 

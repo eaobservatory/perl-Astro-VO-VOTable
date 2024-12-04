@@ -41,7 +41,8 @@
 <P>
 <HR>
 <H1><A NAME="synopsis">SYNOPSIS</A></H1>
-<P><CODE>use VOTABLE::DESCRIPTION;</CODE></P>
+<PRE>
+ use VOTABLE::DESCRIPTION;</PRE>
 <P>
 <HR>
 <H1><A NAME="description">DESCRIPTION</A></H1>
@@ -60,7 +61,7 @@ the following excerpt from the <CODE>VOTABLE</CODE> 1.0 DTD:</P>
 <H3><A NAME="new($str_or_ref, %options)"><CODE>new($str_or_ref, %options)</CODE></A></H3>
 <P>Create a new <CODE>VOTABLE::DESCRIPTION</CODE> object, and return a reference to
 it. If the first argument (<CODE>$str_or_ref</CODE>) is a string, it is used as
-the initial <CODE>PCDATA</CODE> content of the <CODE>DESCRIPTION</CODE> element. If the
+the initial <CODE>#PCDATA</CODE> content of the <CODE>DESCRIPTION</CODE> element. If the
 first argument is a reference to a <CODE>XML::DOM::Element</CODE> object, that
 object is used to initialize the new <CODE>DESCRIPTION</CODE> element
 (implicitly assuming that the <CODE>XML::DOM::Element</CODE> object contains a
@@ -70,13 +71,14 @@ undefined, or an empty string, create and return an empty
 <CODE>VOTABLE::DESCRIPTION</CODE> object. Return <CODE>undef</CODE> if an error occurs.</P>
 <P>
 <H3><A NAME="get"><CODE>get</CODE></A></H3>
-<P>Return a string containing the <CODE>PCDATA</CODE> content of the <CODE>DESCRIPTION</CODE>
-element. Return <CODE>undef</CODE> if the element has no <CODE>PCDATA</CODE> content, or
-an error occurs.</P>
+<P>Return a string containing the <CODE>#PCDATA</CODE> content of the
+<CODE>DESCRIPTION</CODE> element. Return <CODE>undef</CODE> if the element has no
+<CODE>#PCDATA</CODE> content, or an error occurs.</P>
 <P>
 <H3><A NAME="set($str)"><CODE>set($str)</CODE></A></H3>
-<P>Set the <CODE>PCDATA</CODE> content of the <CODE>DESCRIPTION</CODE> element to the
-specified string. Return the string on success, or <CODE>undef</CODE> if an
+<P>Set the <CODE>#PCDATA</CODE> content of the <CODE>DESCRIPTION</CODE> element to the
+specified string. Use <CODE>undef</CODE> as the argument to clear any existing
+value of the text. Return the string on success, or <CODE>undef</CODE> if an
 error occurs.</P>
 <P>
 <H2><A NAME="notes on class internals">Notes on class internals</A></H2>
@@ -89,7 +91,8 @@ class hierarchy.
 <LI>
 The names of the <CODE>get_XXX</CODE> and <CODE>set_XXX</CODE> accessors for attributes
 and elements are derived directly from the names of the attributes or
-elements. Attribute and element names containing embedded hyphens
+elements, with the attribute or element name replacing
+<CODE>XXX</CODE>. Attribute and element names containing embedded hyphens
 ('<CODE>-</CODE>') use accessors where the hyphen is mapped to an underscore
 ('<CODE>_</CODE>') in the name of the accessor method. This is a necessity,
 since the hyphen is not a valid name character in Perl.
@@ -101,12 +104,11 @@ since the hyphen is not a valid name character in Perl.
 <LI>
 This code (perhaps unwisely) assumes that object internal structure is
 always maintained. For example, this code assumes that every
-<CODE>VOTABLE::DESCRIPTION</CODE> object <EM>always</EM> has an underlying
-<CODE>XML::DOM::Element</CODE> object. As long as the internal structure is
-manipulated only by the publicly-available methods, this should be an
-adequate assumption. If a method detects an aberrant case, a warning
-message is printed (using the <CODE>Carp::carp</CODE> subroutine), and the
-method fails.
+<CODE>VOTABLE</CODE> object <EM>always</EM> has an underlying <CODE>XML::DOM::Element</CODE>
+object. As long as the internal structure is manipulated only by the
+publicly-available methods, this should be an adequate assumption. If
+a method detects an aberrant case, a warning message is printed (using
+the <CODE>Carp::carp</CODE> subroutine), and the method fails.
 <P></P>
 <LI>
 Similarly, this code assumes that <CODE>XML::DOM</CODE> methods always
@@ -131,7 +133,7 @@ acceptable values, as defined in the DTD.
 <P>
 <HR>
 <H1><A NAME="version">VERSION</A></H1>
-<P>$Id: DESCRIPTION.pm,v 1.1.1.9 2002/05/21 14:09:37 elwinter Exp $</P>
+<P>$Id: DESCRIPTION.pm,v 1.1.1.11 2002/06/09 21:13:08 elwinter Exp $</P>
 
 </BODY>
 

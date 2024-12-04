@@ -20,6 +20,8 @@
 		<UL>
 
 			<LI><A HREF="#new($str_or_ref, %options)"><CODE>new($str_or_ref, %options)</CODE></A></LI>
+			<LI><A HREF="#get_ref"><CODE>get_ref</CODE></A></LI>
+			<LI><A HREF="#set_ref($ref)"><CODE>set_ref($ref)</CODE></A></LI>
 			<LI><A HREF="#get"><CODE>get</CODE></A></LI>
 			<LI><A HREF="#set($str)"><CODE>set($str)</CODE></A></LI>
 		</UL>
@@ -42,7 +44,8 @@
 <P>
 <HR>
 <H1><A NAME="synopsis">SYNOPSIS</A></H1>
-<P><CODE>use VOTABLE::TD;</CODE></P>
+<PRE>
+ use VOTABLE::TD;</PRE>
 <P>
 <HR>
 <H1><A NAME="description">DESCRIPTION</A></H1>
@@ -62,7 +65,7 @@ following excerpt from the <CODE>VOTABLE</CODE> 1.0 DTD:</P>
 <H3><A NAME="new($str_or_ref, %options)"><CODE>new($str_or_ref, %options)</CODE></A></H3>
 <P>Create a new <CODE>VOTABLE::TD</CODE> object, and return a reference to it. If
 the first argument (<CODE>$str_or_ref</CODE>) is a string, it is used as the
-initial <CODE>PCDATA</CODE> content of the <CODE>TD</CODE> element. If the first argument
+initial <CODE>#PCDATA</CODE> content of the <CODE>TD</CODE> element. If the first argument
 is a reference to a <CODE>XML::DOM::Element</CODE> object, that object is used
 to initialize the new <CODE>TD</CODE> element (implicitly assuming that the
 <CODE>XML::DOM::Element</CODE> object contains a valid <CODE>TD</CODE> element). The
@@ -71,14 +74,26 @@ the first argument is missing or undefined, or an empty string, create
 and return an empty <CODE>VOTABLE::TD</CODE> object. Return <CODE>undef</CODE> if an error
 occurs.</P>
 <P>
+<H3><A NAME="get_ref"><CODE>get_ref</CODE></A></H3>
+<P>Return the value of the <CODE>ref</CODE> attribute. Return <CODE>undef</CODE> if the
+attribute has not been set, or an error occurs.</P>
+<P>
+<H3><A NAME="set_ref($ref)"><CODE>set_ref($ref)</CODE></A></H3>
+<P>Set the value of the <CODE>ref</CODE> attribute to the specified value. Use
+<CODE>undef</CODE> as the argument to clear any existing value of the
+attribute. Return the new value of the attribute on success,or
+<CODE>undef</CODE> if an error occurs.</P>
+<P>
 <H3><A NAME="get"><CODE>get</CODE></A></H3>
-<P>Return a string containing the <CODE>PCDATA</CODE> content of the <CODE>TD</CODE>
-element. Return <CODE>undef</CODE> if the element has no <CODE>PCDATA</CODE> content, or
+<P>Return a string containing the <CODE>#PCDATA</CODE> content of the <CODE>TD</CODE>
+element. Return <CODE>undef</CODE> if the element has no <CODE>#PCDATA</CODE> content, or
 an error occurs.</P>
 <P>
 <H3><A NAME="set($str)"><CODE>set($str)</CODE></A></H3>
-<P>Set the <CODE>PCDATA</CODE> content of the <CODE>TD</CODE> element to the specified
-string. Return the string on success, or <CODE>undef</CODE> if an error occurs.</P>
+<P>Set the <CODE>#PCDATA</CODE> content of the <CODE>TD</CODE> element to the specified
+string. Use <CODE>undef</CODE> as the argument to clear any existing value of
+the text. Return the string on success, or <CODE>undef</CODE> if an error
+occurs.</P>
 <P>
 <H2><A NAME="notes on class internals">Notes on class internals</A></H2>
 <UL>
@@ -90,7 +105,8 @@ class hierarchy.
 <LI>
 The names of the <CODE>get_XXX</CODE> and <CODE>set_XXX</CODE> accessors for attributes
 and elements are derived directly from the names of the attributes or
-elements. Attribute and element names containing embedded hyphens
+elements, with the attribute or element name replacing
+<CODE>XXX</CODE>. Attribute and element names containing embedded hyphens
 ('<CODE>-</CODE>') use accessors where the hyphen is mapped to an underscore
 ('<CODE>_</CODE>') in the name of the accessor method. This is a necessity,
 since the hyphen is not a valid name character in Perl.
@@ -100,9 +116,12 @@ since the hyphen is not a valid name character in Perl.
 <H1><A NAME="warnings">WARNINGS</A></H1>
 <UL>
 <LI>
+This class does not currently support array values as cell contents.
+<P></P>
+<LI>
 This code (perhaps unwisely) assumes that object internal structure is
 always maintained. For example, this code assumes that every
-<CODE>VOTABLE::TD</CODE> object <EM>always</EM> has an underlying <CODE>XML::DOM::Element</CODE>
+<CODE>VOTABLE</CODE> object <EM>always</EM> has an underlying <CODE>XML::DOM::Element</CODE>
 object. As long as the internal structure is manipulated only by the
 publicly-available methods, this should be an adequate assumption. If
 a method detects an aberrant case, a warning message is printed (using
@@ -130,7 +149,7 @@ acceptable values, as defined in the DTD.
 <P>
 <HR>
 <H1><A NAME="version">VERSION</A></H1>
-<P>$Id: TD.pm,v 1.1.1.8 2002/05/21 14:13:49 elwinter Exp $</P>
+<P>$Id: TD.pm,v 1.1.1.12 2002/06/09 21:13:08 elwinter Exp $</P>
 
 </BODY>
 

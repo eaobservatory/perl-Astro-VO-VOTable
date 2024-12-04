@@ -1,6 +1,6 @@
 <HTML>
 <HEAD>
-<TITLE>VOTABLE - VOTABLE XML manipulation package</TITLE>
+<TITLE>VOTABLE::Element - VOTABLE XML element class</TITLE>
 <LINK REV="made" HREF="mailto:elwinter@olegacy.gsfc.nasa.gov">
 </HEAD>
 
@@ -14,6 +14,16 @@
 	<LI><A HREF="#name">NAME</A></LI>
 	<LI><A HREF="#synopsis">SYNOPSIS</A></LI>
 	<LI><A HREF="#description">DESCRIPTION</A></LI>
+	<UL>
+
+		<LI><A HREF="#methods">Methods</A></LI>
+		<UL>
+
+			<LI><A HREF="#new($str_or_ref, %options)"><CODE>new($str_or_ref, %options)</CODE></A></LI>
+		</UL>
+
+	</UL>
+
 	<LI><A HREF="#warnings">WARNINGS</A></LI>
 	<LI><A HREF="#see also">SEE ALSO</A></LI>
 	<LI><A HREF="#author">AUTHOR</A></LI>
@@ -25,31 +35,35 @@
 <P>
 <HR>
 <H1><A NAME="name">NAME</A></H1>
-<P>VOTABLE - VOTABLE XML manipulation package</P>
+<P>VOTABLE::Element - VOTABLE XML element class</P>
 <P>
 <HR>
 <H1><A NAME="synopsis">SYNOPSIS</A></H1>
-<P><CODE>use VOTABLE</CODE>;</P>
+<P><CODE>use VOTABLE::Element</CODE></P>
+<P><CODE>$votable_element = new VOTABLE::Element</CODE></P>
+<P><CODE>$votable_element = new VOTABLE::Element undef, a1 =&gt; v1, a2 =&gt; v2, ...</CODE></P>
+<P><CODE>$votable_element = new VOTABLE::Element $xml_string</CODE></P>
+<P><CODE>$votable_element = new VOTABLE::Element $xml_string, a1 =&gt; v1, a2 =&gt; v2, ...</CODE></P>
+<P><CODE>$votable_element = new VOTABLE::Element $xmldom_element</CODE></P>
+<P><CODE>$votable_element = new VOTABLE::Element $xmldom_element, a1 =&gt; v1, a2 =&gt; v2, ...</CODE></P>
 <P>
 <HR>
 <H1><A NAME="description">DESCRIPTION</A></H1>
-<P>The <CODE>VOTABLE::</CODE> class hierarchy forms a set of wrappers around the
- class hierarchy. When using the <CODE>VOTABLE</CODE> classes, the
-user does not need to worry about the implementation details of the
-underlying XML technology (currently <A HREF="#item_XML%3A%3ADOM"><CODE>XML::DOM</CODE></A>, but subject to
-change).</P>
-<P>In general, the code consists of a <CODE>VOTABLE</CODE> module/class for each
-VOTABLE element defined in the VOTABLE DTD (version 1.0). This is VERY
-alpha code. It provides a crude but essentially complete capability to
-read, modify, and write VOTABLE documents. The code does its best to
-maintain the internal integrity of the document so that adherence to
-the DTD (or schema) is maintained.</P>
+<P>This class is a VOTABLE-specific wrapper around the
+<CODE>XML::DOM::Element</CODE> class. It provides the base functionality for all
+VOTABLE element classes, and allows access to implementation-specific
+details, such as <CODE>the XML::DOM::Element</CODE> objects embedded within the
+VOTABLE objects. The typical user should never need access to the
+implementation-specific details, so these base methods are for use
+primarily by other VOTABLE objects. This approach was taken to allow
+modification of the underlying XML technology (currently <CODE>XML::DOM</CODE>,
+but we may use something else later) without changing the user API.</P>
 <P>The overall design of the VOTABLE objects is straightforward. Each XML
 element in the VOTABLE DTD is represented by a class. Each element
 class is a subclass of <CODE>VOTABLE::Element</CODE> (this class). Within each
 element class, there are attributes and child elements, along with
 implementation-specific data, such as references to the underlying
-<A HREF="#item_XML%3A%3ADOM"><CODE>XML::DOM</CODE></A> objects.</P>
+<CODE>XML::DOM</CODE> objects.</P>
 <P>Attributes are manipulated using <CODE>get_ATTNAME</CODE> and <CODE>set_ATTNAME</CODE>
 methods (accessors), where <CODE>ATTNAME</CODE> is replaced by the name of the
 attribute in question. The <CODE>set</CODE> methods take a single argument (the
@@ -73,43 +87,23 @@ are passed and returned as lists. Like <CODE>set_ATTNAME</CODE> accessors,
 <CODE>set_ELNAME</CODE> accessors return the new <CODE>value(s)</CODE> on success. On
 failure, scalar-returning methods return <CODE>undef</CODE>, while
 list-returning methods return an empty list.</P>
-<P>The <CODE>VOTABLE</CODE> class hierarchy is simple. The <A HREF="#item_VOTABLE%3A%3ADocument"><CODE>VOTABLE::Document</CODE></A>
-class is used for objects representing entire XML documents, which are
-composed of <CODE>VOTABLE::ELEMENT_NAME</CODE> objects, where <CODE>ELEMENT_NAME</CODE> is
-replaced by the name of a valid VOTABLE element tag. There is a class
-for each valid VOTABLE element. Classes are arranged in tiers, where
-an element in a higher tier is composed exclusively of elements in
-lower tiers. The current list of valid elements is:</P>
-<UL>
-<LI>
-Tier 0: <CODE>COOSYS</CODE>, <CODE>DESCRIPTION</CODE>, <CODE>INFO</CODE>, <CODE>LINK</CODE>, <CODE>MAX</CODE>, <CODE>MIN</CODE>,
-<CODE>STREAM</CODE>, <CODE>TD</CODE>
-<P></P>
-<LI>
-Tier 1: <CODE>BINARY</CODE>, <CODE>FITS</CODE>, <CODE>OPTION</CODE>, <CODE>TR</CODE>
-<P></P>
-<LI>
-Tier 2: <CODE>TABLEDATA</CODE>, <CODE>VALUES</CODE>
-<P></P>
-<LI>
-Tier 3: <CODE>DATA</CODE>, <CODE>FIELD</CODE>, <CODE>PARAM</CODE>
-<P></P>
-<LI>
-Tier 4: <CODE>DEFINITIONS</CODE>, <CODE>TABLE</CODE>
-<P></P>
-<LI>
-Tier 5: <CODE>RESOURCE</CODE>
-<P></P>
-<LI>
-Tier 6: <CODE>Document</CODE>
-<P></P></UL>
+<P>
+<H2><A NAME="methods">Methods</A></H2>
+<P>
+<H3><A NAME="new($str_or_ref, %options)"><CODE>new($str_or_ref, %options)</CODE></A></H3>
+<P>This is the class constructor. <CODE>$str_or_ref</CODE>, if defined, contains a
+string of XML to use to initialize the new object, or a reference to
+an existing <CODE>XML::DOM::Element</CODE> object to use to initialize the new
+object. If <CODE>$str_or_ref</CODE> is undefined, a new, empty
+<CODE>XML::DOM::Element</CODE> object is created for the new object. The
+<CODE>%options</CODE> argument contains 0 or more <CODE>key =&gt; value</CODE> pairs to
+use when setting the initial values of the element attributes. On
+success, this method returns the blessed refrence for the new
+object. On failure, this method returns <CODE>undef</CODE>.</P>
 <P>
 <HR>
 <H1><A NAME="warnings">WARNINGS</A></H1>
 <UL>
-<LI>
-Alpha code. Caveat programmor.
-<P></P>
 <LI>
 This code (perhaps unwisely) assumes that object internal structure is
 always maintained. For example, this code assumes that every
@@ -118,7 +112,7 @@ object. When aberrant cases are encountered, an exception is raised
 (using the <CODE>Carp::croak</CODE> subroutine).
 <P></P>
 <LI>
-Similarly, this code assumes that <A HREF="#item_XML%3A%3ADOM"><CODE>XML::DOM</CODE></A> methods always
+Similarly, this code assumes that <CODE>XML::DOM</CODE> methods always
 succeed. When aberrant cases are encountered, an exception is raised
 (using the <CODE>Carp::croak</CODE> subroutine).
 <P></P>
@@ -127,23 +121,11 @@ Attribute and element names containing embedded hyphens ('-') use
 accessors where the hyphen is mapped to an underscore ('_') in the
 name of the accessor method. This is a necessity, since the hyphen is
 not a valid name character in Perl.
-<P></P>
-<LI>
-External data is not yet supported, although the infrastructure has
-been started (BINARY and FITS elements, and STREAMs).
-<P></P>
-<LI>
-No testing has been done with Perl prior to version 5.6.1.
 <P></P></UL>
 <P>
 <HR>
 <H1><A NAME="see also">SEE ALSO</A></H1>
-<UL>
-<LI><STRONG><A NAME="item_VOTABLE%3A%3ADocument"><CODE>VOTABLE::Document</CODE></A></STRONG><BR>
-
-<LI><STRONG><A NAME="item_XML%3A%3ADOM"><CODE>XML::DOM</CODE></A></STRONG><BR>
-
-</UL>
+<P><EM>perl</EM>, <EM>XML::DOM</EM></P>
 <P>
 <HR>
 <H1><A NAME="author">AUTHOR</A></H1>
@@ -151,7 +133,7 @@ No testing has been done with Perl prior to version 5.6.1.
 <P>
 <HR>
 <H1><A NAME="version">VERSION</A></H1>
-<P>$Id: VOTABLE.pm,v 1.1.1.5 2002/06/09 21:13:08 elwinter Exp $</P>
+<P>$Id: Element.pm,v 1.1.1.4 2002/06/09 21:13:08 elwinter Exp $</P>
 
 </BODY>
 

@@ -1,6 +1,17 @@
 Revision history for Perl extension VOTABLE.
 
-0.01  Sat Apr 27 11:48:32 2002
-	- original version; created by h2xs 1.21 with options
-		-APXf -n VOTABLE
+0.01  Tuesday 14 May 2002
 
+- First release.
+
+0.02  Tuesday 21 May 2002
+
+- Documentation update release.
+
+0.03  Sunday 9 June 2002
+- Added support for BINARY data.
+
+- Added utility methods for appending rows to tables, and to set and
+retrieve individual rows.
+
+- Numerous minor and major bug fixes, especially in element ordering.

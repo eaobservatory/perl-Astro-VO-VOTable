@@ -22,6 +22,8 @@
 			<LI><A HREF="#new($xmldom_element, %options)"><CODE>new($xmldom_element, %options)</CODE></A></LI>
 			<LI><A HREF="#get_td"><CODE>get_td</CODE></A></LI>
 			<LI><A HREF="#set_td(@votable_td)"><CODE>set_td(@votable_td)</CODE></A></LI>
+			<LI><A HREF="#as_array"><CODE>as_array</CODE></A></LI>
+			<LI><A HREF="#from_array(@values)"><CODE>from_array(@values)</CODE></A></LI>
 		</UL>
 
 		<LI><A HREF="#notes on class internals">Notes on class internals</A></LI>
@@ -73,6 +75,15 @@ of <CODE>VOTABLE::TD</CODE> objects. Any previously existing <CODE>TD</CODE> ele
 first removed. Return the input list on success, or an empty list if
 an error occurs.</P>
 <P>
+<H3><A NAME="as_array"><CODE>as_array</CODE></A></H3>
+<P>Return the contents of the <CODE>TD</CODE> elements for this <CODE>TR</CODE> element as an
+array of values. Return an empty list if an error occurs.</P>
+<P>
+<H3><A NAME="from_array(@values)"><CODE>from_array(@values)</CODE></A></H3>
+<P>Set the values of the <CODE>TD</CODE> element children of this <CODE>TR</CODE> element
+using the <CODE>@values</CODE> array. Return the list of new values added, or an
+enpty list if an error occurs.</P>
+<P>
 <H2><A NAME="notes on class internals">Notes on class internals</A></H2>
 <UL>
 <LI>
@@ -123,7 +134,7 @@ acceptable values, as defined in the DTD.
 <P>
 <HR>
 <H1><A NAME="version">VERSION</A></H1>
-<P>$Id: TR.pm,v 1.1.1.10 2002/05/21 14:14:07 elwinter Exp $</P>
+<P>$Id: TR.pm,v 1.1.1.14 2002/06/09 21:13:08 elwinter Exp $</P>
 
 </BODY>
 

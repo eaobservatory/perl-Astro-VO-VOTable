@@ -44,6 +44,23 @@ supplied list of C<VOTABLE::TR> objects. Any previously existing C<TR>
 elements are first removed. Return the input list on success, or an
 empty list if an error occurs.
 
+=head3 C<append_tr($votable_tr)>
+
+Append the specified C<TR> element to the end of the list of C<TR>
+elements for this C<TABLEDATA> element. Return the new C<TR> element
+on success, or C<undef> if an error occurs.
+
+=head3 C<get_row($rownum)>
+
+Return the contents of row C<$rownum> as a list. Return an empty list
+if an error occurs.
+
+=head3 C<set_row($rownum, @values)>
+
+Set the values of row C<$rownum> using the values in the array
+C<@values>. Return the new values on success, or an empty list if an
+error occurs.
+
 =head2 Notes on class internals
 
 =over 4
@@ -105,7 +122,7 @@ Eric Winter, NASA GSFC (elwinter@milkyway.gsfc.nasa.gov)
 
 =head1 VERSION
 
-$Id: TABLEDATA.pm,v 1.1.1.7 2002/05/21 14:13:34 elwinter Exp $
+$Id: TABLEDATA.pm,v 1.1.1.13 2002/06/09 21:13:08 elwinter Exp $
 
 =cut
 
@@ -114,6 +131,24 @@ $Id: TABLEDATA.pm,v 1.1.1.7 2002/05/21 14:13:34 elwinter Exp $
 # Revision history
 
 # $Log: TABLEDATA.pm,v $
+# Revision 1.1.1.13  2002/06/09  21:13:08  elwinter
+# Sert version to 0.03.
+#
+# Revision 1.1.1.12  2002/06/09  19:53:56  elwinter
+# Changed required Perl version to 5.6.1.
+#
+# Revision 1.1.1.11  2002/06/08  21:13:50  elwinter
+# Minor doc bug fix.
+#
+# Revision 1.1.1.10  2002/05/24  14:42:15  elwinter
+# Added set_row() method.
+#
+# Revision 1.1.1.9  2002/05/23  13:12:53  elwinter
+# Added get_row() method.
+#
+# Revision 1.1.1.8  2002/05/22  12:21:32  elwinter
+# Added append_tr() method.
+#
 # Revision 1.1.1.7  2002/05/21  14:13:34  elwinter
 # Incremented $VERSION to 0.02.
 #
@@ -139,7 +174,7 @@ $Id: TABLEDATA.pm,v 1.1.1.7 2002/05/21 14:13:34 elwinter Exp $
 package VOTABLE::TABLEDATA;
 
 # Specify the minimum acceptable Perl version.
-use 5.006;
+use 5.6.1;
 
 # Turn on strict syntax checking.
 use strict;
@@ -156,7 +191,7 @@ use warnings;
 our @ISA = qw();
 
 # Module version.
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 #------------------------------------------------------------------------------
 
@@ -358,6 +393,95 @@ sub new()
 
 #------------------------------------------------------------------------------
 
+# get_row()
+
+# Return the contents of row $rownum as a list, or an empty list if an
+# error occurs.
+
+sub get_row()
+{
+
+    # Save arguments.
+    my($this, $rownum) = @_;
+
+    #--------------------------------------------------------------------------
+
+    # Local variables.
+
+    # Array to hold TR elements.
+    my(@votable_tr);
+
+    # Array to hold row contents.
+    my(@row);
+
+    #--------------------------------------------------------------------------
+
+    # Fetch the list of TR elements for this element.
+    @votable_tr = $this->get_tr;
+    if (@votable_tr == 0) {
+	carp('No TR elements found!');
+	return(());
+    }
+
+    # Check that the desired TR exists.
+    if (not exists($votable_tr[$rownum])) {
+	carp("Row $rownum not found!");
+	return(());
+    }
+
+    # Convert the TR element to an array of values.
+    @row = $votable_tr[$rownum]->as_array;
+
+    # Return the row contents.
+    return(@row);
+
+}
+
+#------------------------------------------------------------------------------
+
+# set_row()
+
+# Set the contents of row $rownum using the array @values. Return the
+# new values on success, or an empty list if an error occurs.
+
+sub set_row()
+{
+
+    # Save arguments.
+    my($this, $rownum, @values) = @_;
+
+    #--------------------------------------------------------------------------
+
+    # Local variables.
+
+    # Array to hold TR elements.
+    my(@votable_tr);
+
+    #--------------------------------------------------------------------------
+
+    # Fetch the list of TR elements for this element.
+    @votable_tr = $this->get_tr;
+    if (@votable_tr == 0) {
+	carp('No TR elements found!');
+	return(());
+    }
+
+    # Check that the desired TR exists.
+    if (not exists($votable_tr[$rownum])) {
+	carp("Row $rownum not found!");
+	return(());
+    }
+
+    # Set the TR element with the array of values.
+    $votable_tr[$rownum]->from_array(@values);
+
+    # Return the row contents.
+    return(@values);
+
+}
+
+#------------------------------------------------------------------------------
+
 # Attribute accessor methods
 
 #------------------------------------------------------------------------------
@@ -442,6 +566,47 @@ sub set_tr()
 
     # Return the new objects.
     return($this->get_tr);
+
+}
+
+sub append_tr()
+{
+
+    # Save arguments.
+    my($this, $votable_tr) = @_;
+
+    #--------------------------------------------------------------------------
+
+    # Local variables.
+
+    # Reference to XML::DOM::Element object for this object.
+    my($xmldom_element_this);
+
+    # Reference to XML::DOM::Element object for the new TR.
+    my($xmldom_element_tr);
+
+    #--------------------------------------------------------------------------
+
+    # Link the objects at the VOTABLE level.
+    push(@{$this->{'TR'}}, $votable_tr);
+
+    #--------------------------------------------------------------------------
+
+    # Get a reference to the XML::DOM::Element object for this object.
+    $xmldom_element_this = $this->_get_XMLDOM;
+
+    # Get a reference to the XML::DOM::Element object for the new TR.
+    $xmldom_element_tr = $votable_tr->_get_XMLDOM;
+
+    # Attach the TR element to the current document.
+    $xmldom_element_tr->setOwnerDocument($xmldom_element_this->
+					 getOwnerDocument);
+
+    # Append the TR to the TABLEDATA.
+    $xmldom_element_this->appendChild($xmldom_element_tr);
+
+    # Return the new object.
+    return($votable_tr);
 
 }
 

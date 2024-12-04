@@ -154,7 +154,7 @@ Eric Winter, NASA GSFC (elwinter@milkyway.gsfc.nasa.gov)
 
 =head1 VERSION
 
-$Id: VOTABLE.pm,v 1.1.1.4 2002/05/21 14:07:09 elwinter Exp $
+$Id: VOTABLE.pm,v 1.1.1.5 2002/06/09 21:13:08 elwinter Exp $
 
 =cut
 
@@ -163,6 +163,9 @@ $Id: VOTABLE.pm,v 1.1.1.4 2002/05/21 14:07:09 elwinter Exp $
 # Revision history
 
 # $Log: VOTABLE.pm,v $
+# Revision 1.1.1.5  2002/06/09  21:13:08  elwinter
+# Sert version to 0.03.
+#
 # Revision 1.1.1.4  2002/05/21  14:07:09  elwinter
 # Incremented $VERSION to 0.02.
 #
@@ -196,7 +199,7 @@ use warnings;
 our @ISA = qw();
 
 # Module version.
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 #******************************************************************************
 

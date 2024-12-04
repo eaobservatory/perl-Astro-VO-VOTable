@@ -41,37 +41,64 @@ ok(test_set, 1);
 
 #########################
 
-# Supporting subroutines for testing.
+# Supporting subroutines for testing
 
 sub test_new()
 {
-    my($test_text) = 'This is a test.';
-    my($votable_description) = new VOTABLE::DESCRIPTION
+    my($votable_description);
+    my($test_str) = 'This is a test.';
+
+    $votable_description = new VOTABLE::DESCRIPTION
 	or return(0);
-    $votable_description = new VOTABLE::DESCRIPTION $test_text
+    $votable_description = new VOTABLE::DESCRIPTION $test_str
 	or return(0);
     $votable_description = new VOTABLE::DESCRIPTION
 	$factory->createElement('DESCRIPTION')
 	or return(0);
+
     return(1);
 }
 
 sub test_get()
 {
+    my($votable_description);
     my($test_text) = 'This is a test.';
-    my($votable_description) = new VOTABLE::DESCRIPTION $test_text
+    my($test_text2) = 'This is another test.';
+    my($textnode);
+
+    $votable_description = new VOTABLE::DESCRIPTION
+	or return(0);
+    not defined($votable_description->get)
+	or return(0);
+
+    $votable_description = new VOTABLE::DESCRIPTION $test_text
 	or return(0);
     $votable_description->get eq $test_text
 	or return(0);
+
+    $textnode = $factory->createTextNode($test_text2)
+	or return(0);
+    $textnode->setOwnerDocument($votable_description->
+				_get_XMLDOM->getOwnerDocument);
+    $votable_description->_get_XMLDOM->appendChild($textnode)
+	or return(0);
+    $votable_description->get eq ($test_text . $test_text2)
+	or return(0);
+
     return(1);
 }
 
 sub test_set()
 {
+    my($votable_description);
     my($test_text) = 'This is a test.';
-    my($votable_description) = new VOTABLE::DESCRIPTION
-	or return(0);
+
+    $votable_description = new VOTABLE::DESCRIPTION
+ 	or return(0);
     $votable_description->set($test_text) eq $test_text
-	or return(0);
+ 	or return(0);
+    not defined($votable_description->set(undef))
+ 	or return(0);
+
     return(1);
 }

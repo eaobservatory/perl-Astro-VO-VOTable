@@ -58,7 +58,8 @@
 <P>
 <HR>
 <H1><A NAME="synopsis">SYNOPSIS</A></H1>
-<P><CODE>use VOTABLE::LINK;</CODE></P>
+<PRE>
+ use VOTABLE::LINK;</PRE>
 <P>
 <HR>
 <H1><A NAME="description">DESCRIPTION</A></H1>
@@ -66,7 +67,7 @@
 DTD. This element is used to store traditional <CODE>HTTP</CODE> hyperlinks to
 supporting information (using the <CODE>href</CODE> attribute), or a more
 general-purpose link (using the <CODE>gref</CODE> attribute).</P>
-<P>The LINK element is a Tier 0 element, and is described by the
+<P>The <CODE>LINK</CODE> element is a Tier 0 element, and is described by the
 following excerpt from the <CODE>VOTABLE</CODE> 1.0 DTD:</P>
 <PRE>
  &lt;!ELEMENT LINK (#PCDATA)&gt;
@@ -86,7 +87,7 @@ following excerpt from the <CODE>VOTABLE</CODE> 1.0 DTD:</P>
 <H3><A NAME="new($str_or_ref, %options)"><CODE>new($str_or_ref, %options)</CODE></A></H3>
 <P>Create a new <CODE>VOTABLE::LINK</CODE> object, and return a reference to it. If
 the first argument (<CODE>$str_or_ref</CODE>) is a string, it is used as the
-initial <CODE>PCDATA</CODE> content of the <CODE>LINK</CODE> element. If the first
+initial <CODE>#PCDATA</CODE> content of the <CODE>LINK</CODE> element. If the first
 argument is a reference to a <CODE>XML::DOM::Element</CODE> object, that object
 is used to initialize the new <CODE>LINK</CODE> element (implicitly assuming
 that the <CODE>XML::DOM::Element</CODE> object contains a valid <CODE>LINK</CODE>
@@ -100,18 +101,20 @@ object. Return <CODE>undef</CODE> if an error occurs.</P>
 attribute has not been set, or an error occurs.</P>
 <P>
 <H3><A NAME="set_id($id)"><CODE>set_ID($id)</CODE></A></H3>
-<P>Set the value of the <CODE>ID</CODE> attribute to the specified value. Return
-the new value of the attribute on success, or <CODE>undef</CODE> if an error
-occurs.</P>
+<P>Set the value of the <CODE>ID</CODE> attribute to the specified value. Use
+<CODE>undef</CODE> as the argument to clear any existing value of the
+attribute. Return the new value of the attribute on success, or
+<CODE>undef</CODE> if an error occurs.</P>
 <P>
 <H3><A NAME="get_action"><CODE>get_action</CODE></A></H3>
 <P>Return the value of the <CODE>action</CODE> attribute. Return <CODE>undef</CODE> if the
 attribute has not been set, or an error occurs.</P>
 <P>
 <H3><A NAME="set_action($action)"><CODE>set_action($action)</CODE></A></H3>
-<P>Set the value of the <CODE>action</CODE> attribute to the specified
-value. Return the new value of the attribute on success, or <CODE>undef</CODE>
-if an error occurs.</P>
+<P>Set the value of the <CODE>action</CODE> attribute to the specified value. Use
+<CODE>undef</CODE> as the argument to clear any existing value of the
+attribute. Return the new value of the attribute on success, or
+<CODE>undef</CODE> if an error occurs.</P>
 <P>
 <H3><A NAME="get_content_role"><CODE>get_content_role</CODE></A></H3>
 <P>Return the value of the <CODE>content-role attribute</CODE>. Return <CODE>undef</CODE> if
@@ -119,8 +122,9 @@ the attribute has not been set, or an error occurs.</P>
 <P>
 <H3><A NAME="set_content_role($content_role)"><CODE>set_content_role($content_role)</CODE></A></H3>
 <P>Set the value of the <CODE>content-role</CODE> attribute to the specified
-value. Return the new value of the attribute on success, or <CODE>undef</CODE>
-if an error occurs.</P>
+value. Use <CODE>undef</CODE> as the argument to clear any existing value of the
+attribute. Return the new value of the attribute on success, or
+<CODE>undef</CODE> if an error occurs.</P>
 <P>
 <H3><A NAME="get_content_type"><CODE>get_content_type</CODE></A></H3>
 <P>Return the value of the <CODE>content-type</CODE> attribute. Return <CODE>undef</CODE> if
@@ -128,53 +132,60 @@ the attribute has not been set, or an error occurs.</P>
 <P>
 <H3><A NAME="set_content_type($content_type)"><CODE>set_content_type($content_type)</CODE></A></H3>
 <P>Set the value of the <CODE>content-type</CODE> attribute to the specified
-value. Return the new value of the attribute on success, or <CODE>undef</CODE>
-if an error occurs.</P>
+value. Use <CODE>undef</CODE> as the argument to clear any existing value of the
+attribute. Return the new value of the attribute on success, or
+<CODE>undef</CODE> if an error occurs.</P>
 <P>
 <H3><A NAME="get_gref"><CODE>get_gref</CODE></A></H3>
 <P>Return the value of the <CODE>gref</CODE> attribute. Return <CODE>undef</CODE> if the
 attribute has not been set, or an error occurs.</P>
 <P>
 <H3><A NAME="set_gref($gref)"><CODE>set_gref($gref)</CODE></A></H3>
-<P>Set the value of the <CODE>gref</CODE> attribute to the specified value. Return
-the new value of the attribute on success, or <CODE>undef</CODE> if an error
-occurs.</P>
+<P>Set the value of the <CODE>gref</CODE> attribute to the specified value. Use
+<CODE>undef</CODE> as the argument to clear any existing value of the
+attribute. Return the new value of the attribute on success, or
+<CODE>undef</CODE> if an error occurs.</P>
 <P>
 <H3><A NAME="get_href"><CODE>get_href</CODE></A></H3>
 <P>Return the value of the <CODE>href</CODE> attribute. Return <CODE>undef</CODE> if the
 attribute has not been set, or an error occurs.</P>
 <P>
 <H3><A NAME="set_href($href)"><CODE>set_href($href)</CODE></A></H3>
-<P>Set the value of the <CODE>href</CODE> attribute to the specified value. Return
-the new value of the attribute on success, or <CODE>undef</CODE> if an error
-occurs.</P>
+<P>Set the value of the <CODE>href</CODE> attribute to the specified value. Use
+<CODE>undef</CODE> as the argument to clear any existing value of the
+attribute. Return the new value of the attribute on success, or
+<CODE>undef</CODE> if an error occurs.</P>
 <P>
 <H3><A NAME="get_title"><CODE>get_title</CODE></A></H3>
 <P>Return the value of the <CODE>title</CODE> attribute. Return <CODE>undef</CODE> if the
 attribute has not been set, or an error occurs.</P>
 <P>
 <H3><A NAME="set_title($title)"><CODE>set_title($title)</CODE></A></H3>
-<P>Set the value of the <CODE>title</CODE> attribute to the specified value. Return
-the new value of the attribute on success, or <CODE>undef</CODE> if an error
-occurs.</P>
+<P>Set the value of the <CODE>title</CODE> attribute to the specified value. Use
+<CODE>undef</CODE> as the argument to clear any existing value of the
+attribute. Return the new value of the attribute on success, or
+<CODE>undef</CODE> if an error occurs.</P>
 <P>
 <H3><A NAME="get_value"><CODE>get_value</CODE></A></H3>
 <P>Return the value of the <CODE>value</CODE> attribute. Return <CODE>undef</CODE> if the
 attribute has not been set, or an error occurs.</P>
 <P>
 <H3><A NAME="set_value($value)"><CODE>set_value($value)</CODE></A></H3>
-<P>Set the value of the <CODE>value</CODE> attribute to the specified value. Return
-the new value of the attribute on success, or <CODE>undef</CODE> if an error
-occurs.</P>
+<P>Set the value of the <CODE>value</CODE> attribute to the specified value. Use
+<CODE>undef</CODE> as the argument to clear any existing value of the
+attribute. Return the new value of the attribute on success, or
+<CODE>undef</CODE> if an error occurs.</P>
 <P>
 <H3><A NAME="get"><CODE>get</CODE></A></H3>
-<P>Return a string containing the <CODE>PCDATA</CODE> content of the <CODE>LINK</CODE>
-element. Return <CODE>undef</CODE> if the element has no <CODE>PCDATA</CODE> content, or
+<P>Return a string containing the <CODE>#PCDATA</CODE> content of the <CODE>LINK</CODE>
+element. Return <CODE>undef</CODE> if the element has no <CODE>#PCDATA</CODE> content, or
 an error occurs.</P>
 <P>
 <H3><A NAME="set($str)"><CODE>set($str)</CODE></A></H3>
-<P>Set the <CODE>PCDATA</CODE> content of the <CODE>LINK</CODE> element to the specified
-string. Return the string on success, or <CODE>undef</CODE> if an error occurs.</P>
+<P>Set the <CODE>#PCDATA</CODE> content of the <CODE>LINK</CODE> element to the specified
+string. Use <CODE>undef</CODE> as the argument to clear any existing value of
+the text. Return the string on success, or <CODE>undef</CODE> if an error
+occurs.</P>
 <P>
 <H2><A NAME="notes on class internals">Notes on class internals</A></H2>
 <UL>
@@ -186,7 +197,8 @@ class hierarchy.
 <LI>
 The names of the <CODE>get_XXX</CODE> and <CODE>set_XXX</CODE> accessors for attributes
 and elements are derived directly from the names of the attributes or
-elements. Attribute and element names containing embedded hyphens
+elements, with the attribute or element name replacing
+<CODE>XXX</CODE>. Attribute and element names containing embedded hyphens
 ('<CODE>-</CODE>') use accessors where the hyphen is mapped to an underscore
 ('<CODE>_</CODE>') in the name of the accessor method. This is a necessity,
 since the hyphen is not a valid name character in Perl.
@@ -198,12 +210,11 @@ since the hyphen is not a valid name character in Perl.
 <LI>
 This code (perhaps unwisely) assumes that object internal structure is
 always maintained. For example, this code assumes that every
-<CODE>VOTABLE::LINK</CODE> object <EM>always</EM> has an underlying
-<CODE>XML::DOM::Element</CODE> object. As long as the internal structure is
-manipulated only by the publicly-available methods, this should be an
-adequate assumption. If a method detects an aberrant case, a warning
-message is printed (using the <CODE>Carp::carp</CODE> subroutine), and the
-method fails.
+<CODE>VOTABLE</CODE> object <EM>always</EM> has an underlying <CODE>XML::DOM::Element</CODE>
+object. As long as the internal structure is manipulated only by the
+publicly-available methods, this should be an safe assumption. If a
+method detects an aberrant case, a warning message is printed (using
+the <CODE>Carp::carp</CODE> subroutine), and the method fails.
 <P></P>
 <LI>
 Similarly, this code assumes that <CODE>XML::DOM</CODE> methods always
@@ -228,7 +239,7 @@ acceptable values, as defined in the DTD.
 <P>
 <HR>
 <H1><A NAME="version">VERSION</A></H1>
-<P>$Id: LINK.pm,v 1.1.1.7 2002/05/21 14:11:17 elwinter Exp $</P>
+<P>$Id: LINK.pm,v 1.1.1.9 2002/06/09 21:13:08 elwinter Exp $</P>
 
 </BODY>
 

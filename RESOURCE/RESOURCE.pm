@@ -225,7 +225,7 @@ Eric Winter, NASA GSFC (elwinter@milkyway.gsfc.nasa.gov)
 
 =head1 VERSION
 
-$Id: RESOURCE.pm,v 1.1.1.11 2002/05/21 14:12:47 elwinter Exp $
+$Id: RESOURCE.pm,v 1.1.1.14 2002/06/09 21:13:08 elwinter Exp $
 
 =cut
 
@@ -234,6 +234,15 @@ $Id: RESOURCE.pm,v 1.1.1.11 2002/05/21 14:12:47 elwinter Exp $
 # Revision history
 
 # $Log: RESOURCE.pm,v $
+# Revision 1.1.1.14  2002/06/09  21:13:08  elwinter
+# Sert version to 0.03.
+#
+# Revision 1.1.1.13  2002/06/09  19:52:55  elwinter
+# Changed required Perl version to 5.6.1.
+#
+# Revision 1.1.1.12  2002/06/08  20:56:40  elwinter
+# Fixed bugs in element insertion order.
+#
 # Revision 1.1.1.11  2002/05/21  14:12:47  elwinter
 # Incremented $VERSION to 0.02.
 #
@@ -268,7 +277,7 @@ $Id: RESOURCE.pm,v 1.1.1.11 2002/05/21 14:12:47 elwinter Exp $
 package VOTABLE::RESOURCE;
 
 # Specify the minimum acceptable Perl version.
-use 5.006;
+use 5.6.1;
 
 # Turn on strict syntax checking.
 use strict;
@@ -285,7 +294,7 @@ use warnings;
 our @ISA = qw();
 
 # Module version.
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 #------------------------------------------------------------------------------
 
@@ -702,7 +711,7 @@ sub set_info()
 	    # insert the INFO elements right after it. Otherwise,
 	    # append the INFO elements.
 	    if ($xmldom_elements[0] ne $xmldom_element_this->getLastChild) {
-		foreach $votable_info (@votable_info) {
+		foreach $votable_info (reverse(@votable_info)) {
 		    $xmldom_element_info = $votable_info->_get_XMLDOM;
 		    $xmldom_element_this->
 			insertBefore($xmldom_element_info,
@@ -719,7 +728,7 @@ sub set_info()
 
 	    # No DESCRIPTION element found, so insert the INFO
 	    # elements as the first children.
-	    foreach $votable_info (@votable_info) {
+	    foreach $votable_info (reverse(@votable_info)) {
 		$xmldom_element_info = $votable_info->_get_XMLDOM;
 		$xmldom_element_this->
 		    insertBefore($xmldom_element_info,
@@ -821,7 +830,7 @@ sub set_coosys()
 	    # the COOSYS elements right after it. Otherwise, append
 	    # the COOSYS elements.
 	    if ($xmldom_elements[-1] ne $xmldom_element_this->getLastChild) {
-		foreach $votable_coosys (@votable_coosys) {
+		foreach $votable_coosys (reverse(@votable_coosys)) {
 		    $xmldom_element_coosys = $votable_coosys->_get_XMLDOM;
 		    $xmldom_element_this->
 			insertBefore($xmldom_element_coosys,
@@ -841,7 +850,7 @@ sub set_coosys()
 	    # insert the COOSYS elements right after it. Otherwise,
 	    # append the COOSYS elements.
 	    if ($xmldom_elements[0] ne $xmldom_element_this->getLastChild) {
-		foreach $votable_coosys (@votable_coosys) {
+		foreach $votable_coosys (reverse(@votable_coosys)) {
 		    $xmldom_element_coosys = $votable_coosys->_get_XMLDOM;
 		    $xmldom_element_this->
 			insertBefore($xmldom_element_coosys,
@@ -858,7 +867,7 @@ sub set_coosys()
 
 	    # No DESCRIPTION element found, so insert the COOSYS
 	    # elements as the first children.
-	    foreach $votable_coosys (@votable_coosys) {
+	    foreach $votable_coosys (reverse(@votable_coosys)) {
 		$xmldom_element_coosys = $votable_coosys->_get_XMLDOM;
 		$xmldom_element_this->
 		    insertBefore($xmldom_element_coosys,
@@ -960,7 +969,7 @@ sub set_param()
 	    # the PARAM elements right after it. Otherwise, append
 	    # the PARAM elements.
 	    if ($xmldom_elements[-1] ne $xmldom_element_this->getLastChild) {
-		foreach $votable_param (@votable_param) {
+		foreach $votable_param (reverse(@votable_param)) {
 		    $xmldom_element_param = $votable_param->_get_XMLDOM;
 		    $xmldom_element_this->
 			insertBefore($xmldom_element_param,
@@ -980,7 +989,7 @@ sub set_param()
 	    # the PARAM elements right after it. Otherwise, append
 	    # the PARAM elements.
 	    if ($xmldom_elements[-1] ne $xmldom_element_this->getLastChild) {
-		foreach $votable_param (@votable_param) {
+		foreach $votable_param (reverse(@votable_param)) {
 		    $xmldom_element_param = $votable_param->_get_XMLDOM;
 		    $xmldom_element_this->
 			insertBefore($xmldom_element_param,
@@ -1000,7 +1009,7 @@ sub set_param()
 	    # insert the PARAM elements right after it. Otherwise,
 	    # append the PARAM elements.
 	    if ($xmldom_elements[0] ne $xmldom_element_this->getLastChild) {
-		foreach $votable_param (@votable_param) {
+		foreach $votable_param (reverse(@votable_param)) {
 		    $xmldom_element_param = $votable_param->_get_XMLDOM;
 		    $xmldom_element_this->
 			insertBefore($xmldom_element_param,
@@ -1017,7 +1026,7 @@ sub set_param()
 
 	    # No DESCRIPTION element found, so insert the PARAM
 	    # elements as the first children.
-	    foreach $votable_param (@votable_param) {
+	    foreach $votable_param (reverse(@votable_param)) {
 		$xmldom_element_param = $votable_param->_get_XMLDOM;
 		$xmldom_element_this->
 		    insertBefore($xmldom_element_param,
@@ -1120,7 +1129,7 @@ sub set_link()
 	    # the LINK elements right after it. Otherwise, append
 	    # the LINK elements.
 	    if ($xmldom_elements[-1] ne $xmldom_element_this->getLastChild) {
-		foreach $votable_link (@votable_link) {
+		foreach $votable_link (reverse(@votable_link)) {
 		    $xmldom_element_link = $votable_link->_get_XMLDOM;
 		    $xmldom_element_this->
 			insertBefore($xmldom_element_link,
@@ -1140,7 +1149,7 @@ sub set_link()
 	    # the LINK elements right after it. Otherwise, append
 	    # the LINK elements.
 	    if ($xmldom_elements[-1] ne $xmldom_element_this->getLastChild) {
-		foreach $votable_link (@votable_link) {
+		foreach $votable_link (reverse(@votable_link)) {
 		    $xmldom_element_link = $votable_link->_get_XMLDOM;
 		    $xmldom_element_this->
 			insertBefore($xmldom_element_link,
@@ -1160,7 +1169,7 @@ sub set_link()
 	    # the LINK elements right after it. Otherwise, append
 	    # the LINK elements.
 	    if ($xmldom_elements[-1] ne $xmldom_element_this->getLastChild) {
-		foreach $votable_link (@votable_link) {
+		foreach $votable_link (reverse(@votable_link)) {
 		    $xmldom_element_link = $votable_link->_get_XMLDOM;
 		    $xmldom_element_this->
 			insertBefore($xmldom_element_link,
@@ -1180,7 +1189,7 @@ sub set_link()
 	    # insert the LINK elements right after it. Otherwise,
 	    # append the LINK elements.
 	    if ($xmldom_elements[0] ne $xmldom_element_this->getLastChild) {
-		foreach $votable_link (@votable_link) {
+		foreach $votable_link (reverse(@votable_link)) {
 		    $xmldom_element_link = $votable_link->_get_XMLDOM;
 		    $xmldom_element_this->
 			insertBefore($xmldom_element_link,
@@ -1197,7 +1206,7 @@ sub set_link()
 
 	    # No DESCRIPTION element found, so insert the LINK
 	    # elements as the first children.
-	    foreach $votable_link (@votable_link) {
+	    foreach $votable_link (reverse(@votable_link)) {
 		$xmldom_element_link = $votable_link->_get_XMLDOM;
 		$xmldom_element_this->
 		    insertBefore($xmldom_element_link,
@@ -1300,7 +1309,7 @@ sub set_table()
 	    # the TABLE elements right after it. Otherwise, append
 	    # the TABLE elements.
 	    if ($xmldom_elements[-1] ne $xmldom_element_this->getLastChild) {
-		foreach $votable_table (@votable_table) {
+		foreach $votable_table (reverse(@votable_table)) {
 		    $xmldom_element_table = $votable_table->_get_XMLDOM;
 		    $xmldom_element_this->
 			insertBefore($xmldom_element_table,
@@ -1320,7 +1329,7 @@ sub set_table()
 	    # the TABLE elements right after it. Otherwise, append
 	    # the TABLE elements.
 	    if ($xmldom_elements[-1] ne $xmldom_element_this->getLastChild) {
-		foreach $votable_table (@votable_table) {
+		foreach $votable_table (reverse(@votable_table)) {
 		    $xmldom_element_table = $votable_table->_get_XMLDOM;
 		    $xmldom_element_this->
 			insertBefore($xmldom_element_table,
@@ -1340,7 +1349,7 @@ sub set_table()
 	    # the TABLE elements right after it. Otherwise, append
 	    # the TABLE elements.
 	    if ($xmldom_elements[-1] ne $xmldom_element_this->getLastChild) {
-		foreach $votable_table (@votable_table) {
+		foreach $votable_table (reverse(@votable_table)) {
 		    $xmldom_element_table = $votable_table->_get_XMLDOM;
 		    $xmldom_element_this->
 			insertBefore($xmldom_element_table,
@@ -1360,7 +1369,7 @@ sub set_table()
 	    # the TABLE elements right after it. Otherwise, append
 	    # the TABLE elements.
 	    if ($xmldom_elements[-1] ne $xmldom_element_this->getLastChild) {
-		foreach $votable_table (@votable_table) {
+		foreach $votable_table (reverse(@votable_table)) {
 		    $xmldom_element_table = $votable_table->_get_XMLDOM;
 		    $xmldom_element_this->
 			insertBefore($xmldom_element_table,
@@ -1380,7 +1389,7 @@ sub set_table()
 	    # insert the TABLE elements right after it. Otherwise,
 	    # append the TABLE elements.
 	    if ($xmldom_elements[0] ne $xmldom_element_this->getLastChild) {
-		foreach $votable_table (@votable_table) {
+		foreach $votable_table (reverse(@votable_table)) {
 		    $xmldom_element_table = $votable_table->_get_XMLDOM;
 		    $xmldom_element_this->
 			insertBefore($xmldom_element_table,
@@ -1397,7 +1406,7 @@ sub set_table()
 
 	    # No DESCRIPTION element found, so insert the TABLE
 	    # elements as the first children.
-	    foreach $votable_table (@votable_table) {
+	    foreach $votable_table (reverse(@votable_table)) {
 		$xmldom_element_table = $votable_table->_get_XMLDOM;
 		$xmldom_element_this->
 		    insertBefore($xmldom_element_table,
@@ -1500,7 +1509,7 @@ sub set_resource()
 	    # the RESOURCE elements right after it. Otherwise, append
 	    # the RESOURCE elements.
 	    if ($xmldom_elements[-1] ne $xmldom_element_this->getLastChild) {
-		foreach $votable_resource (@votable_resource) {
+		foreach $votable_resource (reverse(@votable_resource)) {
 		    $xmldom_element_resource = $votable_resource->_get_XMLDOM;
 		    $xmldom_element_this->
 			insertBefore($xmldom_element_resource,
@@ -1521,7 +1530,7 @@ sub set_resource()
 	    # the RESOURCE elements right after it. Otherwise, append
 	    # the RESOURCE elements.
 	    if ($xmldom_elements[-1] ne $xmldom_element_this->getLastChild) {
-		foreach $votable_resource (@votable_resource) {
+		foreach $votable_resource (reverse(@votable_resource)) {
 		    $xmldom_element_resource = $votable_resource->_get_XMLDOM;
 		    $xmldom_element_this->
 			insertBefore($xmldom_element_resource,
@@ -1542,7 +1551,7 @@ sub set_resource()
 	    # the RESOURCE elements right after it. Otherwise, append
 	    # the RESOURCE elements.
 	    if ($xmldom_elements[-1] ne $xmldom_element_this->getLastChild) {
-		foreach $votable_resource (@votable_resource) {
+		foreach $votable_resource (reverse(@votable_resource)) {
 		    $xmldom_element_resource = $votable_resource->_get_XMLDOM;
 		    $xmldom_element_this->
 			insertBefore($xmldom_element_resource,
@@ -1563,7 +1572,7 @@ sub set_resource()
 	    # the RESOURCE elements right after it. Otherwise, append
 	    # the RESOURCE elements.
 	    if ($xmldom_elements[-1] ne $xmldom_element_this->getLastChild) {
-		foreach $votable_resource (@votable_resource) {
+		foreach $votable_resource (reverse(@votable_resource)) {
 		    $xmldom_element_resource = $votable_resource->_get_XMLDOM;
 		    $xmldom_element_this->
 			insertBefore($xmldom_element_resource,
@@ -1584,7 +1593,7 @@ sub set_resource()
 	    # the RESOURCE elements right after it. Otherwise, append
 	    # the RESOURCE elements.
 	    if ($xmldom_elements[-1] ne $xmldom_element_this->getLastChild) {
-		foreach $votable_resource (@votable_resource) {
+		foreach $votable_resource (reverse(@votable_resource)) {
 		    $xmldom_element_resource = $votable_resource->_get_XMLDOM;
 		    $xmldom_element_this->
 			insertBefore($xmldom_element_resource,
@@ -1605,7 +1614,7 @@ sub set_resource()
 	    # insert the RESOURCE elements right after it. Otherwise,
 	    # append the RESOURCE elements.
 	    if ($xmldom_elements[0] ne $xmldom_element_this->getLastChild) {
-		foreach $votable_resource (@votable_resource) {
+		foreach $votable_resource (reverse(@votable_resource)) {
 		    $xmldom_element_resource = $votable_resource->_get_XMLDOM;
 		    $xmldom_element_this->
 			insertBefore($xmldom_element_resource,
@@ -1623,7 +1632,7 @@ sub set_resource()
 
 	    # No DESCRIPTION element found, so insert the RESOURCE
 	    # elements as the first children.
-	    foreach $votable_resource (@votable_resource) {
+	    foreach $votable_resource (reverse(@votable_resource)) {
 		$xmldom_element_resource = $votable_resource->_get_XMLDOM;
 		$xmldom_element_this->
 		    insertBefore($xmldom_element_resource,

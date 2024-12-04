@@ -46,12 +46,13 @@
 <P>
 <HR>
 <H1><A NAME="synopsis">SYNOPSIS</A></H1>
-<P><CODE>use VOTABLE::MIN;</CODE></P>
+<PRE>
+ use VOTABLE::MIN;</PRE>
 <P>
 <HR>
 <H1><A NAME="description">DESCRIPTION</A></H1>
 <P>This class implements the <CODE>MIN</CODE> element from the <CODE>VOTABLE</CODE> DTD. This
-element is used to store minimum values for a numeric quantity.</P>
+element is used to store a minimum value for a numeric quantity.</P>
 <P>The <CODE>MIN</CODE> element is a Tier 0 element, and is described by the
 following excerpt from the <CODE>VOTABLE</CODE> 1.0 DTD:</P>
 <PRE>
@@ -66,10 +67,10 @@ following excerpt from the <CODE>VOTABLE</CODE> 1.0 DTD:</P>
 <H3><A NAME="new($str_or_ref, %options)"><CODE>new($str_or_ref, %options)</CODE></A></H3>
 <P>Create a new <CODE>VOTABLE::MIN</CODE> object, and return a reference to it. If
 the first argument (<CODE>$str_or_ref</CODE>) is a string, it is used as the
-initial <CODE>PCDATA</CODE> content of the <CODE>MIN</CODE> element. If the first argument
-is a reference to a <CODE>XML::DOM::Element</CODE> object, that object is used
-to initialize the new <CODE>MIN</CODE> element (implicitly assuming that the
-<CODE>XML::DOM::Element</CODE> object contains a valid <CODE>MIN</CODE> element). The
+initial <CODE>#PCDATA</CODE> content of the <CODE>MIN</CODE> element. If the first
+argument is a reference to a <CODE>XML::DOM::Element</CODE> object, that object
+is used to initialize the new <CODE>MIN</CODE> element (implicitly assuming that
+the <CODE>XML::DOM::Element</CODE> object contains a valid <CODE>MIN</CODE> element). The
 <CODE>%options</CODE> hash is used to set the attributes of the new element. If
 the first argument is missing or undefined, or an empty string, create
 and return an empty <CODE>VOTABLE::MIN</CODE> object. Return <CODE>undef</CODE> if an
@@ -81,26 +82,31 @@ attribute has not been set, or an error occurs.</P>
 <P>
 <H3><A NAME="set_inclusive($inclusive)"><CODE>set_inclusive($inclusive)</CODE></A></H3>
 <P>Set the value of the <CODE>inclusive</CODE> attribute to the specified
-value. Return the new value of the attribute on success, or <CODE>undef</CODE>
-if an error occurs.</P>
+value. The new value is checked for correctness against the list of
+allowed values. Use <CODE>undef</CODE> as the argument to clear any existing
+value of the attribute. Return the new value of the attribute on
+success, or <CODE>undef</CODE> if an error occurs.</P>
 <P>
 <H3><A NAME="get_value"><CODE>get_value</CODE></A></H3>
 <P>Return the value of the <CODE>value</CODE> attribute. Return <CODE>undef</CODE> if the
 attribute has not been set, or an error occurs.</P>
 <P>
 <H3><A NAME="set_value($value)"><CODE>set_value($value)</CODE></A></H3>
-<P>Set the value of the <CODE>value</CODE> attribute to the specified value. Return
-the new value of the attribute on success, or <CODE>undef</CODE> if an error
-occurs.</P>
+<P>Set the value of the <CODE>value</CODE> attribute to the specified value. Use
+<CODE>undef</CODE> as the argument to clear any existing value of the
+attribute. Return the new value of the attribute on success, or
+<CODE>undef</CODE> if an error occurs.</P>
 <P>
 <H3><A NAME="get"><CODE>get</CODE></A></H3>
-<P>Return a string containing the <CODE>PCDATA</CODE> content of the <CODE>MIN</CODE>
-element. Return <CODE>undef</CODE> if the element has no <CODE>PCDATA</CODE> content, or
+<P>Return a string containing the <CODE>#PCDATA</CODE> content of the <CODE>MAX</CODE>
+element. Return <CODE>undef</CODE> if the element has no <CODE>#PCDATA</CODE> content, or
 an error occurs.</P>
 <P>
 <H3><A NAME="set($str)"><CODE>set($str)</CODE></A></H3>
-<P>Set the <CODE>PCDATA</CODE> content of the <CODE>MIN</CODE> element to the specified
-string. Return the string on success, or <CODE>undef</CODE> if an error occurs.</P>
+<P>Set the <CODE>#PCDATA</CODE> content of the <CODE>MAX</CODE> element to the specified
+string. Use <CODE>undef</CODE> as the argument to clear any existing value of
+the text. Return the string on success, or <CODE>undef</CODE> if an error
+occurs.</P>
 <P>
 <H2><A NAME="notes on class internals">Notes on class internals</A></H2>
 <UL>
@@ -112,7 +118,8 @@ class hierarchy.
 <LI>
 The names of the <CODE>get_XXX</CODE> and <CODE>set_XXX</CODE> accessors for attributes
 and elements are derived directly from the names of the attributes or
-elements. Attribute and element names containing embedded hyphens
+elements, with the attribute or element name replacing
+<CODE>XXX</CODE>. Attribute and element names containing embedded hyphens
 ('<CODE>-</CODE>') use accessors where the hyphen is mapped to an underscore
 ('<CODE>_</CODE>') in the name of the accessor method. This is a necessity,
 since the hyphen is not a valid name character in Perl.
@@ -124,12 +131,11 @@ since the hyphen is not a valid name character in Perl.
 <LI>
 This code (perhaps unwisely) assumes that object internal structure is
 always maintained. For example, this code assumes that every
-<CODE>VOTABLE::MIN</CODE> object <EM>always</EM> has an underlying
-<CODE>XML::DOM::Element</CODE> object. As long as the internal structure is
-manipulated only by the publicly-available methods, this should be an
-adequate assumption. If a method detects an aberrant case, a warning
-message is printed (using the <CODE>Carp::carp</CODE> subroutine), and the
-method fails.
+<CODE>VOTABLE</CODE> object <EM>always</EM> has an underlying <CODE>XML::DOM::Element</CODE>
+object. As long as the internal structure is manipulated only by the
+publicly-available methods, this should be an adequate assumption. If
+a method detects an aberrant case, a warning message is printed (using
+the <CODE>Carp::carp</CODE> subroutine), and the method fails.
 <P></P>
 <LI>
 Similarly, this code assumes that <CODE>XML::DOM</CODE> methods always
@@ -153,7 +159,7 @@ acceptable values, as defined in the DTD.
 <P>
 <HR>
 <H1><A NAME="version">VERSION</A></H1>
-<P>$Id: MIN.pm,v 1.1.1.8 2002/05/21 14:11:48 elwinter Exp $</P>
+<P>$Id: MIN.pm,v 1.1.1.10 2002/06/09 21:13:08 elwinter Exp $</P>
 
 </BODY>
 

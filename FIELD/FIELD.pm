@@ -255,7 +255,7 @@ Eric Winter, NASA GSFC (elwinter@milkyway.gsfc.nasa.gov)
 
 =head1 VERSION
 
-$Id: FIELD.pm,v 1.1.1.8 2002/05/21 14:10:33 elwinter Exp $
+$Id: FIELD.pm,v 1.1.1.11 2002/06/09 21:13:08 elwinter Exp $
 
 =cut
 
@@ -264,6 +264,15 @@ $Id: FIELD.pm,v 1.1.1.8 2002/05/21 14:10:33 elwinter Exp $
 # Revision history
 
 # $Log: FIELD.pm,v $
+# Revision 1.1.1.11  2002/06/09  21:13:08  elwinter
+# Sert version to 0.03.
+#
+# Revision 1.1.1.10  2002/06/09  19:57:26  elwinter
+# Changed required Perl version to 5.6.1.
+#
+# Revision 1.1.1.9  2002/06/08  20:44:14  elwinter
+# Fixed bug in element insertion order.
+#
 # Revision 1.1.1.8  2002/05/21  14:10:33  elwinter
 # Incremented $VERSION to 0.02.
 #
@@ -289,7 +298,7 @@ $Id: FIELD.pm,v 1.1.1.8 2002/05/21 14:10:33 elwinter Exp $
 package VOTABLE::FIELD;
 
 # Specify the minimum acceptable Perl version.
-use 5.006;
+use 5.6.1;
 
 # Turn on strict syntax checking.
 use strict;
@@ -306,7 +315,7 @@ use warnings;
 our @ISA = qw();
 
 # Module version.
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 #------------------------------------------------------------------------------
 
@@ -821,7 +830,7 @@ sub set_values()
  	    # insert the VALUES elements right after it. Otherwise,
  	    # append the VALUES elements.
  	    if ($xmldom_elements[0] ne $xmldom_element_this->getLastChild) {
- 		foreach $votable_values (@votable_values) {
+ 		foreach $votable_values (reverse(@votable_values)) {
  		    $xmldom_element_values = $votable_values->_get_XMLDOM;
  		    $xmldom_element_this->
  			insertBefore($xmldom_element_values,
@@ -839,7 +848,7 @@ sub set_values()
 
  	    # No DESCRIPTION element found, so insert the VALUES
  	    # elements as the first children.
- 	    foreach $votable_values (@votable_values) {
+ 	    foreach $votable_values (reverse(@votable_values)) {
  		$xmldom_element_values = $votable_values->_get_XMLDOM;
  		$xmldom_element_this->
  		    insertBefore($xmldom_element_values,

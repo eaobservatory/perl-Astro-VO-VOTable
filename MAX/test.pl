@@ -49,78 +49,132 @@ ok(test_set(), 1);
 
 #########################
 
-# Supporting subroutines for testing.
+# Supporting subroutines for testing
 
 sub test_new()
 {
-    my($test_text) = '100';
-    my($votable_max) = new VOTABLE::MAX
+    my($votable_max);
+    my($test_max) = '100';
+    my($test_inclusive) = 'no';
+
+    $votable_max = new VOTABLE::MAX
 	or return(0);
-    $votable_max = new VOTABLE::MAX $test_text
+    $votable_max = new VOTABLE::MAX $test_max
 	or return(0);
-    $votable_max = new VOTABLE::MAX $test_text, inclusive => 'no'
+    $votable_max = new VOTABLE::MAX $test_max, inclusive => $test_inclusive
 	or return(0);
     $votable_max = new VOTABLE::MAX $factory->createElement('MAX')
 	or return(0);
+
     return(1);
 }
 
 sub test_get_inclusive()
 {
+    my($votable_max);
     my($test_inclusive) = 'no';
-    my($votable_max) = new VOTABLE::MAX '', inclusive => $test_inclusive
+
+    $votable_max = new VOTABLE::MAX
+	or return(0);
+    not defined($votable_max->get_inclusive)
+	or return(0);
+
+    $votable_max = new VOTABLE::MAX '', inclusive => $test_inclusive
 	or return(0);
     $votable_max->get_inclusive eq $test_inclusive
 	or return(0);
+
     return(1);
 }
 
 sub test_set_inclusive()
 {
+    my($votable_max);
     my($test_inclusive) = 'no';
-    my($votable_max) = new VOTABLE::MAX
+
+    $votable_max = new VOTABLE::MAX
 	or return(0);
     $votable_max->set_inclusive($test_inclusive) eq $test_inclusive
 	or return(0);
+    not defined($votable_max->set_inclusive(undef))
+	or return(0);
+
     return(1);
 }
 
 sub test_get_value()
 {
+    my($votable_max);
     my($test_value) = '100';
-    my($votable_max) = new VOTABLE::MAX '', value => $test_value
+
+    $votable_max = new VOTABLE::MAX
+	or return(0);
+    not defined($votable_max->get_value)
+	or return(0);
+
+    $votable_max = new VOTABLE::MAX '', value => $test_value
 	or return(0);
     $votable_max->get_value eq $test_value
 	or return(0);
+
     return(1);
 }
 
 sub test_set_value()
 {
+    my($votable_max);
     my($test_value) = '100';
-    my($votable_max) = new VOTABLE::MAX
+
+    $votable_max = new VOTABLE::MAX
 	or return(0);
     $votable_max->set_value($test_value) eq $test_value
 	or return(0);
+    not defined($votable_max->set_value(undef))
+	or return(0);
+
     return(1);
 }
 
 sub test_get()
 {
+    my($votable_max);
     my($test_text) = 'This is a test.';
-    my($this) = new VOTABLE::MAX $test_text
+    my($test_text2) = 'This is another test.';
+    my($textnode);
+
+    $votable_max = new VOTABLE::MAX
 	or return(0);
-    $this->get eq $test_text
+    not defined($votable_max->get)
 	or return(0);
+
+    $votable_max = new VOTABLE::MAX $test_text
+	or return(0);
+    $votable_max->get eq $test_text
+	or return(0);
+
+    $textnode = $factory->createTextNode($test_text2)
+	or return(0);
+    $textnode->setOwnerDocument($votable_max->
+				_get_XMLDOM->getOwnerDocument);
+    $votable_max->_get_XMLDOM->appendChild($textnode)
+	or return(0);
+    $votable_max->get eq ($test_text . $test_text2)
+	or return(0);
+
     return(1);
 }
 
 sub test_set()
 {
+    my($votable_max);
     my($test_text) = 'This is a test.';
-    my($this) = new VOTABLE::MAX ''
-	or return(0);
-    $this->set($test_text) eq $test_text
-	or return(0);
+
+    $votable_max = new VOTABLE::MAX
+ 	or return(0);
+    $votable_max->set($test_text) eq $test_text
+ 	or return(0);
+    not defined($votable_max->set(undef))
+ 	or return(0);
+
     return(1);
 }

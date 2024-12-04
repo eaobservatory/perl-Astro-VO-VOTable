@@ -1,6 +1,0 @@
-Revision history for Perl extension VOTABLE::DEFINITIONS.
-
-0.01  Sat Apr 27 11:46:20 2002
-	- original version; created by h2xs 1.21 with options
-		-APXf -n VOTABLE::DEFINITIONS
-

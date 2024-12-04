@@ -22,6 +22,9 @@
 			<LI><A HREF="#new($xmldom_element, %options)"><CODE>new($xmldom_element, %options)</CODE></A></LI>
 			<LI><A HREF="#get_tr"><CODE>get_tr</CODE></A></LI>
 			<LI><A HREF="#set_tr(@votable_tr)"><CODE>set_tr(@votable_tr)</CODE></A></LI>
+			<LI><A HREF="#append_tr($votable_tr)"><CODE>append_tr($votable_tr)</CODE></A></LI>
+			<LI><A HREF="#get_row($rownum)"><CODE>get_row($rownum)</CODE></A></LI>
+			<LI><A HREF="#set_row($rownum, @values)"><CODE>set_row($rownum, @values)</CODE></A></LI>
 		</UL>
 
 		<LI><A HREF="#notes on class internals">Notes on class internals</A></LI>
@@ -74,6 +77,20 @@ supplied list of <CODE>VOTABLE::TR</CODE> objects. Any previously existing <CODE
 elements are first removed. Return the input list on success, or an
 empty list if an error occurs.</P>
 <P>
+<H3><A NAME="append_tr($votable_tr)"><CODE>append_tr($votable_tr)</CODE></A></H3>
+<P>Append the specified <CODE>TR</CODE> element to the end of the list of <CODE>TR</CODE>
+elements for this <CODE>TABLEDATA</CODE> element. Return the new <CODE>TR</CODE> element
+on success, or <CODE>undef</CODE> if an error occurs.</P>
+<P>
+<H3><A NAME="get_row($rownum)"><CODE>get_row($rownum)</CODE></A></H3>
+<P>Return the contents of row <CODE>$rownum</CODE> as a list. Return an empty list
+if an error occurs.</P>
+<P>
+<H3><A NAME="set_row($rownum, @values)"><CODE>set_row($rownum, @values)</CODE></A></H3>
+<P>Set the values of row <CODE>$rownum</CODE> using the values in the array
+<CODE>@values</CODE>. Return the new values on success, or an empty list if an
+error occurs.</P>
+<P>
 <H2><A NAME="notes on class internals">Notes on class internals</A></H2>
 <UL>
 <LI>
@@ -125,7 +142,7 @@ acceptable values, as defined in the DTD.
 <P>
 <HR>
 <H1><A NAME="version">VERSION</A></H1>
-<P>$Id: TABLEDATA.pm,v 1.1.1.7 2002/05/21 14:13:34 elwinter Exp $</P>
+<P>$Id: TABLEDATA.pm,v 1.1.1.13 2002/06/09 21:13:08 elwinter Exp $</P>
 
 </BODY>
 

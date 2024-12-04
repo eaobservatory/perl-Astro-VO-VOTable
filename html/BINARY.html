@@ -22,6 +22,8 @@
 			<LI><A HREF="#new($xmldom_element, %options)"><CODE>new($xmldom_element, %options)</CODE></A></LI>
 			<LI><A HREF="#get_stream"><CODE>get_stream</CODE></A></LI>
 			<LI><A HREF="#set_stream($votable_stream)"><CODE>set_stream($votable_stream)</CODE></A></LI>
+			<LI><A HREF="#get_content($offset, $length)"><CODE>get_content($offset, $length)</CODE></A></LI>
+			<LI><A HREF="#set_content($bytes, $offset, $length)"><CODE>set_content($bytes, $offset, $length)</CODE></A></LI>
 		</UL>
 
 		<LI><A HREF="#notes on class internals">Notes on class internals</A></LI>
@@ -42,7 +44,8 @@
 <P>
 <HR>
 <H1><A NAME="synopsis">SYNOPSIS</A></H1>
-<P><CODE>use VOTABLE::BINARY</CODE>;</P>
+<PRE>
+ use VOTABLE::BINARY;</PRE>
 <P>
 <HR>
 <H1><A NAME="description">DESCRIPTION</A></H1>
@@ -72,6 +75,26 @@ is the child of this <CODE>BINARY</CODE> element. Return <CODE>undef</CODE> if n
 supplied <CODE>VOTABLE::STREAM</CODE> object. Return the <CODE>VOTABLE::STREAM</CODE>
 object on success, or <CODE>undef</CODE> if an error occurs.</P>
 <P>
+<H3><A NAME="get_content($offset, $length)"><CODE>get_content($offset, $length)</CODE></A></H3>
+<P>Return a portion of the content string starting at <CODE>$offset</CODE> bytes
+and continuing for <CODE>$length</CODE> bytes. If <CODE>$offset</CODE> and <CODE>$length</CODE> are
+not specified, return the entire content as a single byte string. If
+<CODE>$offset</CODE> is specified but <CODE>$length</CODE> is not, return the content from
+<CODE>$offset</CODE> to the end of the string. Otherwise, the <CODE>$offset</CODE> and
+<CODE>$length</CODE> arguments are treated the same as the corresponding
+arguments to the <CODE>substr</CODE> subroutine. Return the content as a string,
+or <CODE>undef</CODE> if an error occurs.</P>
+<P>
+<H3><A NAME="set_content($bytes, $offset, $length)"><CODE>set_content($bytes, $offset, $length)</CODE></A></H3>
+<P>Set the specified portion of the content, starting at <CODE>$offset</CODE> and
+continuing for <CODE>$length</CODE> bytes, to the specified byte string. If
+<CODE>$offset</CODE> and <CODE>$length</CODE> are not specified, the current content is
+replaced by the specified byte string. If <CODE>$offset</CODE> is specified but
+<CODE>$length</CODE> is not specified, <CODE>$length</CODE> defaults to the length of
+<CODE>$bytes</CODE>. Otherwise, <CODE>$offset</CODE> and <CODE>$length</CODE> behave as the
+corresponding arguments to <CODE>substr</CODE>. Return the new string on
+success, or <CODE>undef</CODE> on error.</P>
+<P>
 <H2><A NAME="notes on class internals">Notes on class internals</A></H2>
 <UL>
 <LI>
@@ -82,7 +105,8 @@ class hierarchy.
 <LI>
 The names of the <CODE>get_XXX</CODE> and <CODE>set_XXX</CODE> accessors for attributes
 and elements are derived directly from the names of the attributes or
-elements. Attribute and element names containing embedded hyphens
+elements, with the attribute or element name replacing
+<CODE>XXX</CODE>. Attribute and element names containing embedded hyphens
 ('<CODE>-</CODE>') use accessors where the hyphen is mapped to an underscore
 ('<CODE>_</CODE>') in the name of the accessor method. This is a necessity,
 since the hyphen is not a valid name character in Perl.
@@ -98,12 +122,11 @@ STREAM</CODE>, but that capability will be added ASAP.
 <LI>
 This code (perhaps unwisely) assumes that object internal structure is
 always maintained. For example, this code assumes that every
-<CODE>VOTABLE::BINARY</CODE> object <EM>always</EM> has an underlying
-<CODE>XML::DOM::Element</CODE> object. As long as the internal structure is
-manipulated only by the publicly-available methods, this should be an
-adequate assumption. If a method detects an aberrant case, a warning
-message is printed (using the <CODE>Carp::carp</CODE> subroutine), and the
-method fails.
+<CODE>VOTABLE</CODE> object <EM>always</EM> has an underlying <CODE>XML::DOM::Element</CODE>
+object. As long as the internal structure is manipulated only by the
+publicly-available methods, this should be an adequate assumption. If
+a method detects an aberrant case, a warning message is printed (using
+the <CODE>Carp::carp</CODE> subroutine), and the method fails.
 <P></P>
 <LI>
 Similarly, this code assumes that <CODE>XML::DOM</CODE> methods always
@@ -127,7 +150,7 @@ acceptable values, as defined in the DTD.
 <P>
 <HR>
 <H1><A NAME="version">VERSION</A></H1>
-<P>$Id: BINARY.pm,v 1.1.1.8 2002/05/21 14:07:47 elwinter Exp $</P>
+<P>$Id: BINARY.pm,v 1.1.1.13 2002/06/09 21:13:08 elwinter Exp $</P>
 
 </BODY>
 

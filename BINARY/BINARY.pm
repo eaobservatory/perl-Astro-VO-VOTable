@@ -8,7 +8,7 @@ VOTABLE::BINARY - VOTABLE BINARY XML element class
 
 =head1 SYNOPSIS
 
-C<use VOTABLE::BINARY>;
+ use VOTABLE::BINARY;
 
 =head1 DESCRIPTION
 
@@ -42,6 +42,28 @@ Set the C<STREAM> element for this C<BINARY> element using the
 supplied C<VOTABLE::STREAM> object. Return the C<VOTABLE::STREAM>
 object on success, or C<undef> if an error occurs.
 
+=head3 C<get_content($offset, $length)>
+
+Return a portion of the content string starting at C<$offset> bytes
+and continuing for C<$length> bytes. If C<$offset> and C<$length> are
+not specified, return the entire content as a single byte string. If
+C<$offset> is specified but C<$length> is not, return the content from
+C<$offset> to the end of the string. Otherwise, the C<$offset> and
+C<$length> arguments are treated the same as the corresponding
+arguments to the C<substr> subroutine. Return the content as a string,
+or C<undef> if an error occurs.
+
+=head3 C<set_content($bytes, $offset, $length)>
+
+Set the specified portion of the content, starting at C<$offset> and
+continuing for C<$length> bytes, to the specified byte string. If
+C<$offset> and C<$length> are not specified, the current content is
+replaced by the specified byte string. If C<$offset> is specified but
+C<$length> is not specified, C<$length> defaults to the length of
+C<$bytes>. Otherwise, C<$offset> and C<$length> behave as the
+corresponding arguments to C<substr>. Return the new string on
+success, or C<undef> on error.
+
 =head2 Notes on class internals
 
 =over 4
@@ -56,7 +78,8 @@ class hierarchy.
 
 The names of the C<get_XXX> and C<set_XXX> accessors for attributes
 and elements are derived directly from the names of the attributes or
-elements. Attribute and element names containing embedded hyphens
+elements, with the attribute or element name replacing
+C<XXX>. Attribute and element names containing embedded hyphens
 ('C<->') use accessors where the hyphen is mapped to an underscore
 ('C<_>') in the name of the accessor method. This is a necessity,
 since the hyphen is not a valid name character in Perl.
@@ -76,12 +99,11 @@ STREAM>, but that capability will be added ASAP.
 
 This code (perhaps unwisely) assumes that object internal structure is
 always maintained. For example, this code assumes that every
-C<VOTABLE::BINARY> object I<always> has an underlying
-C<XML::DOM::Element> object. As long as the internal structure is
-manipulated only by the publicly-available methods, this should be an
-adequate assumption. If a method detects an aberrant case, a warning
-message is printed (using the C<Carp::carp> subroutine), and the
-method fails.
+C<VOTABLE> object I<always> has an underlying C<XML::DOM::Element>
+object. As long as the internal structure is manipulated only by the
+publicly-available methods, this should be an adequate assumption. If
+a method detects an aberrant case, a warning message is printed (using
+the C<Carp::carp> subroutine), and the method fails.
 
 =item *
 
@@ -108,7 +130,7 @@ Eric Winter, NASA GSFC (elwinter@milkyway.gsfc.nasa.gov)
 
 =head1 VERSION
 
-$Id: BINARY.pm,v 1.1.1.8 2002/05/21 14:07:47 elwinter Exp $
+$Id: BINARY.pm,v 1.1.1.13 2002/06/09 21:13:08 elwinter Exp $
 
 =cut
 
@@ -117,6 +139,21 @@ $Id: BINARY.pm,v 1.1.1.8 2002/05/21 14:07:47 elwinter Exp $
 # Revision history
 
 # $Log: BINARY.pm,v $
+# Revision 1.1.1.13  2002/06/09  21:13:08  elwinter
+# Sert version to 0.03.
+#
+# Revision 1.1.1.12  2002/06/08  20:30:41  elwinter
+# Minor tweaks to documentation and code arrangement.
+#
+# Revision 1.1.1.11  2002/05/29  12:24:12  elwinter
+# Overhauled get_content(), added set_content().
+#
+# Revision 1.1.1.10  2002/05/28  15:07:34  elwinter
+# get_content() now returns a string reference.
+#
+# Revision 1.1.1.9  2002/05/23  13:06:11  elwinter
+# Added get_content() method.
+#
 # Revision 1.1.1.8  2002/05/21  14:07:47  elwinter
 # Incremented $VERSION to 0.02.
 #
@@ -142,7 +179,7 @@ $Id: BINARY.pm,v 1.1.1.8 2002/05/21 14:07:47 elwinter Exp $
 package VOTABLE::BINARY;
 
 # Specify the minimum acceptable Perl version.
-use 5.006;
+use 5.6.1;
 
 # Turn on strict syntax checking.
 use strict;
@@ -159,7 +196,7 @@ use warnings;
 our @ISA = qw();
 
 # Module version.
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 #------------------------------------------------------------------------------
 
@@ -183,10 +220,10 @@ use VOTABLE::STREAM;
 my($TAG_NAME) = 'BINARY';
 
 # Name of underlying XML::DOM object class.
-my($XMLDOM_BASE_CLASS) = 'XML::DOM::Element';
+my($XMLDOM_BASE) = 'XML::DOM::Element';
 
 # List of valid attributes for this element.
-my(@valid_attribute_names) = ();
+my(@VALID_ATTRIBUTE_NAMES) = ();
 
 #------------------------------------------------------------------------------
 
@@ -247,9 +284,6 @@ sub new()
 {
 
     # Save arguments.
-    # $class is the class name for the new object.
-    # @options contains all of the remaining options used when the
-    # constructor is invoked.
     my($class, @options) = @_;
 
     #--------------------------------------------------------------------------
@@ -279,27 +313,25 @@ sub new()
     # Process the options.
     if (@options) {
 	if (ref($options[0])) {
-	    if (ref($options[0]) ne $XMLDOM_BASE_CLASS) {
+	    if (ref($options[0]) ne $XMLDOM_BASE) {
  		carp('Bad input class: ', ref($options[0]));
  		return(undef);
  	    }
+	    if ($xmldom_element_this) {
+		$tag_name = $xmldom_element_this->getTagName;
+		if ($tag_name ne $TAG_NAME) {
+		    carp("Invalid tag name: $tag_name");
+		    return(undef);
+		}
+	    }
 	}
 	($xmldom_element_this, %attributes) = @options;
     }
 
-    # Make sure the specified element (if any) is the correct type.
-    if ($xmldom_element_this) {
-	$tag_name = $xmldom_element_this->getTagName;
-	if ($tag_name ne $TAG_NAME) {
-	    carp("Invalid tag name: $tag_name!");
-	    return(undef);
-	}
-    }
-
     # Make sure only valid attributes were specified.
     foreach $attribute_name (keys(%attributes)) {
-	if (not grep(/$attribute_name/, @valid_attribute_names)) {
-	    carp("Invalid attribute name: $attribute_name!");
+	if (not grep(/$attribute_name/, @VALID_ATTRIBUTE_NAMES)) {
+	    carp("Invalid attribute name: $attribute_name");
 	    return(undef);
 	}
     }
@@ -310,7 +342,7 @@ sub new()
     $this = {};
 
     # Bless the object.
-    bless $this, $class;
+    bless $this => $class;
 
     # Fill in the object.
     if ($xmldom_element_this) {
@@ -323,7 +355,7 @@ sub new()
 	$xmldom_element_this =
 	    $xmldom_document_factory->createElement($TAG_NAME);
 	if (not $xmldom_element_this) {
-	    carp('Unable to create XML::DOM::Element.');
+	    carp('Unable to create $XMLDOM_BASE.');
 	    return(undef);
 	}
 
@@ -331,30 +363,75 @@ sub new()
 
     # Save the new XML::DOM::Element.
     if ($this->_set_XMLDOM($xmldom_element_this) ne $xmldom_element_this) {
-	carp("Unable to set $XMLDOM_BASE_CLASS.");
+	carp("Unable to set $XMLDOM_BASE.");
 	return(undef);
     }
 
     # Process any specified attributes.
     while (($attribute_name, $attribute_value) = each(%attributes)) {
+
+	# Map the attribute name to a valid Perl name.
 	$attribute_name =~ s/-/_/;
+
+	# Create a string of code to evaluate to set the attribute
+	# value.
 	$set_attribute = "\$this->set_${attribute_name}(\$attribute_value)";
+
+	# Evalute the attribute-setting code and check for errors.
 	eval($set_attribute);
 	if ($EVAL_ERROR) {
-	    carp("Error evaluating '$set_attribute': $EVAL_ERROR!");
+	    carp("Error evaluating '$set_attribute': $EVAL_ERROR");
 	    return(undef);
 	}
+
     }
 
-    # Construct the VOTABLE::BINARY object from the XML::DOM object.
+    # Construct the VOTABLE object from the XML::DOM object.
     if (not $this->_build_from_XMLDOM) {
-	carp("Unable to build VOTABLE::$TAG_NAME object from " .
-	     "XML::DOM::Element!");
+	carp("Unable to build VOTABLE::$TAG_NAME object from $XMLDOM_BASE.");
 	return(undef);
     }
 
     # Return the object.
     return($this);
+
+}
+
+#------------------------------------------------------------------------------
+
+# get_content()
+
+# Fetch the specified portion of the content.
+
+sub get_content()
+{
+
+    # Save arguments.
+    my($this, $offset, $length) = @_;
+
+    #--------------------------------------------------------------------------
+
+    # Return the content.
+    return($this->get_stream->get_content($offset, $length));
+
+}
+
+#------------------------------------------------------------------------------
+
+# set_content()
+
+# Set the specified portion of the content.
+
+sub set_content()
+{
+
+    # Save arguments.
+    my($this, $bytes, $offset, $length) = @_;
+
+    #--------------------------------------------------------------------------
+
+    # Return the content.
+    return($this->get_stream->set_content($bytes, $offset, $length));
 
 }
 
@@ -422,7 +499,7 @@ sub set_stream()
     # Get the XML::DOM::Element for the new STREAM element.
     $xmldom_element_stream = $votable_stream->_get_XMLDOM;
     if (not $xmldom_element_stream) {
-	carp('Unable to find XML::DOM::Element!');
+	carp('Unable to find XML::DOM::Element.');
 	return(undef);
     }
 
@@ -508,17 +585,17 @@ sub _build_from_XMLDOM()
     @xmldom_elements =
 	$xmldom_element_this->getElementsByTagName('STREAM', 0);
     if (@xmldom_elements > 1) {
-	carp('Multiple STREAM elements!');
+	carp('Multiple STREAM elements.');
 	return(0);
     }
     if (@xmldom_elements) {
 	$votable_stream = new VOTABLE::STREAM $xmldom_elements[0];
 	if (not $votable_stream) {
-	    carp('Unable to create VOTABLE::STREAM!');
+	    carp('Unable to create VOTABLE::STREAM.');
 	    return(0);
 	}
 	if ($this->set_stream($votable_stream) ne $votable_stream) {
-	    carp('Unable to set VOTABLE::STREAM!');
+	    carp('Unable to set VOTABLE::STREAM.');
 	    return(0);
 	}
     }
@@ -538,7 +615,7 @@ sub _build_from_XMLDOM()
 sub _get_XMLDOM()
 {
     my($this) = @_;
-    return($this->{$XMLDOM_BASE_CLASS});
+    return($this->{$XMLDOM_BASE});
 }
 
 #------------------------------------------------------------------------------
@@ -552,8 +629,8 @@ sub _get_XMLDOM()
 sub _set_XMLDOM()
 {
     my($this, $xmldom_element) = @_;
-    $this->{$XMLDOM_BASE_CLASS} = $xmldom_element;
-    return($this->{$XMLDOM_BASE_CLASS});
+    $this->{$XMLDOM_BASE} = $xmldom_element;
+    return($this->{$XMLDOM_BASE});
 }
 
 #******************************************************************************

@@ -183,7 +183,7 @@ Eric Winter, NASA GSFC (elwinter@milkyway.gsfc.nasa.gov)
 
 =head1 VERSION
 
-$Id: VALUES.pm,v 1.1.1.11 2002/05/21 14:14:37 elwinter Exp $
+$Id: VALUES.pm,v 1.1.1.14 2002/06/09 21:13:08 elwinter Exp $
 
 =cut
 
@@ -192,6 +192,15 @@ $Id: VALUES.pm,v 1.1.1.11 2002/05/21 14:14:37 elwinter Exp $
 # Revision history
 
 # $Log: VALUES.pm,v $
+# Revision 1.1.1.14  2002/06/09  21:13:08  elwinter
+# Sert version to 0.03.
+#
+# Revision 1.1.1.13  2002/06/09  19:55:36  elwinter
+# Changed required Perl version to 5.6.1.
+#
+# Revision 1.1.1.12  2002/06/08  21:05:55  elwinter
+# Fixed bug in element insertion order.
+#
 # Revision 1.1.1.11  2002/05/21  14:14:37  elwinter
 # Incremented $VERSION to 0.02.
 #
@@ -226,7 +235,7 @@ $Id: VALUES.pm,v 1.1.1.11 2002/05/21 14:14:37 elwinter Exp $
 package VOTABLE::VALUES;
 
 # Specify the minimum acceptable Perl version.
-use 5.006;
+use 5.6.1;
 
 # Turn on strict syntax checking.
 use strict;
@@ -243,7 +252,7 @@ use warnings;
 our @ISA = qw();
 
 # Module version.
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 #------------------------------------------------------------------------------
 
@@ -839,7 +848,7 @@ sub set_option()
 	    # OPTION elements right after it. Otherwise, append the
 	    # OPTION elements.
 	    if ($xmldom_elements[0] ne $xmldom_element_this->getLastChild) {
-		foreach $votable_option (@votable_option) {
+		foreach $votable_option (reverse(@votable_option)) {
 		    $xmldom_element_this->
 			insertBefore($votable_option->_get_XMLDOM,
 				     $xmldom_elements[0]->getNextSibling);
@@ -858,7 +867,7 @@ sub set_option()
 	    # OPTION elements right after it. Otherwise, append the
 	    # OPTION elements.
 	    if ($xmldom_elements[0] ne $xmldom_element_this->getLastChild) {
-		foreach $votable_option (@votable_option) {
+		foreach $votable_option (reverse(@votable_option)) {
 		    $xmldom_element_this->
 			insertBefore($votable_option->_get_XMLDOM,
 				     $xmldom_elements[0]->getNextSibling);
@@ -873,7 +882,7 @@ sub set_option()
 	} else {
 
 	    # No MIN or MAX elements, so insert as the first children.
-	    foreach $votable_option (@votable_option) {
+	    foreach $votable_option (reverse(@votable_option)) {
 		$xmldom_element_this->
 		    insertBefore($votable_option->_get_XMLDOM,
 				 $xmldom_element_this->getFirstChild);
