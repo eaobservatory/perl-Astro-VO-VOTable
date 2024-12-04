@@ -1,0 +1,210 @@
+<HTML>
+<HEAD>
+<TITLE>VOTABLE::VALUES - VOTABLE VALUES XML element class</TITLE>
+<LINK REV="made" HREF="mailto:elwinter@olegacy.gsfc.nasa.gov">
+</HEAD>
+
+<BODY>
+
+<A NAME="__index__"></A>
+<!-- INDEX BEGIN -->
+
+<UL>
+
+	<LI><A HREF="#name">NAME</A></LI>
+	<LI><A HREF="#synopsis">SYNOPSIS</A></LI>
+	<LI><A HREF="#description">DESCRIPTION</A></LI>
+	<UL>
+
+		<LI><A HREF="#methods">Methods</A></LI>
+		<UL>
+
+			<LI><A HREF="#new($xmldom_element, %options)"><CODE>new($xmldom_element, %options)</CODE></A></LI>
+			<LI><A HREF="#get_id"><CODE>get_ID</CODE></A></LI>
+			<LI><A HREF="#set_id($id)"><CODE>set_ID($id)</CODE></A></LI>
+			<LI><A HREF="#get_invalid"><CODE>get_invalid</CODE></A></LI>
+			<LI><A HREF="#set_invalid($invalid)"><CODE>set_invalid($invalid)</CODE></A></LI>
+			<LI><A HREF="#get_null"><CODE>get_null</CODE></A></LI>
+			<LI><A HREF="#set_null($null)"><CODE>set_null($null)</CODE></A></LI>
+			<LI><A HREF="#get_type"><CODE>get_type</CODE></A></LI>
+			<LI><A HREF="#set_type($type)"><CODE>set_type($type)</CODE></A></LI>
+			<LI><A HREF="#get_max"><CODE>get_max</CODE></A></LI>
+			<LI><A HREF="#set_max($votable_max)"><CODE>set_max($votable_max)</CODE></A></LI>
+			<LI><A HREF="#get_min"><CODE>get_min</CODE></A></LI>
+			<LI><A HREF="#set_min($votable_min)"><CODE>set_min($votable_min)</CODE></A></LI>
+			<LI><A HREF="#get_option"><CODE>get_option</CODE></A></LI>
+			<LI><A HREF="#set_option(@votable_option)"><CODE>set_option(@votable_option)</CODE></A></LI>
+		</UL>
+
+		<LI><A HREF="#notes on class internals">Notes on class internals</A></LI>
+	</UL>
+
+	<LI><A HREF="#warnings">WARNINGS</A></LI>
+	<LI><A HREF="#see also">SEE ALSO</A></LI>
+	<LI><A HREF="#author">AUTHOR</A></LI>
+	<LI><A HREF="#version">VERSION</A></LI>
+</UL>
+<!-- INDEX END -->
+
+<HR>
+<P>
+<HR>
+<H1><A NAME="name">NAME</A></H1>
+<P>VOTABLE::VALUES - VOTABLE VALUES XML element class</P>
+<P>
+<HR>
+<H1><A NAME="synopsis">SYNOPSIS</A></H1>
+<P><CODE>use VOTABLE::VALUES;</CODE></P>
+<P>
+<HR>
+<H1><A NAME="description">DESCRIPTION</A></H1>
+<P>This class implements the <CODE>VALUES</CODE> element from the <CODE>VOTABLE</CODE>
+DTD. This element is used to store descriptive values about other data
+items, such as minimum and maximum allowed values, and options for
+enumerated values.</P>
+<P>The <CODE>VALUES</CODE> element is a Tier 2 element, and is described by the
+following excerpt from the <CODE>VOTABLE</CODE> 1.0 DTD:</P>
+<PRE>
+ &lt;!ELEMENT VALUES (MIN?, MAX?, OPTION*)&gt;
+ &lt;!ATTLIST VALUES
+         ID ID #IMPLIED
+         type (legal | actual) &quot;legal&quot;
+         null CDATA #IMPLIED
+         invalid (yes | no) &quot;no&quot;
+ &gt;</PRE>
+<P>
+<H2><A NAME="methods">Methods</A></H2>
+<P>
+<H3><A NAME="new($xmldom_element, %options)"><CODE>new($xmldom_element, %options)</CODE></A></H3>
+<P>Create and return a new <CODE>VOTABLE::VALUES</CODE> object, based on the
+supplied <CODE>XML::DOM::Element</CODE> object, using <CODE>%options</CODE> to set the
+attributes of the new object. If no <CODE>XML::DOM::Element</CODE> object is
+specified, or is undefined, create and return an empty
+<CODE>VOTABLE::VALUES</CODE> object. Return <CODE>undef</CODE> if an error occurs.</P>
+<P>
+<H3><A NAME="get_id"><CODE>get_ID</CODE></A></H3>
+<P>Return the value of the <CODE>ID</CODE> attribute. Return <CODE>undef</CODE> if the
+attribute has not been set, or an error occurs.</P>
+<P>
+<H3><A NAME="set_id($id)"><CODE>set_ID($id)</CODE></A></H3>
+<P>Set the value of the <CODE>ID</CODE> attribute to the specified value. Return
+the new value of the attribute on success, or <CODE>undef</CODE> if an error
+occurs.</P>
+<P>
+<H3><A NAME="get_invalid"><CODE>get_invalid</CODE></A></H3>
+<P>Return the value of the <CODE>invalid</CODE> attribute. Return <CODE>undef</CODE> if the
+attribute has not been set, or an error occurs.</P>
+<P>
+<H3><A NAME="set_invalid($invalid)"><CODE>set_invalid($invalid)</CODE></A></H3>
+<P>Set the value of the <CODE>invalid</CODE> attribute to the specified
+value. Return the new value of the attribute on success, or <CODE>undef</CODE>
+if an error occurs.</P>
+<P>
+<H3><A NAME="get_null"><CODE>get_null</CODE></A></H3>
+<P>Return the value of the <CODE>null</CODE> attribute. Return <CODE>undef</CODE> if the
+attribute has not been set, or an error occurs.</P>
+<P>
+<H3><A NAME="set_null($null)"><CODE>set_null($null)</CODE></A></H3>
+<P>Set the value of the <CODE>null</CODE> attribute to the specified value. Return
+the new value of the attribute on success, or <CODE>undef</CODE> if an error
+occurs.</P>
+<P>
+<H3><A NAME="get_type"><CODE>get_type</CODE></A></H3>
+<P>Return the value of the <CODE>type</CODE> attribute. Return <CODE>undef</CODE> if the
+attribute has not been set, or an error occurs.</P>
+<P>
+<H3><A NAME="set_type($type)"><CODE>set_type($type)</CODE></A></H3>
+<P>Set the value of the <CODE>type</CODE> attribute to the specified value. Return
+the new value of the attribute on success, or <CODE>undef</CODE> if an error
+occurs.</P>
+<P>
+<H3><A NAME="get_max"><CODE>get_max</CODE></A></H3>
+<P>Return the <CODE>VOTABLE::MAX</CODE> object for the <CODE>MAX</CODE> element child of this
+<CODE>VALUES</CODE> object. Return <CODE>undef</CODE> if no <CODE>MAX</CODE> element is found, or if
+an error occurs.</P>
+<P>
+<H3><A NAME="set_max($votable_max)"><CODE>set_max($votable_max)</CODE></A></H3>
+<P>Set the <CODE>VOTABLE::MAX</CODE> object for the <CODE>MAX</CODE> child element of this
+<CODE>VALUES</CODE> element to the specified object. Any existing <CODE>MAX</CODE> child
+element is first removed. Return the new <CODE>MAX</CODE> object on success, or
+<CODE>undef</CODE> if an error occurs.</P>
+<P>
+<H3><A NAME="get_min"><CODE>get_min</CODE></A></H3>
+<P>Return the <CODE>VOTABLE::MIN</CODE> object for the <CODE>MIN</CODE> element child of this
+<CODE>VALUES</CODE> object. Return <CODE>undef</CODE> if no <CODE>MIN</CODE> element is found, or if
+an error occurs.</P>
+<P>
+<H3><A NAME="set_min($votable_min)"><CODE>set_min($votable_min)</CODE></A></H3>
+<P>Set the <CODE>VOTABLE::MIN</CODE> object for the <CODE>MIN</CODE> child element of this
+<CODE>VALUES</CODE> element to the specified objects. Any existing <CODE>MIN</CODE> child
+element is first removed. Return the new <CODE>MIN</CODE> object on success, or
+<CODE>undef</CODE> if an error occurs.</P>
+<P>
+<H3><A NAME="get_option"><CODE>get_option</CODE></A></H3>
+<P>Return a list of the <CODE>VOTABLE::OPTION</CODE> objects for the <CODE>OPTION</CODE>
+element children of this <CODE>VALUES</CODE> object. Return an empty list if no
+<CODE>OPTION</CODE> elements are found, or if an error occurs.</P>
+<P>
+<H3><A NAME="set_option(@votable_option)"><CODE>set_option(@votable_option)</CODE></A></H3>
+<P>Set the <CODE>VOTABLE::OPTION</CODE> objects for the <CODE>OPTION</CODE> child elements of
+this <CODE>VALUES</CODE> element to the specified objects. Any existing
+<CODE>OPTION</CODE> child elements are first removed. Return the new <CODE>OPTION</CODE>
+objects on success, or an empty list if an error occurs.</P>
+<P>
+<H2><A NAME="notes on class internals">Notes on class internals</A></H2>
+<UL>
+<LI>
+Method names that begin with a leading underscore ('<CODE>_</CODE>') are for
+internal use only, and should <EM>not</EM> be used outside of the <CODE>VOTABLE</CODE>
+class hierarchy.
+<P></P>
+<LI>
+The names of the <CODE>get_XXX</CODE> and <CODE>set_XXX</CODE> accessors for attributes
+and elements are derived directly from the names of the attributes or
+elements. Attribute and element names containing embedded hyphens
+('<CODE>-</CODE>') use accessors where the hyphen is mapped to an underscore
+('<CODE>_</CODE>') in the name of the accessor method. This is a necessity,
+since the hyphen is not a valid name character in Perl.
+<P></P></UL>
+<P>
+<HR>
+<H1><A NAME="warnings">WARNINGS</A></H1>
+<UL>
+<LI>
+This code (perhaps unwisely) assumes that object internal structure is
+always maintained. For example, this code assumes that every
+<CODE>VOTABLE::TABLEDATA</CODE> object <EM>always</EM> has an underlying
+<CODE>XML::DOM::Element</CODE> object. As long as the internal structure is
+manipulated only by the publicly-available methods, this should be an
+adequate assumption. If a method detects an aberrant case, a warning
+message is printed (using the <CODE>Carp::carp</CODE> subroutine), and the
+method fails.
+<P></P>
+<LI>
+Similarly, this code assumes that <CODE>XML::DOM</CODE> methods always
+succeed. If a method detects an aberrant case, a warning message is
+printed (using the <CODE>Carp::carp</CODE> subroutine), and the method fails.
+<P></P>
+<LI>
+Most attribute <CODE>set_XXX</CODE> accessors do not perform validation of the
+new attribute values. The exceptions are the accessors for attributes
+with enumerated values; the new value is checked against the list of
+acceptable values, as defined in the DTD.
+<P></P></UL>
+<P>
+<HR>
+<H1><A NAME="see also">SEE ALSO</A></H1>
+<P><CODE>VOTABLE</CODE>, <CODE>VOTABLE::FIELD</CODE>, <CODE>VOTABLE::MAX</CODE>, <CODE>VOTABLE::MIN</CODE>,
+<CODE>VOTABLE::OPTION</CODE>, <CODE>VOTABLE::PARAM</CODE></P>
+<P>
+<HR>
+<H1><A NAME="author">AUTHOR</A></H1>
+<P>Eric Winter, NASA GSFC (<A HREF="mailto:elwinter@milkyway.gsfc.nasa.gov">elwinter@milkyway.gsfc.nasa.gov</A>)</P>
+<P>
+<HR>
+<H1><A NAME="version">VERSION</A></H1>
+<P>$Id: VALUES.pm,v 1.1.1.11 2002/05/21 14:14:37 elwinter Exp $</P>
+
+</BODY>
+
+</HTML>

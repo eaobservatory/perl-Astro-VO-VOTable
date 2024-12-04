@@ -1,0 +1,219 @@
+<HTML>
+<HEAD>
+<TITLE>VOTABLE::Document - VOTABLE XML document class</TITLE>
+<LINK REV="made" HREF="mailto:elwinter@olegacy.gsfc.nasa.gov">
+</HEAD>
+
+<BODY>
+
+<A NAME="__index__"></A>
+<!-- INDEX BEGIN -->
+
+<UL>
+
+	<LI><A HREF="#name">NAME</A></LI>
+	<LI><A HREF="#synopsis">SYNOPSIS</A></LI>
+	<LI><A HREF="#description">DESCRIPTION</A></LI>
+	<UL>
+
+		<LI><A HREF="#methods">Methods</A></LI>
+		<UL>
+
+			<LI><A HREF="#new($str_or_ref, %options)"><CODE>new($str_or_ref, %options)</CODE></A></LI>
+			<LI><A HREF="#new_from_filename($filename, %options)"><CODE>new_from_filename($filename, %options)</CODE></A></LI>
+			<LI><A HREF="#get_id"><CODE>get_ID</CODE></A></LI>
+			<LI><A HREF="#set_id($id)"><CODE>set_ID($id)</CODE></A></LI>
+			<LI><A HREF="#get_version"><CODE>get_version</CODE></A></LI>
+			<LI><A HREF="#set_version($version)"><CODE>set_version($version)</CODE></A></LI>
+			<LI><A HREF="#get_description"><CODE>get_description</CODE></A></LI>
+			<LI><A HREF="#set_description($votable_description)"><CODE>set_description($votable_description)</CODE></A></LI>
+			<LI><A HREF="#get_definitions"><CODE>get_definitions</CODE></A></LI>
+			<LI><A HREF="#set_definitions($votable_definitions)"><CODE>set_definitions($votable_definitions)</CODE></A></LI>
+			<LI><A HREF="#get_info"><CODE>get_info</CODE></A></LI>
+			<LI><A HREF="#set_info(@votable_info)"><CODE>set_info(@votable_info)</CODE></A></LI>
+			<LI><A HREF="#get_resource"><CODE>get_resource</CODE></A></LI>
+			<LI><A HREF="#set_resource(@votable_resource)"><CODE>set_resource(@votable_resource)</CODE></A></LI>
+		</UL>
+
+		<LI><A HREF="#notes on class internals">Notes on class internals</A></LI>
+	</UL>
+
+	<LI><A HREF="#warnings">WARNINGS</A></LI>
+	<LI><A HREF="#see also">SEE ALSO</A></LI>
+	<LI><A HREF="#author">AUTHOR</A></LI>
+	<LI><A HREF="#version">VERSION</A></LI>
+</UL>
+<!-- INDEX END -->
+
+<HR>
+<P>
+<HR>
+<H1><A NAME="name">NAME</A></H1>
+<P>VOTABLE::Document - VOTABLE XML document class</P>
+<P>
+<HR>
+<H1><A NAME="synopsis">SYNOPSIS</A></H1>
+<P><CODE>use VOTABLE::Document</CODE>;</P>
+<P>
+<HR>
+<H1><A NAME="description">DESCRIPTION</A></H1>
+<P>This class implements the <CODE>VOTABLE</CODE> element from the <CODE>VOTABLE</CODE>
+DTD. This element is the document element for <CODE>VOTABLE</CODE> documents.</P>
+<P>The <CODE>VOTABLE</CODE> element is a Tier 6 element, and is described by the
+following excerpt from the <CODE>VOTABLE</CODE> 1.0 DTD:
+&lt;
+ !ELEMENT VOTABLE (DESCRIPTION?, DEFINITIONS?, INFO*, RESOURCE*)&gt;
+ &lt;!ATTLIST VOTABLE
+         ID ID #IMPLIED
+         version CDATA #IMPLIED
+ &gt;</P>
+<P>
+<H2><A NAME="methods">Methods</A></H2>
+<P>
+<H3><A NAME="new($str_or_ref, %options)"><CODE>new($str_or_ref, %options)</CODE></A></H3>
+<P>Create a new <CODE>VOTABLE::Document</CODE> object, and return a reference to
+it. If the first argument (<CODE>$str_or_ref</CODE>) is a string, it is used as
+the XML content of the document. If the first argument is a reference
+to an open FileHandle object, it is used as the source of the XML
+stream used to create the document. If the first argument is a
+reference to a <CODE>XML::DOM::Document</CODE> object, that object is used to
+initialize the new <CODE>VOTABLE</CODE> element (implicitly assuming that the
+<CODE>XML::DOM::Document</CODE> object contains a valid <CODE>VOTABLE</CODE> element). The
+<CODE>%options</CODE> hash is used to set the attributes of the new element. If
+the first argument is missing or undefined, or an empty string, create
+and return an empty <CODE>VOTABLE::Document</CODE> object. Return <CODE>undef</CODE> if an
+error occurs.</P>
+<P>
+<H3><A NAME="new_from_filename($filename, %options)"><CODE>new_from_filename($filename, %options)</CODE></A></H3>
+<P>This is the alternate class constructor. The first argument is
+interpreted as the name of a file from which to read the
+XML. <CODE>%options</CODE> is used to set the attributes of the new
+element. Return <CODE>undef</CODE> if an error occurs.</P>
+<P>
+<H3><A NAME="get_id"><CODE>get_ID</CODE></A></H3>
+<P>Return the value of the <CODE>ID</CODE> attribute. Return <CODE>undef</CODE> if the
+attribute has not been set, or an error occurs.</P>
+<P>
+<H3><A NAME="set_id($id)"><CODE>set_ID($id)</CODE></A></H3>
+<P>Set the value of the <CODE>ID</CODE> attribute to the specified value. Return
+the new value of the attribute on success, or <CODE>undef</CODE> on error.</P>
+<P>
+<H3><A NAME="get_version"><CODE>get_version</CODE></A></H3>
+<P>Return the value of the <CODE>version</CODE> attribute. Return <CODE>undef</CODE> if the
+attribute has not been set, or an error occurs.</P>
+<P>
+<H3><A NAME="set_version($version)"><CODE>set_version($version)</CODE></A></H3>
+<P>Set the value of the <CODE>version</CODE> attribute to the specified
+value. Return the new value of the attribute on success, or <CODE>undef</CODE>
+on error.</P>
+<P>
+<H3><A NAME="get_description"><CODE>get_description</CODE></A></H3>
+<P>Return the <CODE>VOTABLE::DESCRIPTION</CODE> object for this
+<CODE>VOTABLE::Document</CODE>. If no description is found, or an error occurs,
+return <CODE>undef</CODE>.</P>
+<P>
+<H3><A NAME="set_description($votable_description)"><CODE>set_description($votable_description)</CODE></A></H3>
+<P>Set the <CODE>DESCRIPTION</CODE> element for this object to the supplied
+<CODE>VOTABLE::DESCRIPTION</CODE> object. Return the <CODE>VOTABLE::DESCRIPTION</CODE>
+object on success, or <CODE>undef</CODE> if an error occurs.</P>
+<P>
+<H3><A NAME="get_definitions"><CODE>get_definitions</CODE></A></H3>
+<P>Return a the <CODE>VOTABLE::DEFINITIONS</CODE> object for this
+<CODE>VOTABLE::Document</CODE>. If no <CODE>DEFINITIONS</CODE> element is found, or an
+error occurs, return <CODE>undef</CODE>.</P>
+<P>
+<H3><A NAME="set_definitions($votable_definitions)"><CODE>set_definitions($votable_definitions)</CODE></A></H3>
+<P>Set the <CODE>DEFINITIONS</CODE> element for this object to the supplied
+<CODE>VOTABLE::DEFINITIONS</CODE> object. Return the <CODE>VOTABLE::DEFINITIONS</CODE>
+object on success, or <CODE>undef</CODE> if an error occurs.</P>
+<P>
+<H3><A NAME="get_info"><CODE>get_info</CODE></A></H3>
+<P>Return a list of the <CODE>VOTABLE::INFO</CODE> objects representing the <CODE>INFO</CODE>
+elements for this object. If no <CODE>INFO</CODE> elements are found, or an
+error occurs, return an empty list.</P>
+<P>
+<H3><A NAME="set_info(@votable_info)"><CODE>set_info(@votable_info)</CODE></A></H3>
+<P>Set the <CODE>INFO</CODE> elements for this object to the supplied list of
+<CODE>VOTABLE::INFO</CODE> objects. Return the input list on success, or an
+empty list on error.</P>
+<P>
+<H3><A NAME="get_resource"><CODE>get_resource</CODE></A></H3>
+<P>Return a list of the <CODE>VOTABLE::RESOURCE</CODE> objects representing the
+<CODE>RESOURCE</CODE> elements for this object. If no <CODE>RESOURCE</CODE> elements are
+found, or an error occurs, return an empty list.</P>
+<P>
+<H3><A NAME="set_resource(@votable_resource)"><CODE>set_resource(@votable_resource)</CODE></A></H3>
+<P>Set the <CODE>RESOURCE</CODE> elements for this object to the supplied list of
+<CODE>VOTABLE::RESOURCE</CODE> objects. Return the input list on success, or an
+empty list on error.</P>
+<P>
+<H2><A NAME="notes on class internals">Notes on class internals</A></H2>
+<UL>
+<LI>
+WARNING: The information in this section is for code maintainers only.
+<P></P>
+<LI>
+This class (along with the other VOTABLE classes) makes extensive use
+of internal methods. The internal method names always start with a
+leading underscore (<CODE>_</CODE>), and should only be used by other methods in
+the class, or subclasses.
+<P></P>
+<LI>
+To further delineate the <CODE>VOTABLE</CODE> and <CODE>XML::DOM</CODE> class hierarchies,
+any variable (other than the traditional <CODE>$this</CODE>) that refers to a
+<CODE>XML::DOM</CODE> object has the <CODE>xmldom_</CODE> prefix, while variables that
+refer to <CODE>VOTABLE</CODE> objects use the <CODE>votable_</CODE> prefix. Again, this is
+probably verbosity overkill, but I'd rather be safe than sorry right
+now.
+<P></P>
+<LI>
+A general design principle for this software is that the user should
+not be aware of the use of the underlying representation (<CODE>XML::DOM</CODE>
+in this case), so that it can be changed in the future.
+<P></P>
+<LI>
+The names of the <CODE>get_XXX</CODE> and <CODE>set_XXX</CODE> accessors for attributes
+and elements are derived directly from the names of the attributes or
+elements. Attribute and element names containing embedded hyphens
+('<CODE>-</CODE>') use accessors where the hyphen is mapped to an underscore
+('<CODE>_</CODE>') in the name of the accessor method. This is a necessity,
+since the hyphen is not a valid name character in Perl.
+<P></P></UL>
+<P>
+<HR>
+<H1><A NAME="warnings">WARNINGS</A></H1>
+<UL>
+<LI>
+This code assumes (perhaps unwisely) that <CODE>XML::DOM</CODE> methods and
+subroutines never fail, and that the internal structure of <CODE>VOTABLE</CODE>
+and <CODE>XML::DOM</CODE> objects is always consistent. This decision was made
+to speed initial development.
+<P></P>
+<LI>
+Similarly, this code assumes that <CODE>XML::DOM</CODE> methods always
+succeed. If a method detects an aberrant case, a warning message is
+printed (using the <CODE>Carp::carp</CODE> subroutine), and the method fails.
+<P></P>
+<LI>
+Most attribute <CODE>set_XXX</CODE> accessors do not perform validation of the
+new attribute values. The exceptions are the accessors for attributes
+with enumerated values; the new value is checked against the list of
+acceptable values, as defined in the DTD.
+<P></P></UL>
+<P>
+<HR>
+<H1><A NAME="see also">SEE ALSO</A></H1>
+<P><CODE>VOTABLE</CODE>, <CODE>VOTABLE::DEFINITIONS</CODE>, <CODE>VOTABLE::DESCRIPTION</CODE>,
+<CODE>VOTABLE::INFO</CODE>, <CODE>VOTABLE::RESOURCE</CODE></P>
+<P>
+<HR>
+<H1><A NAME="author">AUTHOR</A></H1>
+<P>Eric Winter, NASA GSFC (<A HREF="mailto:elwinter@milkyway.gsfc.nasa.gov">elwinter@milkyway.gsfc.nasa.gov</A>)</P>
+<P>
+<HR>
+<H1><A NAME="version">VERSION</A></H1>
+<P>$Id: Document.pm,v 1.1.1.19 2002/05/21 14:09:55 elwinter Exp $</P>
+
+</BODY>
+
+</HTML>

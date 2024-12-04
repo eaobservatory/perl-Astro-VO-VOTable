@@ -1,0 +1,198 @@
+<HTML>
+<HEAD>
+<TITLE>VOTABLE::STREAM - VOTABLE STREAM XML element class</TITLE>
+<LINK REV="made" HREF="mailto:elwinter@olegacy.gsfc.nasa.gov">
+</HEAD>
+
+<BODY>
+
+<A NAME="__index__"></A>
+<!-- INDEX BEGIN -->
+
+<UL>
+
+	<LI><A HREF="#name">NAME</A></LI>
+	<LI><A HREF="#synopsis">SYNOPSIS</A></LI>
+	<LI><A HREF="#description">DESCRIPTION</A></LI>
+	<UL>
+
+		<LI><A HREF="#methods">Methods</A></LI>
+		<UL>
+
+			<LI><A HREF="#new($str_or_ref, %options)"><CODE>new($str_or_ref, %options)</CODE></A></LI>
+			<LI><A HREF="#get_actuate"><CODE>get_actuate</CODE></A></LI>
+			<LI><A HREF="#set_actuate($actuate)"><CODE>set_actuate($actuate)</CODE></A></LI>
+			<LI><A HREF="#get_encoding"><CODE>get_encoding</CODE></A></LI>
+			<LI><A HREF="#set_encoding($encoding)"><CODE>set_encoding($encoding)</CODE></A></LI>
+			<LI><A HREF="#get_expires"><CODE>get_expires</CODE></A></LI>
+			<LI><A HREF="#set_expires($expires)"><CODE>set_expires($expires)</CODE></A></LI>
+			<LI><A HREF="#get_href"><CODE>get_href</CODE></A></LI>
+			<LI><A HREF="#set_href($href)"><CODE>set_href($href)</CODE></A></LI>
+			<LI><A HREF="#get_rights"><CODE>get_rights</CODE></A></LI>
+			<LI><A HREF="#set_rights($rights)"><CODE>set_rights($rights)</CODE></A></LI>
+			<LI><A HREF="#get_type"><CODE>get_type</CODE></A></LI>
+			<LI><A HREF="#set_type($type)"><CODE>set_type($type)</CODE></A></LI>
+		</UL>
+
+		<LI><A HREF="#notes on class internals">Notes on class internals</A></LI>
+	</UL>
+
+	<LI><A HREF="#warnings">WARNINGS</A></LI>
+	<LI><A HREF="#see also">SEE ALSO</A></LI>
+	<LI><A HREF="#author">AUTHOR</A></LI>
+	<LI><A HREF="#version">VERSION</A></LI>
+</UL>
+<!-- INDEX END -->
+
+<HR>
+<P>
+<HR>
+<H1><A NAME="name">NAME</A></H1>
+<P>VOTABLE::STREAM - VOTABLE STREAM XML element class</P>
+<P>
+<HR>
+<H1><A NAME="synopsis">SYNOPSIS</A></H1>
+<P><CODE>use VOTABLE::STREAM;</CODE></P>
+<P>
+<HR>
+<H1><A NAME="description">DESCRIPTION</A></H1>
+<P>This class implements the <CODE>STREAM</CODE> element from the <CODE>VOTABLE</CODE>
+DTD. This element is used to encapsulate streams of arbitrary data,
+possible encoded and/or compressed.</P>
+<P>The <CODE>STREAM</CODE> element is a Tier 0 element, and is described by the
+following excerpt from the <CODE>VOTABLE</CODE> 1.0 DTD:</P>
+<PRE>
+ &lt;!ELEMENT STREAM (#PCDATA)&gt;
+ &lt;!ATTLIST STREAM
+         type (locator | other) &quot;locator&quot;
+         href CDATA #IMPLIED
+         actuate (onLoad | onRequest | other | none) &quot;onRequest&quot;
+         encoding (gzip | base64 | dynamic | none) &quot;none&quot;
+         expires CDATA #IMPLIED
+         rights CDATA #IMPLIED
+ &gt;</PRE>
+<P>
+<H2><A NAME="methods">Methods</A></H2>
+<P>
+<H3><A NAME="new($str_or_ref, %options)"><CODE>new($str_or_ref, %options)</CODE></A></H3>
+<P>Create a new <CODE>VOTABLE::STREAM</CODE> object, and return a reference to
+it. If the first argument (<CODE>$str_or_ref</CODE>) is a string, it is used as
+the initial <CODE>PCDATA</CODE> content of the <CODE>STREAM</CODE> element. If the first
+argument is a reference to a <CODE>XML::DOM::Element</CODE> object, that object
+is used to initialize the new <CODE>STREAM</CODE> element (implicitly assuming
+that the <CODE>XML::DOM::Element</CODE> object contains a valid <CODE>STREAM</CODE>
+element). The <CODE>%options</CODE> hash is used to set the attributes of the
+new element. If the first argument is missing or undefined, or an
+empty string, create and return an empty <CODE>VOTABLE::STREAM</CODE>
+object. Return <CODE>undef</CODE> if an error occurs.</P>
+<P>
+<H3><A NAME="get_actuate"><CODE>get_actuate</CODE></A></H3>
+<P>Return the value of the <CODE>actuate</CODE> attribute. Return <CODE>undef</CODE> if the
+attribute has not been set, or an error occurs.</P>
+<P>
+<H3><A NAME="set_actuate($actuate)"><CODE>set_actuate($actuate)</CODE></A></H3>
+<P>Set the value of the <CODE>actuate</CODE> attribute to the specified
+value. Return the new value of the attribute on success, or <CODE>undef</CODE>
+if an error occurs.</P>
+<P>
+<H3><A NAME="get_encoding"><CODE>get_encoding</CODE></A></H3>
+<P>Return the value of the <CODE>encoding</CODE> attribute. Return <CODE>undef</CODE> if the
+attribute has not been set, or an error occurs.</P>
+<P>
+<H3><A NAME="set_encoding($encoding)"><CODE>set_encoding($encoding)</CODE></A></H3>
+<P>Set the value of the <CODE>encoding</CODE> attribute to the specified
+value. Return the new value of the attribute on success, or <CODE>undef</CODE>
+if an error occurs.</P>
+<P>
+<H3><A NAME="get_expires"><CODE>get_expires</CODE></A></H3>
+<P>Return the value of the <CODE>expires</CODE> attribute. Return <CODE>undef</CODE> if the
+attribute has not been set, or an error occurs.</P>
+<P>
+<H3><A NAME="set_expires($expires)"><CODE>set_expires($expires)</CODE></A></H3>
+<P>Set the value of the <CODE>expires</CODE> attribute to the specified
+value. Return the new value of the attribute on success, or <CODE>undef</CODE>
+if an error occurs.</P>
+<P>
+<H3><A NAME="get_href"><CODE>get_href</CODE></A></H3>
+<P>Return the value of the <CODE>href</CODE> attribute. Return <CODE>undef</CODE> if the
+attribute has not been set, or an error occurs.</P>
+<P>
+<H3><A NAME="set_href($href)"><CODE>set_href($href)</CODE></A></H3>
+<P>Set the value of the <CODE>href</CODE> attribute to the specified value. Return
+the new value of the attribute on success, or <CODE>undef</CODE> if an error
+occurs.</P>
+<P>
+<H3><A NAME="get_rights"><CODE>get_rights</CODE></A></H3>
+<P>Return the value of the <CODE>rights</CODE> attribute. Return <CODE>undef</CODE> if the
+attribute has not been set, or an error occurs.</P>
+<P>
+<H3><A NAME="set_rights($rights)"><CODE>set_rights($rights)</CODE></A></H3>
+<P>Set the value of the <CODE>rights</CODE> attribute to the specified
+value. Return the new value of the attribute on success, or <CODE>undef</CODE>
+if an error occurs.</P>
+<P>
+<H3><A NAME="get_type"><CODE>get_type</CODE></A></H3>
+<P>Return the value of the <CODE>type</CODE> attribute. Return <CODE>undef</CODE> if the
+attribute has not been set, or an error occurs.</P>
+<P>
+<H3><A NAME="set_type($type)"><CODE>set_type($type)</CODE></A></H3>
+<P>Set the value of the <CODE>type</CODE> attribute to the specified value. Return
+the new value of the attribute on success, or <CODE>undef</CODE> if an error
+occurs.</P>
+<P>
+<H2><A NAME="notes on class internals">Notes on class internals</A></H2>
+<UL>
+<LI>
+Method names that begin with a leading underscore ('<CODE>_</CODE>') are for
+internal use only, and should <EM>not</EM> be used outside of the <CODE>VOTABLE</CODE>
+class hierarchy.
+<P></P>
+<LI>
+The names of the <CODE>get_XXX</CODE> and <CODE>set_XXX</CODE> accessors for attributes
+and elements are derived directly from the names of the attributes or
+elements. Attribute and element names containing embedded hyphens
+('<CODE>-</CODE>') use accessors where the hyphen is mapped to an underscore
+('<CODE>_</CODE>') in the name of the accessor method. This is a necessity,
+since the hyphen is not a valid name character in Perl.
+<P></P></UL>
+<P>
+<HR>
+<H1><A NAME="warnings">WARNINGS</A></H1>
+<UL>
+<LI>
+This code (perhaps unwisely) assumes that object internal structure is
+always maintained. For example, this code assumes that every
+<CODE>VOTABLE::STREAM</CODE> object <EM>always</EM> has an underlying
+<CODE>XML::DOM::Element</CODE> object. As long as the internal structure is
+manipulated only by the publicly-available methods, this should be an
+adequate assumption. If a method detects an aberrant case, a warning
+message is printed (using the <CODE>Carp::carp</CODE> subroutine), and the
+method fails.
+<P></P>
+<LI>
+Similarly, this code assumes that <CODE>XML::DOM</CODE> methods always
+succeed. If a method detects an aberrant case, a warning message is
+printed (using the <CODE>Carp::carp</CODE> subroutine), and the method fails.
+<P></P>
+<LI>
+Most attribute <CODE>set_XXX</CODE> accessors do not perform validation of the
+new attribute values. The exceptions are the accessors for attributes
+with enumerated values; the new value is checked against the list of
+acceptable values, as defined in the DTD.
+<P></P></UL>
+<P>
+<HR>
+<H1><A NAME="see also">SEE ALSO</A></H1>
+<P><CODE>VOTABLE</CODE>, <CODE>VOTABLE::BINARY</CODE>, <CODE>VOTABLE::FITS</CODE></P>
+<P>
+<HR>
+<H1><A NAME="author">AUTHOR</A></H1>
+<P>Eric Winter, NASA GSFC (<A HREF="mailto:elwinter@milkyway.gsfc.nasa.gov">elwinter@milkyway.gsfc.nasa.gov</A>)</P>
+<P>
+<HR>
+<H1><A NAME="version">VERSION</A></H1>
+<P>$Id: STREAM.pm,v 1.1.1.7 2002/05/21 14:13:06 elwinter Exp $</P>
+
+</BODY>
+
+</HTML>

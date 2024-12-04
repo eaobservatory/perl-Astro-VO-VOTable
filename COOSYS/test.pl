@@ -70,6 +70,8 @@ sub test_new()
 	or return(0);
     $votable_coosys = new VOTABLE::COOSYS $factory->createElement('COOSYS')
 	or return(0);
+    $votable_coosys = new VOTABLE::COOSYS ''
+	or return(0);
     return(1);
 }
 

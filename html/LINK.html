@@ -1,0 +1,235 @@
+<HTML>
+<HEAD>
+<TITLE>VOTABLE::LINK - VOTABLE LINK XML element class</TITLE>
+<LINK REV="made" HREF="mailto:elwinter@olegacy.gsfc.nasa.gov">
+</HEAD>
+
+<BODY>
+
+<A NAME="__index__"></A>
+<!-- INDEX BEGIN -->
+
+<UL>
+
+	<LI><A HREF="#name">NAME</A></LI>
+	<LI><A HREF="#synopsis">SYNOPSIS</A></LI>
+	<LI><A HREF="#description">DESCRIPTION</A></LI>
+	<UL>
+
+		<LI><A HREF="#methods">Methods</A></LI>
+		<UL>
+
+			<LI><A HREF="#new($str_or_ref, %options)"><CODE>new($str_or_ref, %options)</CODE></A></LI>
+			<LI><A HREF="#get_id"><CODE>get_ID</CODE></A></LI>
+			<LI><A HREF="#set_id($id)"><CODE>set_ID($id)</CODE></A></LI>
+			<LI><A HREF="#get_action"><CODE>get_action</CODE></A></LI>
+			<LI><A HREF="#set_action($action)"><CODE>set_action($action)</CODE></A></LI>
+			<LI><A HREF="#get_content_role"><CODE>get_content_role</CODE></A></LI>
+			<LI><A HREF="#set_content_role($content_role)"><CODE>set_content_role($content_role)</CODE></A></LI>
+			<LI><A HREF="#get_content_type"><CODE>get_content_type</CODE></A></LI>
+			<LI><A HREF="#set_content_type($content_type)"><CODE>set_content_type($content_type)</CODE></A></LI>
+			<LI><A HREF="#get_gref"><CODE>get_gref</CODE></A></LI>
+			<LI><A HREF="#set_gref($gref)"><CODE>set_gref($gref)</CODE></A></LI>
+			<LI><A HREF="#get_href"><CODE>get_href</CODE></A></LI>
+			<LI><A HREF="#set_href($href)"><CODE>set_href($href)</CODE></A></LI>
+			<LI><A HREF="#get_title"><CODE>get_title</CODE></A></LI>
+			<LI><A HREF="#set_title($title)"><CODE>set_title($title)</CODE></A></LI>
+			<LI><A HREF="#get_value"><CODE>get_value</CODE></A></LI>
+			<LI><A HREF="#set_value($value)"><CODE>set_value($value)</CODE></A></LI>
+			<LI><A HREF="#get"><CODE>get</CODE></A></LI>
+			<LI><A HREF="#set($str)"><CODE>set($str)</CODE></A></LI>
+		</UL>
+
+		<LI><A HREF="#notes on class internals">Notes on class internals</A></LI>
+	</UL>
+
+	<LI><A HREF="#warnings">WARNINGS</A></LI>
+	<LI><A HREF="#see also">SEE ALSO</A></LI>
+	<LI><A HREF="#author">AUTHOR</A></LI>
+	<LI><A HREF="#version">VERSION</A></LI>
+</UL>
+<!-- INDEX END -->
+
+<HR>
+<P>
+<HR>
+<H1><A NAME="name">NAME</A></H1>
+<P>VOTABLE::LINK - VOTABLE LINK XML element class</P>
+<P>
+<HR>
+<H1><A NAME="synopsis">SYNOPSIS</A></H1>
+<P><CODE>use VOTABLE::LINK;</CODE></P>
+<P>
+<HR>
+<H1><A NAME="description">DESCRIPTION</A></H1>
+<P>This class implements the <CODE>LINK</CODE> element from the <CODE>VOTABLE</CODE>
+DTD. This element is used to store traditional <CODE>HTTP</CODE> hyperlinks to
+supporting information (using the <CODE>href</CODE> attribute), or a more
+general-purpose link (using the <CODE>gref</CODE> attribute).</P>
+<P>The LINK element is a Tier 0 element, and is described by the
+following excerpt from the <CODE>VOTABLE</CODE> 1.0 DTD:</P>
+<PRE>
+ &lt;!ELEMENT LINK (#PCDATA)&gt;
+ &lt;!ATTLIST LINK
+         ID ID #IMPLIED
+         content-role (query | hints | doc) #IMPLIED
+         content-type CDATA #IMPLIED
+         title CDATA #IMPLIED
+         value CDATA #IMPLIED
+         href CDATA #IMPLIED
+         gref CDATA #IMPLIED
+         action CDATA #IMPLIED
+ &gt;</PRE>
+<P>
+<H2><A NAME="methods">Methods</A></H2>
+<P>
+<H3><A NAME="new($str_or_ref, %options)"><CODE>new($str_or_ref, %options)</CODE></A></H3>
+<P>Create a new <CODE>VOTABLE::LINK</CODE> object, and return a reference to it. If
+the first argument (<CODE>$str_or_ref</CODE>) is a string, it is used as the
+initial <CODE>PCDATA</CODE> content of the <CODE>LINK</CODE> element. If the first
+argument is a reference to a <CODE>XML::DOM::Element</CODE> object, that object
+is used to initialize the new <CODE>LINK</CODE> element (implicitly assuming
+that the <CODE>XML::DOM::Element</CODE> object contains a valid <CODE>LINK</CODE>
+element). The <CODE>%options</CODE> hash is used to set the attributes of the
+new element. If the first argument is missing or undefined, or an
+empty string, create and return an empty <CODE>VOTABLE::LINK</CODE>
+object. Return <CODE>undef</CODE> if an error occurs.</P>
+<P>
+<H3><A NAME="get_id"><CODE>get_ID</CODE></A></H3>
+<P>Return the value of the <CODE>ID</CODE> attribute. Return <CODE>undef</CODE> if the
+attribute has not been set, or an error occurs.</P>
+<P>
+<H3><A NAME="set_id($id)"><CODE>set_ID($id)</CODE></A></H3>
+<P>Set the value of the <CODE>ID</CODE> attribute to the specified value. Return
+the new value of the attribute on success, or <CODE>undef</CODE> if an error
+occurs.</P>
+<P>
+<H3><A NAME="get_action"><CODE>get_action</CODE></A></H3>
+<P>Return the value of the <CODE>action</CODE> attribute. Return <CODE>undef</CODE> if the
+attribute has not been set, or an error occurs.</P>
+<P>
+<H3><A NAME="set_action($action)"><CODE>set_action($action)</CODE></A></H3>
+<P>Set the value of the <CODE>action</CODE> attribute to the specified
+value. Return the new value of the attribute on success, or <CODE>undef</CODE>
+if an error occurs.</P>
+<P>
+<H3><A NAME="get_content_role"><CODE>get_content_role</CODE></A></H3>
+<P>Return the value of the <CODE>content-role attribute</CODE>. Return <CODE>undef</CODE> if
+the attribute has not been set, or an error occurs.</P>
+<P>
+<H3><A NAME="set_content_role($content_role)"><CODE>set_content_role($content_role)</CODE></A></H3>
+<P>Set the value of the <CODE>content-role</CODE> attribute to the specified
+value. Return the new value of the attribute on success, or <CODE>undef</CODE>
+if an error occurs.</P>
+<P>
+<H3><A NAME="get_content_type"><CODE>get_content_type</CODE></A></H3>
+<P>Return the value of the <CODE>content-type</CODE> attribute. Return <CODE>undef</CODE> if
+the attribute has not been set, or an error occurs.</P>
+<P>
+<H3><A NAME="set_content_type($content_type)"><CODE>set_content_type($content_type)</CODE></A></H3>
+<P>Set the value of the <CODE>content-type</CODE> attribute to the specified
+value. Return the new value of the attribute on success, or <CODE>undef</CODE>
+if an error occurs.</P>
+<P>
+<H3><A NAME="get_gref"><CODE>get_gref</CODE></A></H3>
+<P>Return the value of the <CODE>gref</CODE> attribute. Return <CODE>undef</CODE> if the
+attribute has not been set, or an error occurs.</P>
+<P>
+<H3><A NAME="set_gref($gref)"><CODE>set_gref($gref)</CODE></A></H3>
+<P>Set the value of the <CODE>gref</CODE> attribute to the specified value. Return
+the new value of the attribute on success, or <CODE>undef</CODE> if an error
+occurs.</P>
+<P>
+<H3><A NAME="get_href"><CODE>get_href</CODE></A></H3>
+<P>Return the value of the <CODE>href</CODE> attribute. Return <CODE>undef</CODE> if the
+attribute has not been set, or an error occurs.</P>
+<P>
+<H3><A NAME="set_href($href)"><CODE>set_href($href)</CODE></A></H3>
+<P>Set the value of the <CODE>href</CODE> attribute to the specified value. Return
+the new value of the attribute on success, or <CODE>undef</CODE> if an error
+occurs.</P>
+<P>
+<H3><A NAME="get_title"><CODE>get_title</CODE></A></H3>
+<P>Return the value of the <CODE>title</CODE> attribute. Return <CODE>undef</CODE> if the
+attribute has not been set, or an error occurs.</P>
+<P>
+<H3><A NAME="set_title($title)"><CODE>set_title($title)</CODE></A></H3>
+<P>Set the value of the <CODE>title</CODE> attribute to the specified value. Return
+the new value of the attribute on success, or <CODE>undef</CODE> if an error
+occurs.</P>
+<P>
+<H3><A NAME="get_value"><CODE>get_value</CODE></A></H3>
+<P>Return the value of the <CODE>value</CODE> attribute. Return <CODE>undef</CODE> if the
+attribute has not been set, or an error occurs.</P>
+<P>
+<H3><A NAME="set_value($value)"><CODE>set_value($value)</CODE></A></H3>
+<P>Set the value of the <CODE>value</CODE> attribute to the specified value. Return
+the new value of the attribute on success, or <CODE>undef</CODE> if an error
+occurs.</P>
+<P>
+<H3><A NAME="get"><CODE>get</CODE></A></H3>
+<P>Return a string containing the <CODE>PCDATA</CODE> content of the <CODE>LINK</CODE>
+element. Return <CODE>undef</CODE> if the element has no <CODE>PCDATA</CODE> content, or
+an error occurs.</P>
+<P>
+<H3><A NAME="set($str)"><CODE>set($str)</CODE></A></H3>
+<P>Set the <CODE>PCDATA</CODE> content of the <CODE>LINK</CODE> element to the specified
+string. Return the string on success, or <CODE>undef</CODE> if an error occurs.</P>
+<P>
+<H2><A NAME="notes on class internals">Notes on class internals</A></H2>
+<UL>
+<LI>
+Method names that begin with a leading underscore ('<CODE>_</CODE>') are for
+internal use only, and should <EM>not</EM> be used outside of the <CODE>VOTABLE</CODE>
+class hierarchy.
+<P></P>
+<LI>
+The names of the <CODE>get_XXX</CODE> and <CODE>set_XXX</CODE> accessors for attributes
+and elements are derived directly from the names of the attributes or
+elements. Attribute and element names containing embedded hyphens
+('<CODE>-</CODE>') use accessors where the hyphen is mapped to an underscore
+('<CODE>_</CODE>') in the name of the accessor method. This is a necessity,
+since the hyphen is not a valid name character in Perl.
+<P></P></UL>
+<P>
+<HR>
+<H1><A NAME="warnings">WARNINGS</A></H1>
+<UL>
+<LI>
+This code (perhaps unwisely) assumes that object internal structure is
+always maintained. For example, this code assumes that every
+<CODE>VOTABLE::LINK</CODE> object <EM>always</EM> has an underlying
+<CODE>XML::DOM::Element</CODE> object. As long as the internal structure is
+manipulated only by the publicly-available methods, this should be an
+adequate assumption. If a method detects an aberrant case, a warning
+message is printed (using the <CODE>Carp::carp</CODE> subroutine), and the
+method fails.
+<P></P>
+<LI>
+Similarly, this code assumes that <CODE>XML::DOM</CODE> methods always
+succeed. If a method detects an aberrant case, a warning message is
+printed (using the <CODE>Carp::carp</CODE> subroutine), and the method fails.
+<P></P>
+<LI>
+Most attribute <CODE>set_XXX</CODE> accessors do not perform validation of the
+new attribute values. The exceptions are the accessors for attributes
+with enumerated values; the new value is checked against the list of
+acceptable values, as defined in the DTD.
+<P></P></UL>
+<P>
+<HR>
+<H1><A NAME="see also">SEE ALSO</A></H1>
+<P><CODE>VOTABLE</CODE>, <CODE>VOTABLE::FIELD</CODE>, <CODE>VOTABLE::PARAM</CODE>,
+<CODE>VOTABLE::RESOURCE</CODE>, <CODE>VOTABLE::TABLE</CODE></P>
+<P>
+<HR>
+<H1><A NAME="author">AUTHOR</A></H1>
+<P>Eric Winter, NASA GSFC (<A HREF="mailto:elwinter@milkyway.gsfc.nasa.gov">elwinter@milkyway.gsfc.nasa.gov</A>)</P>
+<P>
+<HR>
+<H1><A NAME="version">VERSION</A></H1>
+<P>$Id: LINK.pm,v 1.1.1.7 2002/05/21 14:11:17 elwinter Exp $</P>
+
+</BODY>
+
+</HTML>

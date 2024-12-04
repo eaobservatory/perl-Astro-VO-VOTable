@@ -54,8 +54,6 @@ sub test_new()
     my($votable_option);
     $votable_option = new VOTABLE::OPTION
 	or return(0);
-    $votable_option = new VOTABLE::OPTION '100'
-	or return(0);
     $votable_option = new VOTABLE::OPTION $factory->createElement('OPTION')
 	or return(0);
     return(1);

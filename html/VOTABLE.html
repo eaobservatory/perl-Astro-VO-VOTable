@@ -1,0 +1,158 @@
+<HTML>
+<HEAD>
+<TITLE>VOTABLE - VOTABLE XML manipulation package</TITLE>
+<LINK REV="made" HREF="mailto:elwinter@olegacy.gsfc.nasa.gov">
+</HEAD>
+
+<BODY>
+
+<A NAME="__index__"></A>
+<!-- INDEX BEGIN -->
+
+<UL>
+
+	<LI><A HREF="#name">NAME</A></LI>
+	<LI><A HREF="#synopsis">SYNOPSIS</A></LI>
+	<LI><A HREF="#description">DESCRIPTION</A></LI>
+	<LI><A HREF="#warnings">WARNINGS</A></LI>
+	<LI><A HREF="#see also">SEE ALSO</A></LI>
+	<LI><A HREF="#author">AUTHOR</A></LI>
+	<LI><A HREF="#version">VERSION</A></LI>
+</UL>
+<!-- INDEX END -->
+
+<HR>
+<P>
+<HR>
+<H1><A NAME="name">NAME</A></H1>
+<P>VOTABLE - VOTABLE XML manipulation package</P>
+<P>
+<HR>
+<H1><A NAME="synopsis">SYNOPSIS</A></H1>
+<P><CODE>use VOTABLE</CODE>;</P>
+<P>
+<HR>
+<H1><A NAME="description">DESCRIPTION</A></H1>
+<P>The <CODE>VOTABLE::</CODE> class hierarchy forms a set of wrappers around the
+ class hierarchy. When using the <CODE>VOTABLE</CODE> classes, the
+user does not need to worry about the implementation details of the
+underlying XML technology (currently <A HREF="#item_XML%3A%3ADOM"><CODE>XML::DOM</CODE></A>, but subject to
+change).</P>
+<P>In general, the code consists of a <CODE>VOTABLE</CODE> module/class for each
+VOTABLE element defined in the VOTABLE DTD (version 1.0). This is VERY
+alpha code. It provides a crude but essentially complete capability to
+read, modify, and write VOTABLE documents. The code does its best to
+maintain the internal integrity of the document so that adherence to
+the DTD (or schema) is maintained.</P>
+<P>The overall design of the VOTABLE objects is straightforward. Each XML
+element in the VOTABLE DTD is represented by a class. Each element
+class is a subclass of <CODE>VOTABLE::Element</CODE> (this class). Within each
+element class, there are attributes and child elements, along with
+implementation-specific data, such as references to the underlying
+<A HREF="#item_XML%3A%3ADOM"><CODE>XML::DOM</CODE></A> objects.</P>
+<P>Attributes are manipulated using <CODE>get_ATTNAME</CODE> and <CODE>set_ATTNAME</CODE>
+methods (accessors), where <CODE>ATTNAME</CODE> is replaced by the name of the
+attribute in question. The <CODE>set</CODE> methods take a single argument (the
+value to set the attribute to), and the <CODE>get</CODE> methods take no
+arguments. Since attributes can only take single values, all
+<CODE>set_ATTNAME</CODE> methods take single scalars as arguments, and
+<CODE>get_ATTNAME</CODE> methods return single scalars. All <CODE>set_ATTNAME</CODE>
+methods return the newly-set value on success, or <CODE>undef</CODE> if an error
+occurs.</P>
+<P>Child elements have similar accessors, of the form <CODE>get_ELNAME</CODE> and
+<CODE>set_ELNAME</CODE>, where <CODE>ELNAME</CODE> is replaced by the name of the element
+(more precisely, the name of the element <EM>tag</EM>, such as <CODE>TABLEDATA</CODE>
+for a <CODE>TABLEDATA</CODE> element). Note that these names, and the methods,
+are case-sensitive. The type of arguments passed to and returned from
+the element accessors is determined by the multiplicity of the child
+elements (as defined by the VOTABLE DTD). Elements which can occur 0
+or 1 times (those which are unquantified, or quantified with a '?' in
+the DTD) are passed and returned as scalars, while elements which can
+occur 1 or more times (those quantified with a '+' or '*' in the DTD)
+are passed and returned as lists. Like <CODE>set_ATTNAME</CODE> accessors,
+<CODE>set_ELNAME</CODE> accessors return the new <CODE>value(s)</CODE> on success. On
+failure, scalar-returning methods return <CODE>undef</CODE>, while
+list-returning methods return an empty list.</P>
+<P>The <CODE>VOTABLE</CODE> class hierarchy is simple. The <A HREF="#item_VOTABLE%3A%3ADocument"><CODE>VOTABLE::Document</CODE></A>
+class is used for objects representing entire XML documents, which are
+composed of <CODE>VOTABLE::ELEMENT_NAME</CODE> objects, where <CODE>ELEMENT_NAME</CODE> is
+replaced by the name of a valid VOTABLE element tag. There is a class
+for each valid VOTABLE element. Classes are arranged in tiers, where
+an element in a higher tier is composed exclusively of elements in
+lower tiers. The current list of valid elements is:</P>
+<UL>
+<LI>
+Tier 0: <CODE>COOSYS</CODE>, <CODE>DESCRIPTION</CODE>, <CODE>INFO</CODE>, <CODE>LINK</CODE>, <CODE>MAX</CODE>, <CODE>MIN</CODE>,
+<CODE>STREAM</CODE>, <CODE>TD</CODE>
+<P></P>
+<LI>
+Tier 1: <CODE>BINARY</CODE>, <CODE>FITS</CODE>, <CODE>OPTION</CODE>, <CODE>TR</CODE>
+<P></P>
+<LI>
+Tier 2: <CODE>TABLEDATA</CODE>, <CODE>VALUES</CODE>
+<P></P>
+<LI>
+Tier 3: <CODE>DATA</CODE>, <CODE>FIELD</CODE>, <CODE>PARAM</CODE>
+<P></P>
+<LI>
+Tier 4: <CODE>DEFINITIONS</CODE>, <CODE>TABLE</CODE>
+<P></P>
+<LI>
+Tier 5: <CODE>RESOURCE</CODE>
+<P></P>
+<LI>
+Tier 6: <CODE>Document</CODE>
+<P></P></UL>
+<P>
+<HR>
+<H1><A NAME="warnings">WARNINGS</A></H1>
+<UL>
+<LI>
+Alpha code. Caveat programmor.
+<P></P>
+<LI>
+This code (perhaps unwisely) assumes that object internal structure is
+always maintained. For example, this code assumes that every
+<CODE>VOTABLE::Element</CODE> <EM>always</EM> has an underlying <CODE>XML::DOM::Element</CODE>
+object. When aberrant cases are encountered, an exception is raised
+(using the <CODE>Carp::croak</CODE> subroutine).
+<P></P>
+<LI>
+Similarly, this code assumes that <A HREF="#item_XML%3A%3ADOM"><CODE>XML::DOM</CODE></A> methods always
+succeed. When aberrant cases are encountered, an exception is raised
+(using the <CODE>Carp::croak</CODE> subroutine).
+<P></P>
+<LI>
+Attribute and element names containing embedded hyphens ('-') use
+accessors where the hyphen is mapped to an underscore ('_') in the
+name of the accessor method. This is a necessity, since the hyphen is
+not a valid name character in Perl.
+<P></P>
+<LI>
+External data is not yet supported, although the infrastructure has
+been started (BINARY and FITS elements, and STREAMs).
+<P></P>
+<LI>
+No testing has been done with Perl prior to version 5.6.1.
+<P></P></UL>
+<P>
+<HR>
+<H1><A NAME="see also">SEE ALSO</A></H1>
+<UL>
+<LI><STRONG><A NAME="item_VOTABLE%3A%3ADocument"><CODE>VOTABLE::Document</CODE></A></STRONG><BR>
+
+<LI><STRONG><A NAME="item_XML%3A%3ADOM"><CODE>XML::DOM</CODE></A></STRONG><BR>
+
+</UL>
+<P>
+<HR>
+<H1><A NAME="author">AUTHOR</A></H1>
+<P>Eric Winter, NASA GSFC (<A HREF="mailto:elwinter@milkyway.gsfc.nasa.gov">elwinter@milkyway.gsfc.nasa.gov</A>)</P>
+<P>
+<HR>
+<H1><A NAME="version">VERSION</A></H1>
+<P>$Id: VOTABLE.pm,v 1.1.1.4 2002/05/21 14:07:09 elwinter Exp $</P>
+
+</BODY>
+
+</HTML>

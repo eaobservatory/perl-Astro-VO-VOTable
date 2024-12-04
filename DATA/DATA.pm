@@ -3,21 +3,132 @@
 =pod
 
 =head1 NAME
+
 VOTABLE::DATA - VOTABLE DATA XML element class
 
 =head1 SYNOPSIS
 
+C<use VOTABLE::DATA;>
+
 =head1 DESCRIPTION
 
-This class implements the DATA element from the VOTABLE DTD.
+This class implements the C<DATA> element from the C<VOTABLE>
+DTD. This is a wrapper element around the C<BINARY>, C<FITS>, and
+C<TABLEDATA> elements, and constitutes the data segment of a C<TABLE>
+element.
+
+The C<DATA> element is a Tier 3 element, and is described by the
+following excerpt from the C<VOTABLE> 1.0 DTD:
+
+ <!ELEMENT DATA (TABLEDATA | BINARY | FITS)>
+
+=head2 Methods
+
+=head3 C<new($xmldom_element, %options)>
+
+Create and return a new C<VOTABLE::DATA> object, based on the supplied
+C<XML::DOM::Element> object, using C<%options> to set the attributes
+of the new object. If no C<XML::DOM::Element> object is specified, or
+is undefined, create and return an empty C<VOTABLE::DATA>
+object. Return C<undef> if an error occurs.
+
+=head3 C<get_binary>
+
+Return the C<VOTABLE::BINARY> object for the C<BINARY> element which
+is the child of this C<DATA> element. Return C<undef> if no C<BINARY>
+element is found, or an error occurs.
+
+=head3 C<set_binary($votable_binary)>
+
+Set the C<BINARY> element for this C<DATA> element using the supplied
+C<VOTABLE::BINARY> object. Any existing C<BINARY>, C<FITS>, or
+C<TABLEDATA> element in this C<DATA> element is replaced by the new
+C<BINARY> element. Return the C<VOTABLE::BINARY> object on success, or
+C<undef> if an error occurs.
+
+=head3 C<get_fits>
+
+Return the C<VOTABLE::FITS> object for the C<FITS> element which is
+the child of this C<DATA> element. Return C<undef> if no C<FITS>
+element is found, or an error occurs.
+
+=head3 C<set_fits($votable_fits)>
+
+Set the C<FITS> element for this C<DATA> element using the supplied
+C<VOTABLE::FITS> object. Any existing C<BINARY>, C<FITS>, or
+C<TABLEDATA> element in this C<DATA> element is replaced by the new
+C<FITS> element. Return the C<VOTABLE::FITS> object on success, or
+C<undef> if an error occurs.
+
+=head3 C<get_tabledata>
+
+Return the C<VOTABLE::TABLEDATA> object for the C<TABLEDATA> element
+which is the child of this C<DATA> element. Return C<undef> if no
+C<TABLEDATA> element is found, or an error occurs.
+
+=head3 C<set_tabledata($votable_tabledata)>
+
+Set the C<TABLEDATA> element for this C<DATA> element using the
+supplied C<VOTABLE::TABLEDATA> object. Any existing C<BINARY>,
+C<FITS>, or C<TABLEDATA> element in this C<DATA> element is replaced
+by the new C<TABLEDATA> element. Return the C<VOTABLE::TABLEDATA>
+object on success, or C<undef> if an error occurs.
+
+=head2 Notes on class internals
+
+=over 4
+
+=item *
+
+Method names that begin with a leading underscore ('C<_>') are for
+internal use only, and should I<not> be used outside of the C<VOTABLE>
+class hierarchy.
+
+=item *
+
+The names of the C<get_XXX> and C<set_XXX> accessors for attributes
+and elements are derived directly from the names of the attributes or
+elements. Attribute and element names containing embedded hyphens
+('C<->') use accessors where the hyphen is mapped to an underscore
+('C<_>') in the name of the accessor method. This is a necessity,
+since the hyphen is not a valid name character in Perl.
+
+=back
 
 =head1 WARNINGS
 
-This code assumes that the internal state of the objects is consistent
-at all times.
+=over 4
 
-This code assumes that calls to XML::DOM methods and subroutines never
-fail.
+=item *
+
+This code (perhaps unwisely) assumes that object internal structure is
+always maintained. For example, this code assumes that every
+C<VOTABLE::TABLEDATA> object I<always> has an underlying
+C<XML::DOM::Element> object. As long as the internal structure is
+manipulated only by the publicly-available methods, this should be an
+adequate assumption. If a method detects an aberrant case, a warning
+message is printed (using the C<Carp::carp> subroutine), and the
+method fails.
+
+=item *
+
+Similarly, this code assumes that C<XML::DOM> methods always
+succeed. If a method detects an aberrant case, a warning message is
+printed (using the C<Carp::carp> subroutine), and the method fails.
+
+=item *
+
+Most attribute C<set_XXX> accessors do not perform validation of the
+new attribute values. The exceptions are the accessors for attributes
+with enumerated values; the new value is checked against the list of
+acceptable values, as defined in the DTD.
+
+=back
+
+=head1 SEE ALSO
+
+C<VOTABLE>, C<VOTABLE::BINARY>, C<VOTABLE::FITS>,
+C<VOTABLE::TABLE>, C<VOTABLE::TABLEDATA>
 
 =head1 AUTHOR
 
@@ -25,15 +136,21 @@ Eric Winter, NASA GSFC (elwinter@milkyway.gsfc.nasa.gov)
 
 =head1 VERSION
 
-$Id: DATA.pm,v 1.1.1.5 2002/05/14 11:48:19 elwinter Exp $
+$Id: DATA.pm,v 1.1.1.7 2002/05/21 14:08:54 elwinter Exp $
 
 =cut
 
-#******************************************************************************
+#------------------------------------------------------------------------------
 
 # Revision history
 
 # $Log: DATA.pm,v $
+# Revision 1.1.1.7  2002/05/21  14:08:54  elwinter
+# Incremented $VERSION to 0.02.
+#
+# Revision 1.1.1.6  2002/05/21  11:51:25  elwinter
+# Overhauled and updated documentation.
+#
 # Revision 1.1.1.5  2002/05/14  11:48:19  elwinter
 # Overhauled.
 #
@@ -61,15 +178,15 @@ use diagnostics;
 # Use enhanced warnings.
 use warnings;
 
-#******************************************************************************
+#------------------------------------------------------------------------------
 
 # Set up the inheritance mexhanism.
 our @ISA = qw();
 
 # Module version.
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
-#******************************************************************************
+#------------------------------------------------------------------------------
 
 # Specify external modules to use.
 
@@ -85,29 +202,53 @@ use VOTABLE::BINARY;
 use VOTABLE::FITS;
 use VOTABLE::TABLEDATA;
 
-#******************************************************************************
+#------------------------------------------------------------------------------
 
 # Class constants.
 
 # Name of XML tag for current class.
 my($TAG_NAME) = 'DATA';
 
+# Name of underlying XML::DOM object class.
+my($XMLDOM_BASE_CLASS) = 'XML::DOM::Element';
+
 # List of valid attributes for this element.
 my(@valid_attribute_names) = ();
 
-#******************************************************************************
+#------------------------------------------------------------------------------
 
 # Class variables.
 
 # This object is used to access the factory methods in the
 # XML::DOM::Document class.
-my($xmldom_factory_document) = new XML::DOM::Document;
+my($xmldom_document_factory);
 
 #******************************************************************************
 
-# Method definitions
+# Class methods
 
 #------------------------------------------------------------------------------
+
+# INIT()
+
+# This subroutine is run just before the main program starts. It is
+# used to initialize the package as a whole.
+
+sub INIT()
+{
+
+    # Create the factory document.
+    $xmldom_document_factory = new XML::DOM::Document;
+    if (not $xmldom_document_factory) {
+	croak('Unable to create factory document!');
+    }
+
+}
+
+#------------------------------------------------------------------------------
+
+# Object methods
+
 #------------------------------------------------------------------------------
 
 # new()
@@ -126,9 +267,8 @@ my($xmldom_factory_document) = new XML::DOM::Document;
 # value pairs to use to initialize the attributes of the new object.
 
 # Note that if you want to specify attribute values to the
-# constructor, but do not want to specify a string or object reference
-# to use, you must pass an empty string or undef as the first
-# additional argument.
+# constructor, but do not want to specify an object reference to use,
+# you must pass undef as the first additional argument.
 
 sub new()
 {
@@ -158,9 +298,6 @@ sub new()
     # Reference to new object.
     my($this);
 
-    # XML::DOM text node object for the content.
-    my($xmldom_textnode);
-
     # Code string for eval.
     my($set_attribute);
 
@@ -168,6 +305,12 @@ sub new()
 
     # Process the options.
     if (@options) {
+	if (ref($options[0])) {
+	    if (ref($options[0]) ne $XMLDOM_BASE_CLASS) {
+ 		carp('Bad input class: ', ref($options[0]));
+ 		return(undef);
+ 	    }
+	}
 	($xmldom_element_this, %attributes) = @options;
     }
 
@@ -175,7 +318,7 @@ sub new()
     if ($xmldom_element_this) {
 	$tag_name = $xmldom_element_this->getTagName;
 	if ($tag_name ne $TAG_NAME) {
-	    carp("Invalid $TAG_NAME tag name: $tag_name!");
+	    carp("Invalid tag name: $tag_name!");
 	    return(undef);
 	}
     }
@@ -183,7 +326,7 @@ sub new()
     # Make sure only valid attributes were specified.
     foreach $attribute_name (keys(%attributes)) {
 	if (not grep(/$attribute_name/, @valid_attribute_names)) {
-	    carp("Invalid $TAG_NAME attribute name: $attribute_name!");
+	    carp("Invalid attribute name: $attribute_name!");
 	    return(undef);
 	}
     }
@@ -205,32 +348,37 @@ sub new()
 
 	# Create a new XML::DOM::Element object.
 	$xmldom_element_this =
-	    $xmldom_factory_document->createElement($TAG_NAME);
+	    $xmldom_document_factory->createElement($TAG_NAME);
+	if (not $xmldom_element_this) {
+	    carp('Unable to create XML::DOM::Element.');
+	    return(undef);
+	}
 
     }
 
     # Save the new XML::DOM::Element.
-    $this->{'XML::DOM::Element'} = $xmldom_element_this;
+    if ($this->_set_XMLDOM($xmldom_element_this) ne $xmldom_element_this) {
+	carp("Unable to set $XMLDOM_BASE_CLASS.");
+	return(undef);
+    }
 
-    # Process any specified attributes. This code assumes that the
-    # name of each attribute can be directly mapped to a subroutine
-    # name.
+    # Process any specified attributes.
     while (($attribute_name, $attribute_value) = each(%attributes)) {
+	$attribute_name =~ s/-/_/;
 	$set_attribute = "\$this->set_${attribute_name}(\$attribute_value)";
 	eval($set_attribute);
 	if ($EVAL_ERROR) {
-	    carp("Error evaluating $TAG_NAME '$set_attribute': $EVAL_ERROR!");
+	    carp("Error evaluating '$set_attribute': $EVAL_ERROR!");
 	    return(undef);
 	}
     }
 
-    # Construct the VOTABLE object from the XML::DOM object.
+    # Construct the VOTABLE::DATA object from the XML::DOM object.
     if (not $this->_build_from_XMLDOM) {
-	carp('Unable to build $TAG_NAME from XML::DOM object!');
+	carp("Unable to build VOTABLE::$TAG_NAME object from " .
+	     "XML::DOM::Element!");
 	return(undef);
     }
-
-    #--------------------------------------------------------------------------
 
     # Return the object.
     return($this);
@@ -238,47 +386,13 @@ sub new()
 }
 
 #------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
 
-# Attribute accessor methods.
-
-#------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
+# Attribute accessor methods
 
 #------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
 
-# Element accessor methods.
+# Element accessor methods
 
-# These methods assume they are called for a valid VOTABLE
-# object. Therefore, no error checking is done on the object
-# internals.
-
-# For each element get_xxx() method, check to see if the element(s)
-# exists. If so, return a reference to the VOTABLE object for the
-# element (or a list of VOTABLE object references for multiple
-# elements). Note that these methods use exists() to check for the
-# element(s), to avoid creation on non-existence (which is what
-# defined() would do if we used it instead of exists()). If the child
-# is not found, return undef. If an error occurs, carp() a message and
-# return undef.
-
-# For each set_xxx() method, check to see if the element(s) currently
-# exist. If so, remove them before attaching the new elements. Note
-# that the set_xxx() methods must maintain the element order specified
-# in the DTD. The current object (always referred to as $this) and its
-# children must be linked at two levels - the VOTABLE level, and the
-# XML::DOM level. Linking at the VOTABLE level is easy, since links
-# are unidirectional, from parent to child. At the XML::DOM level,
-# many more steps must be taken to establish the links. Return the
-# supplied argument, using the matching get_xxx() method, to ensure
-# success. Otherwise, carp() and error message and return undef.
-
-# These methods follow the standard naming convention that variables
-# referring to VOTABLE objects have a 'votable_' prefix, and those
-# referring to XML::DOM objects have a 'xmldom_' prefix.
-
-#------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 
 sub get_binary()
@@ -313,21 +427,18 @@ sub set_binary()
 
     #--------------------------------------------------------------------------
 
-    # Link the elements at the VOTABLE level. This is easy, since
-    # parent/child links in the VOTABLE class hierarchy are one-way,
-    # from parent to child.
+    # Link the elements at the VOTABLE level.
     $this->{'BINARY'} = $votable_binary;
 
     #--------------------------------------------------------------------------
 
-    # Now link the elements at the XML::DOM level. This is
-    # complicated, since the links are bidirectional.
+    # Link the elements at the XML::DOM level.
 
     # Get the XML::DOM::Element for this object.
-    $xmldom_element_this = $this->{'XML::DOM::Element'};
+    $xmldom_element_this = $this->_get_XMLDOM;
 
     # Get the XML::DOM::Element for the new BINARY element.
-    $xmldom_element_binary = $votable_binary->{'XML::DOM::Element'};
+    $xmldom_element_binary = $votable_binary->_get_XMLDOM;
     if (not $xmldom_element_binary) {
 	carp('Unable to find XML::DOM::Element!');
 	return(undef);
@@ -349,8 +460,7 @@ sub set_binary()
 	$xmldom_element_this->removeChild($xmldom_elements[0]);
     }
 
-    # Attach the BINARY element to this element owner
-    # document. THIS IS IMPORTANT!
+    # Attach the BINARY element to this element owner document.
     $xmldom_element_binary->
 	setOwnerDocument($xmldom_element_this->getOwnerDocument);
 
@@ -401,21 +511,18 @@ sub set_fits()
 
     #--------------------------------------------------------------------------
 
-    # Link the elements at the VOTABLE level. This is easy, since
-    # parent/child links in the VOTABLE class hierarchy are one-way,
-    # from parent to child.
+    # Link the elements at the VOTABLE level.
     $this->{'FITS'} = $votable_fits;
 
     #--------------------------------------------------------------------------
 
-    # Now link the elements at the XML::DOM level. This is
-    # complicated, since the links are bidirectional.
+    # Link the elements at the XML::DOM level.
 
     # Get the XML::DOM::Element for this object.
-    $xmldom_element_this = $this->{'XML::DOM::Element'};
+    $xmldom_element_this = $this->_get_XMLDOM;
 
     # Get the XML::DOM::Element for the new FITS element.
-    $xmldom_element_fits = $votable_fits->{'XML::DOM::Element'};
+    $xmldom_element_fits = $votable_fits->_get_XMLDOM;
     if (not $xmldom_element_fits) {
 	carp('Unable to find XML::DOM::Element!');
 	return(undef);
@@ -437,8 +544,7 @@ sub set_fits()
 	$xmldom_element_this->removeChild($xmldom_elements[0]);
     }
 
-    # Attach the FITS element to this element owner
-    # document. THIS IS IMPORTANT!
+    # Attach the FITS element to this element owner document.
     $xmldom_element_fits->
 	setOwnerDocument($xmldom_element_this->getOwnerDocument);
 
@@ -489,21 +595,18 @@ sub set_tabledata()
 
     #--------------------------------------------------------------------------
 
-    # Link the elements at the VOTABLE level. This is easy, since
-    # parent/child links in the VOTABLE class hierarchy are one-way,
-    # from parent to child.
+    # Link the elements at the VOTABLE level.
     $this->{'TABLEDATA'} = $votable_tabledata;
 
     #--------------------------------------------------------------------------
 
-    # Now link the elements at the XML::DOM level. This is
-    # complicated, since the links are bidirectional.
+    # Link the elements at the XML::DOM level.
 
     # Get the XML::DOM::Element for this object.
-    $xmldom_element_this = $this->{'XML::DOM::Element'};
+    $xmldom_element_this = $this->_get_XMLDOM;
 
     # Get the XML::DOM::Element for the new TABLEDATA element.
-    $xmldom_element_tabledata = $votable_tabledata->{'XML::DOM::Element'};
+    $xmldom_element_tabledata = $votable_tabledata->_get_XMLDOM;
     if (not $xmldom_element_tabledata) {
 	carp('Unable to find XML::DOM::Element!');
 	return(undef);
@@ -525,8 +628,7 @@ sub set_tabledata()
 	$xmldom_element_this->removeChild($xmldom_elements[0]);
     }
 
-    # Attach the TABLEDATA element to this element owner
-    # document. THIS IS IMPORTANT!
+    # Attach the TABLEDATA element to this element owner document.
     $xmldom_element_tabledata->
 	setOwnerDocument($xmldom_element_this->getOwnerDocument);
 
@@ -546,19 +648,13 @@ sub set_tabledata()
 }
 
 #------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
 
-# PCDATA content accessor methods.
-
-#------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
+# PCDATA content accessor methods
 
 #------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
 
-# Internal methods.
+# Internal methods
 
-#------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 
 sub _build_from_XMLDOM()
@@ -571,7 +667,8 @@ sub _build_from_XMLDOM()
 
     # Local variables.
 
-    # Reference to XML::DOM::Element object for current VOTABLE object.
+    # Reference to XML::DOM::Element object for current VOTABLE
+    # object.
     my($xmldom_element_this);
 
     # Temporary array of XML::DOM::Element objects.
@@ -583,7 +680,7 @@ sub _build_from_XMLDOM()
     #--------------------------------------------------------------------------
 
     # Fetch the current XML::DOM::Element object.
-    $xmldom_element_this = $this->{'XML::DOM::Element'};
+    $xmldom_element_this = $this->_get_XMLDOM;
 
     #--------------------------------------------------------------------------
 
@@ -646,6 +743,34 @@ sub _build_from_XMLDOM()
 
     # Return normally.
     return(1);
+}
+
+#------------------------------------------------------------------------------
+
+# _get_XMLDOM()
+
+# Internal method to get a reference to the underlying
+# XML::DOM::Element object.
+
+sub _get_XMLDOM()
+{
+    my($this) = @_;
+    return($this->{$XMLDOM_BASE_CLASS});
+}
+
+#------------------------------------------------------------------------------
+
+# _set_XMLDOM()
+
+# Internal method to set the reference to the underlying
+# XML::DOM::Element object. Return the reference to the new
+# XML::DOM::Element.
+
+sub _set_XMLDOM()
+{
+    my($this, $xmldom_element) = @_;
+    $this->{$XMLDOM_BASE_CLASS} = $xmldom_element;
+    return($this->{$XMLDOM_BASE_CLASS});
 }
 
 #******************************************************************************

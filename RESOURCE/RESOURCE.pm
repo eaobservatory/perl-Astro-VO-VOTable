@@ -3,21 +3,221 @@
 =pod
 
 =head1 NAME
+
 VOTABLE::RESOURCE - VOTABLE RESOURCE XML element class
 
 =head1 SYNOPSIS
 
+C<use VOTABLE::RESOURCE;>
+
 =head1 DESCRIPTION
 
-This class implements the RESOURCE element from the VOTABLE DTD.
+This class implements the C<RESOURCE> element from the C<VOTABLE>
+DTD. This element is the high-level container for data resources
+within the VOTABLE framework.
+
+The C<RESOURCE> element is a Tier 5 element, and is described by the
+following excerpt from the C<VOTABLE> 1.0 DTD:
+
+ <!ELEMENT RESOURCE (DESCRIPTION?, INFO*, COOSYS*, PARAM*, LINK*, 
+      TABLE*, RESOURCE*)>
+ <!ATTLIST RESOURCE
+         name CDATA #IMPLIED
+         ID ID #IMPLIED
+         type (results | meta) "results"
+ >
+
+=head2 Methods
+
+=head3 C<new($xmldom_element, %options)>
+
+Create and return a new C<VOTABLE::RESOURCE> object, based on the
+supplied C<XML::DOM::Element> object, using C<%options> to set the
+attributes of the new object. If no C<XML::DOM::Element> object is
+specified, or is undefined, create and return an empty
+C<VOTABLE::RESOURCE> object. Return C<undef> if an error occurs.
+
+=head3 C<get_ID>
+
+Return the value of the C<ID> attribute. Return C<undef> if the
+attribute has not been set, or an error occurs.
+
+=head3 C<set_ID($id)>
+
+Set the value of the C<ID> attribute to the specified value. Return
+the new value of the attribute on success, or C<undef> if an error
+occurs.
+
+=head3 C<get_name>
+
+Return the value of the C<name> attribute. Return C<undef> if the
+attribute has not been set, or an error occurs.
+
+=head3 C<set_name($name)>
+
+Set the value of the C<name> attribute to the specified value. Return
+the new value of the attribute on success, or C<undef> if an error
+occurs.
+
+=head3 C<get_type>
+
+Return the value of the C<type> attribute. Return C<undef> if the
+attribute has not been set, or an error occurs.
+
+=head3 C<set_type($type)>
+
+Set the value of the C<type> attribute to the specified value. Return
+the new value of the attribute on success, or C<undef> if an error
+occurs.
+
+=head3 C<get_description>
+
+Return the C<VOTABLE::DESCRIPTION> object for the C<DESCRIPTION>
+element child of this C<RESOURCE> object. Return C<undef> if no
+C<DESCRIPTION> element is found, or if an error occurs.
+
+=head3 C<set_description($votable_description)>
+
+Set the C<VOTABLE::DESCRIPTION> object for the C<DESCRIPTION> child
+element of this C<RESOURCE> element to the specified object. Any
+existing C<DESCRIPTION> child element is first removed. Return the new
+C<DESCRIPTION> object on success, or C<undef> if an error occurs.
+
+=head3 C<get_info>
+
+Return a list of the C<VOTABLE::INFO> objects for the C<INFO> elements
+which are the children of this C<RESOURCE> element. Return an empty
+list if no C<INFO> elements are found, or if an error occurs.
+
+=head3 C<set_info(@votable_info)>
+
+Set the C<INFO> elements for this C<RESOURCE> element using the
+supplied list of C<VOTABLE::INFO> objects. Any previously existing
+C<INFO> elements are first removed. Return the input list on success,
+or an empty list if an error occurs.
+
+=head3 C<get_coosys>
+
+Return a list of the C<VOTABLE::COOSYS> objects for the C<COOSYS>
+elements which are the children of this C<RESOURCE> element. Return an
+empty list if no C<COOSYS> elements are found, or if an error occurs.
+
+=head3 C<set_coosys(@votable_coosys)>
+
+Set the C<COOSYS> elements for this C<RESOURCE> element using the
+supplied list of C<VOTABLE::COOSYS> objects. Any previously existing
+C<COOSYS> elements are first removed. Return the input list on
+success, or an empty list if an error occurs.
+
+=head3 C<get_param>
+
+Return a list of the C<VOTABLE::PARAM> objects for the C<PARAM>
+elements which are the children of this C<RESOURCE> element. Return an
+empty list if no C<PARAM> elements are found, or if an error occurs.
+
+=head3 C<set_param(@votable_param)>
+
+Set the C<PARAM> elements for this C<RESOURCE> element using the
+supplied list of C<VOTABLE::PARAM> objects. Any previously existing
+C<PARAM> elements are first removed. Return the input list on success,
+or an empty list if an error occurs.
+
+=head3 C<get_link>
+
+Return a list of the C<VOTABLE::LINK> objects for the C<LINK> elements
+which are the children of this C<RESOURCE> element. Return an empty
+list if no C<LINK> elements are found, or if an error occurs.
+
+=head3 C<set_link(@votable_link)>
+
+Set the C<LINK> elements for this C<RESOURCE> element using the
+supplied list of C<VOTABLE::LINK> objects. Any previously existing
+C<LINK> elements are first removed. Return the input list on success,
+or an empty list if an error occurs.
+
+=head3 C<get_table>
+
+Return a list of the C<VOTABLE::TABLE> objects for the C<TABLE>
+elements which are the children of this C<RESOURCE> element. Return an
+empty list if no C<TABLE> elements are found, or if an error occurs.
+
+=head3 C<set_table(@votable_table)>
+
+Set the C<TABLE> elements for this C<RESOURCE> element using the
+supplied list of C<VOTABLE::TABLE> objects. Any previously existing
+C<TABLE> elements are first removed. Return the input list on success,
+or an empty list if an error occurs.
+
+=head3 C<get_resource>
+
+Return a list of the C<VOTABLE::RESOURCE> objects for the C<RESOURCE>
+elements which are the children of this C<RESOURCE> element. Return an
+empty list if no C<RESOURCE> elements are found, or if an error
+occurs.
+
+=head3 C<set_resource(@votable_resource)>
+
+Set the C<RESOURCE> elements for this C<RESOURCE> element using the
+supplied list of C<VOTABLE::RESOURCE> objects. Any previously existing
+C<RESOURCE> elements are first removed. Return the input list on
+success, or an empty list if an error occurs.
+
+=head2 Notes on class internals
+
+=over 4
+
+=item *
+
+Method names that begin with a leading underscore ('C<_>') are for
+internal use only, and should I<not> be used outside of the C<VOTABLE>
+class hierarchy.
+
+=item *
+
+The names of the C<get_XXX> and C<set_XXX> accessors for attributes
+and elements are derived directly from the names of the attributes or
+elements. Attribute and element names containing embedded hyphens
+('C<->') use accessors where the hyphen is mapped to an underscore
+('C<_>') in the name of the accessor method. This is a necessity,
+since the hyphen is not a valid name character in Perl.
+
+=back
 
 =head1 WARNINGS
 
-This code assumes that the internal state of the objects is consistent
-at all times.
+=over 4
 
-This code assumes that calls to XML::DOM methods and subroutines never
-fail.
+=item *
+
+This code (perhaps unwisely) assumes that object internal structure is
+always maintained. For example, this code assumes that every
+C<VOTABLE::TABLEDATA> object I<always> has an underlying
+C<XML::DOM::Element> object. As long as the internal structure is
+manipulated only by the publicly-available methods, this should be an
+adequate assumption. If a method detects an aberrant case, a warning
+message is printed (using the C<Carp::carp> subroutine), and the
+method fails.
+
+=item *
+
+Similarly, this code assumes that C<XML::DOM> methods always
+succeed. If a method detects an aberrant case, a warning message is
+printed (using the C<Carp::carp> subroutine), and the method fails.
+
+=item *
+
+Most attribute C<set_XXX> accessors do not perform validation of the
+new attribute values. The exceptions are the accessors for attributes
+with enumerated values; the new value is checked against the list of
+acceptable values, as defined in the DTD.
+
+=back
+
+=head1 SEE ALSO
+
+C<VOTABLE>, C<VOTABLE::COOSYS>, C<VOTABLE::DESCRIPTION>,
+C<VOTABLE::INFO>, C<VOTABLE::LINK>, C<VOTABLE::PARAM>,
+C<VOTABLE::TABLE>
 
 =head1 AUTHOR
 
@@ -25,15 +225,21 @@ Eric Winter, NASA GSFC (elwinter@milkyway.gsfc.nasa.gov)
 
 =head1 VERSION
 
-$Id: RESOURCE.pm,v 1.1.1.9 2002/05/14 17:35:33 elwinter Exp $
+$Id: RESOURCE.pm,v 1.1.1.11 2002/05/21 14:12:47 elwinter Exp $
 
 =cut
 
-#******************************************************************************
+#------------------------------------------------------------------------------
 
 # Revision history
 
 # $Log: RESOURCE.pm,v $
+# Revision 1.1.1.11  2002/05/21  14:12:47  elwinter
+# Incremented $VERSION to 0.02.
+#
+# Revision 1.1.1.10  2002/05/21  13:48:17  elwinter
+# Overhauled and updated documentation.
+#
 # Revision 1.1.1.9  2002/05/14  17:35:33  elwinter
 # Changed undef list returns to empty lists.
 #
@@ -73,15 +279,15 @@ use diagnostics;
 # Use enhanced warnings.
 use warnings;
 
-#******************************************************************************
+#------------------------------------------------------------------------------
 
 # Set up the inheritance mexhanism.
 our @ISA = qw();
 
 # Module version.
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
-#******************************************************************************
+#------------------------------------------------------------------------------
 
 # Specify external modules to use.
 
@@ -100,12 +306,15 @@ use VOTABLE::LINK;
 use VOTABLE::PARAM;
 use VOTABLE::TABLE;
 
-#******************************************************************************
+#------------------------------------------------------------------------------
 
 # Class constants.
 
 # Name of XML tag for current class.
 my($TAG_NAME) = 'RESOURCE';
+
+# Name of underlying XML::DOM object class.
+my($XMLDOM_BASE_CLASS) = 'XML::DOM::Element';
 
 # List of valid attributes for this element.
 my(@valid_attribute_names) = ('ID', 'name', 'type');
@@ -113,19 +322,40 @@ my(@valid_attribute_names) = ('ID', 'name', 'type');
 # List of valid values for the 'type' attribute.
 my(@valid_types) = ('meta', 'results');
 
-#******************************************************************************
+#------------------------------------------------------------------------------
 
 # Class variables.
 
 # This object is used to access the factory methods in the
 # XML::DOM::Document class.
-my($xmldom_factory_document) = new XML::DOM::Document;
+my($xmldom_document_factory);
 
 #******************************************************************************
 
-# Method definitions
+# Class methods
 
 #------------------------------------------------------------------------------
+
+# INIT()
+
+# This subroutine is run just before the main program starts. It is
+# used to initialize the package as a whole.
+
+sub INIT()
+{
+
+    # Create the factory document.
+    $xmldom_document_factory = new XML::DOM::Document;
+    if (not $xmldom_document_factory) {
+	croak('Unable to create factory document!');
+    }
+
+}
+
+#------------------------------------------------------------------------------
+
+# Object methods
+
 #------------------------------------------------------------------------------
 
 # new()
@@ -141,8 +371,7 @@ my($xmldom_factory_document) = new XML::DOM::Document;
 # additional argument, if it exists, contains a reference to an
 # existing XML::DOM::Element object to use for the new object. Any
 # additional items in the @options array are assumed to be keyword =>
-# value pairs to use to initialize the attributes of the element for
-# the new object.
+# value pairs to use to initialize the attributes of the new object.
 
 # Note that if you want to specify attribute values to the
 # constructor, but do not want to specify an object reference to use,
@@ -167,7 +396,7 @@ sub new()
     # Hash containing keyword-value pairs to initialize attributes.
     my(%attributes);
 
-    # Name of element tag.
+    # Name of current element tag.
     my($tag_name);
 
     # Current attribute name and value.
@@ -183,6 +412,12 @@ sub new()
 
     # Process the options.
     if (@options) {
+	if (ref($options[0])) {
+	    if (ref($options[0]) ne $XMLDOM_BASE_CLASS) {
+ 		carp('Bad input class: ', ref($options[0]));
+ 		return(undef);
+ 	    }
+	}
 	($xmldom_element_this, %attributes) = @options;
     }
 
@@ -190,7 +425,7 @@ sub new()
     if ($xmldom_element_this) {
 	$tag_name = $xmldom_element_this->getTagName;
 	if ($tag_name ne $TAG_NAME) {
-	    carp("Invalid $TAG_NAME tag name: $tag_name!");
+	    carp("Invalid tag name: $tag_name!");
 	    return(undef);
 	}
     }
@@ -198,7 +433,7 @@ sub new()
     # Make sure only valid attributes were specified.
     foreach $attribute_name (keys(%attributes)) {
 	if (not grep(/$attribute_name/, @valid_attribute_names)) {
-	    carp("Invalid $TAG_NAME attribute name: $attribute_name!");
+	    carp("Invalid attribute name: $attribute_name!");
 	    return(undef);
 	}
     }
@@ -219,137 +454,97 @@ sub new()
     } else {
 
 	# Create a new XML::DOM::Element object.
-	$xmldom_element_this = $xmldom_factory_document->
-	    createElement($TAG_NAME);
+	$xmldom_element_this =
+	    $xmldom_document_factory->createElement($TAG_NAME);
+	if (not $xmldom_element_this) {
+	    carp('Unable to create XML::DOM::Element.');
+	    return(undef);
+	}
 
     }
 
     # Save the new XML::DOM::Element.
-    $this->{'XML::DOM::Element'} = $xmldom_element_this;
+    if ($this->_set_XMLDOM($xmldom_element_this) ne $xmldom_element_this) {
+	carp("Unable to set $XMLDOM_BASE_CLASS.");
+	return(undef);
+    }
 
-    # Process any specified attributes. This code assumes that the
-    # name of each attribute can be directly mapped to a subroutine
-    # name.
+    # Process any specified attributes.
     while (($attribute_name, $attribute_value) = each(%attributes)) {
+	$attribute_name =~ s/-/_/;
 	$set_attribute = "\$this->set_${attribute_name}(\$attribute_value)";
 	eval($set_attribute);
 	if ($EVAL_ERROR) {
-	    carp("Error evaluating $TAG_NAME '$set_attribute': $EVAL_ERROR!");
+	    carp("Error evaluating '$set_attribute': $EVAL_ERROR!");
 	    return(undef);
 	}
     }
 
-    # Construct the VOTABLE object from the XML::DOM object.
+    # Construct the VOTABLE::RESOURCE object from the XML::DOM object.
     if (not $this->_build_from_XMLDOM) {
-	carp('Unable to build $TAG_NAME from XML::DOM!');
+	carp("Unable to build VOTABLE::$TAG_NAME object from " .
+	     "XML::DOM::Element!");
 	return(undef);
     }
 
-    #--------------------------------------------------------------------------
-
-    # Return the new object.
+    # Return the object.
     return($this);
 
 }
 
 #------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
 
-# Attribute accessor methods.
+# Attribute accessor methods
 
-# These methods assume they are called for a valid VOTABLE
-# object. Therefore, no error checking is done on the object
-# internals.
-
-# For each attribute get_xxx() method, simply return the result of the
-# getAttribute() method for the corresponding attribute of the
-# XML::DOM::Element object.
-
-# For each attribute set_xxx() method, validate the new value if
-# possible, then call the setAttribute() method for the
-# XML::DOM::Element object. Return the new value with a call to the
-# getAttribute() method.
-
-#------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 
 sub get_ID()
 {
     my($this) = @_;
-    $this->{'XML::DOM::Element'}->getAttribute('ID');
+    $this->_get_XMLDOM->getAttribute('ID');
 }
 
 sub set_ID()
 {
     my($this, $id) = @_;
-    $this->{'XML::DOM::Element'}->setAttribute('ID', $id);
+    $this->_get_XMLDOM->setAttribute('ID', $id);
     return($this->get_ID);
 }
 
 sub get_name()
 {
     my($this) = @_;
-    $this->{'XML::DOM::Element'}->getAttribute('name');
+    $this->_get_XMLDOM->getAttribute('name');
 }
 
 sub set_name()
 {
     my($this, $name) = @_;
-    $this->{'XML::DOM::Element'}->setAttribute('name', $name);
+    $this->_get_XMLDOM->setAttribute('name', $name);
     return($this->get_name);
 }
 
 sub get_type()
 {
     my($this) = @_;
-    $this->{'XML::DOM::Element'}->getAttribute('type');
+    $this->_get_XMLDOM->getAttribute('type');
 }
 
 sub set_type()
 {
     my($this, $type) = @_;
     if (not grep(/$type/, @valid_types)) {
-	carp("Invalid $TAG_NAME attribute value: $type!");
+	carp("Invalid $TAG_NAME 'type' attribute value: $type!");
 	return(undef);
     }
-    $this->{'XML::DOM::Element'}->setAttribute('type', $type);
+    $this->_get_XMLDOM->setAttribute('type', $type);
     return($this->get_type);
 }
 
 #------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
 
-# Element accessor methods.
+# Element accessor methods
 
-# These methods assume they are called for a valid VOTABLE
-# object. Therefore, no error checking is done on the object
-# internals.
-
-# For each element get_xxx() method, check to see if the element(s)
-# exists. If so, return a reference to the VOTABLE object for the
-# element (or a list of VOTABLE object references for multiple
-# elements). Note that these methods use exists() to check for the
-# element(s), to avoid creation on non-existence (which is what
-# defined() would do if we used it instead of exists()). If the child
-# is not found, return undef. If an error occurs, carp() a message and
-# return undef.
-
-# For each set_xxx() method, check to see if the element(s) currently
-# exist. If so, remove them before attaching the new elements. Note
-# that the set_xxx() methods must maintain the element order specified
-# in the DTD. The current object (always referred to as $this) and its
-# children must be linked at two levels - the VOTABLE level, and the
-# XML::DOM level. Linking at the VOTABLE level is easy, since links
-# are unidirectional, from parent to child. At the XML::DOM level,
-# many more steps must be taken to establish the links. Return the
-# supplied argument, using the matching get_xxx() method, to ensure
-# success. Otherwise, carp() and error message and return undef.
-
-# These methods follow the standard naming convention that variables
-# referring to VOTABLE objects have a 'votable_' prefix, and those
-# referring to XML::DOM objects have a 'xmldom_' prefix.
-
-#------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 
 sub get_description()
@@ -384,22 +579,18 @@ sub set_description()
 
     #--------------------------------------------------------------------------
 
-    # Link the objects at the VOTABLE level. This is easy, since
-    # parent/child links in the VOTABLE class hierarchy are one-way,
-    # from parent to child.
+    # Link the objects at the VOTABLE level.
     $this->{'DESCRIPTION'} = $votable_description;
 
     #--------------------------------------------------------------------------
 
-    # Now link the objects at the XML::DOM level. This is more
-    # complicated, since the links are bidirectional.
+    # Link the objects at the XML::DOM level.
 
     # Get the XML::DOM::Element for this object.
-    $xmldom_element_this = $this->{'XML::DOM::Element'};
+    $xmldom_element_this = $this->_get_XMLDOM;
 
     # Get the XML::DOM::Element for the new object.
-    $xmldom_element_description =
-	$votable_description->{'XML::DOM::Element'};
+    $xmldom_element_description = $votable_description->_get_XMLDOM;
     if (not $xmldom_element_description) {
 	carp('Unable to find XML::DOM::Element!');
 	return(undef);
@@ -413,8 +604,7 @@ sub set_description()
 	$xmldom_element_this->removeChild($xmldom_elements[0]);
     }
 
-    # Attach the new object to the owner document for this
-    # object. THIS IS IMPORTANT!
+    # Attach the new object to the owner document for this object.
     $xmldom_element_description->
 	setOwnerDocument($xmldom_element_this->getOwnerDocument);
 
@@ -471,18 +661,15 @@ sub set_info()
 
     #--------------------------------------------------------------------------
 
-    # Link the objects at the VOTABLE level. This is easy, since
-    # parent/child links in the VOTABLE class hierarchy are one-way,
-    # from parent to child.
+    # Link the objects at the VOTABLE level.
     $this->{'INFO'} = [@votable_info];
 
     #--------------------------------------------------------------------------
 
-    # Now link the objects at the XML::DOM level. This is more
-    # complicated, since the links are bidirectional.
+    # Link the objects at the XML::DOM level.
 
     # Get the XML::DOM::Element for this object.
-    $xmldom_element_this = $this->{'XML::DOM::Element'};
+    $xmldom_element_this = $this->_get_XMLDOM;
 
     # If any INFO elements exist for the this object, delete them.
     if ($xmldom_element_this->hasChildNodes) {
@@ -498,7 +685,7 @@ sub set_info()
     # new VOTABLE::INFOs to the owner XML::DOM::Document of the
     # XML::DOM::Element of this VOTABLE::RESOURCE.
     for ($i = 0; $i < @votable_info; $i++) {
-	$xmldom_element_info = $votable_info[$i]->{'XML::DOM::Element'};
+	$xmldom_element_info = $votable_info[$i]->_get_XMLDOM;
 	$xmldom_element_info->setOwnerDocument($xmldom_element_this->
 					       getOwnerDocument);
     }
@@ -516,16 +703,14 @@ sub set_info()
 	    # append the INFO elements.
 	    if ($xmldom_elements[0] ne $xmldom_element_this->getLastChild) {
 		foreach $votable_info (@votable_info) {
-		    $xmldom_element_info =
-			$votable_info->{'XML::DOM::Element'};
+		    $xmldom_element_info = $votable_info->_get_XMLDOM;
 		    $xmldom_element_this->
 			insertBefore($xmldom_element_info,
 				     $xmldom_elements[0]->getNextSibling);
 		}
 	    } else {
 		foreach $votable_info (@votable_info) {
-		    $xmldom_element_info =
-			$votable_info->{'XML::DOM::Element'};
+		    $xmldom_element_info = $votable_info->_get_XMLDOM;
 		    $xmldom_element_this->appendChild($xmldom_element_info);
 		}
 	    }
@@ -535,8 +720,7 @@ sub set_info()
 	    # No DESCRIPTION element found, so insert the INFO
 	    # elements as the first children.
 	    foreach $votable_info (@votable_info) {
-		$xmldom_element_info =
-		    $votable_info->{'XML::DOM::Element'};
+		$xmldom_element_info = $votable_info->_get_XMLDOM;
 		$xmldom_element_this->
 		    insertBefore($xmldom_element_info,
 				 $xmldom_element_this->getFirstChild);
@@ -549,14 +733,13 @@ sub set_info()
 	# No existing children, so these INFO becomes the first
 	# children.
 	foreach $votable_info (@votable_info) {
-	    $xmldom_element_info =
-		$votable_info->{'XML::DOM::Element'};
+	    $xmldom_element_info = $votable_info->_get_XMLDOM;
 	    $xmldom_element_this->appendChild($xmldom_element_info);
 	}
 
     }
 
-    # Return the new object.
+    # Return the new objects.
     return($this->get_info);
 
 }
@@ -597,18 +780,15 @@ sub set_coosys()
 
     #--------------------------------------------------------------------------
 
-    # Link the objects at the VOTABLE level. This is easy, since
-    # parent/child links in the VOTABLE class hierarchy are one-way,
-    # from parent to child.
+    # Link the objects at the VOTABLE level.
     $this->{'COOSYS'} = [@votable_coosys];
 
     #--------------------------------------------------------------------------
 
-    # Now link the objects at the XML::DOM level. This is more
-    # complicated, since the links are bidirectional.
+    # Link the objects at the XML::DOM level.
 
     # Get the XML::DOM::Element for this object.
-    $xmldom_element_this = $this->{'XML::DOM::Element'};
+    $xmldom_element_this = $this->_get_XMLDOM;
 
     # If any COOSYS elements exist for the this object, delete them.
     if ($xmldom_element_this->hasChildNodes) {
@@ -624,9 +804,9 @@ sub set_coosys()
     # new VOTABLE::COOSYSs to the owner XML::DOM::Document of the
     # XML::DOM::Element of this VOTABLE::RESOURCE.
     for ($i = 0; $i < @votable_coosys; $i++) {
-	$xmldom_element_coosys = $votable_coosys[$i]->{'XML::DOM::Element'};
+	$xmldom_element_coosys = $votable_coosys[$i]->_get_XMLDOM;
 	$xmldom_element_coosys->setOwnerDocument($xmldom_element_this->
-					       getOwnerDocument);
+						 getOwnerDocument);
     }
 
     # If any child nodes exist for the this object, insert the new
@@ -634,7 +814,6 @@ sub set_coosys()
     # the last INFO, or any DESCRIPTION. Otherwise, just add the
     # COOSYS elements as the first children.
     if ($xmldom_element_this->hasChildNodes) {
-
 	if (@xmldom_elements =
 	    $xmldom_element_this->getElementsByTagName('INFO', 0)) {
 
@@ -643,16 +822,14 @@ sub set_coosys()
 	    # the COOSYS elements.
 	    if ($xmldom_elements[-1] ne $xmldom_element_this->getLastChild) {
 		foreach $votable_coosys (@votable_coosys) {
-		    $xmldom_element_coosys =
-			$votable_coosys->{'XML::DOM::Element'};
+		    $xmldom_element_coosys = $votable_coosys->_get_XMLDOM;
 		    $xmldom_element_this->
 			insertBefore($xmldom_element_coosys,
 				     $xmldom_elements[-1]->getNextSibling);
 		}
 	    } else {
 		foreach $votable_coosys (@votable_coosys) {
-		    $xmldom_element_coosys =
-			$votable_coosys->{'XML::DOM::Element'};
+		    $xmldom_element_coosys = $votable_coosys->_get_XMLDOM;
 		    $xmldom_element_this->appendChild($xmldom_element_coosys);
 		}
 	    }
@@ -665,16 +842,14 @@ sub set_coosys()
 	    # append the COOSYS elements.
 	    if ($xmldom_elements[0] ne $xmldom_element_this->getLastChild) {
 		foreach $votable_coosys (@votable_coosys) {
-		    $xmldom_element_coosys =
-			$votable_coosys->{'XML::DOM::Element'};
+		    $xmldom_element_coosys = $votable_coosys->_get_XMLDOM;
 		    $xmldom_element_this->
 			insertBefore($xmldom_element_coosys,
 				     $xmldom_elements[0]->getNextSibling);
 		}
 	    } else {
 		foreach $votable_coosys (@votable_coosys) {
-		    $xmldom_element_coosys =
-			$votable_coosys->{'XML::DOM::Element'};
+		    $xmldom_element_coosys = $votable_coosys->_get_XMLDOM;
 		    $xmldom_element_this->appendChild($xmldom_element_coosys);
 		}
 	    }
@@ -684,8 +859,7 @@ sub set_coosys()
 	    # No DESCRIPTION element found, so insert the COOSYS
 	    # elements as the first children.
 	    foreach $votable_coosys (@votable_coosys) {
-		$xmldom_element_coosys =
-		    $votable_coosys->{'XML::DOM::Element'};
+		$xmldom_element_coosys = $votable_coosys->_get_XMLDOM;
 		$xmldom_element_this->
 		    insertBefore($xmldom_element_coosys,
 				 $xmldom_element_this->getFirstChild);
@@ -698,14 +872,13 @@ sub set_coosys()
 	# No existing children, so these COOSYS becomes the first
 	# children.
 	foreach $votable_coosys (@votable_coosys) {
-	    $xmldom_element_coosys =
-		$votable_coosys->{'XML::DOM::Element'};
+	    $xmldom_element_coosys = $votable_coosys->_get_XMLDOM;
 	    $xmldom_element_this->appendChild($xmldom_element_coosys);
 	}
 
     }
 
-    # Return the new object.
+    # Return the new objects.
     return($this->get_coosys);
 
 }
@@ -746,18 +919,15 @@ sub set_param()
 
     #--------------------------------------------------------------------------
 
-    # Link the objects at the VOTABLE level. This is easy, since
-    # parent/child links in the VOTABLE class hierarchy are one-way,
-    # from parent to child.
+    # Link the objects at the VOTABLE level.
     $this->{'PARAM'} = [@votable_param];
 
     #--------------------------------------------------------------------------
 
-    # Now link the objects at the XML::DOM level. This is more
-    # complicated, since the links are bidirectional.
+    # Link the objects at the XML::DOM level.
 
     # Get the XML::DOM::Element for this object.
-    $xmldom_element_this = $this->{'XML::DOM::Element'};
+    $xmldom_element_this = $this->_get_XMLDOM;
 
     # If any PARAM elements exist for the this object, delete them.
     if ($xmldom_element_this->hasChildNodes) {
@@ -773,7 +943,7 @@ sub set_param()
     # new VOTABLE::PARAMs to the owner XML::DOM::Document of the
     # XML::DOM::Element of this VOTABLE::RESOURCE.
     for ($i = 0; $i < @votable_param; $i++) {
-	$xmldom_element_param = $votable_param[$i]->{'XML::DOM::Element'};
+	$xmldom_element_param = $votable_param[$i]->_get_XMLDOM;
 	$xmldom_element_param->setOwnerDocument($xmldom_element_this->
 					       getOwnerDocument);
     }
@@ -783,7 +953,6 @@ sub set_param()
     # the last COOSYS, the last INFO, or any DESCRIPTION. Otherwise,
     # just add the PARAM elements as the first children.
     if ($xmldom_element_this->hasChildNodes) {
-
 	if (@xmldom_elements =
 	    $xmldom_element_this->getElementsByTagName('COOSYS', 0)) {
 
@@ -792,16 +961,14 @@ sub set_param()
 	    # the PARAM elements.
 	    if ($xmldom_elements[-1] ne $xmldom_element_this->getLastChild) {
 		foreach $votable_param (@votable_param) {
-		    $xmldom_element_param =
-			$votable_param->{'XML::DOM::Element'};
+		    $xmldom_element_param = $votable_param->_get_XMLDOM;
 		    $xmldom_element_this->
 			insertBefore($xmldom_element_param,
 				     $xmldom_elements[-1]->getNextSibling);
 		}
 	    } else {
 		foreach $votable_param (@votable_param) {
-		    $xmldom_element_param =
-			$votable_param->{'XML::DOM::Element'};
+		    $xmldom_element_param = $votable_param->_get_XMLDOM;
 		    $xmldom_element_this->appendChild($xmldom_element_param);
 		}
 	    }
@@ -814,16 +981,14 @@ sub set_param()
 	    # the PARAM elements.
 	    if ($xmldom_elements[-1] ne $xmldom_element_this->getLastChild) {
 		foreach $votable_param (@votable_param) {
-		    $xmldom_element_param =
-			$votable_param->{'XML::DOM::Element'};
+		    $xmldom_element_param = $votable_param->_get_XMLDOM;
 		    $xmldom_element_this->
 			insertBefore($xmldom_element_param,
 				     $xmldom_elements[-1]->getNextSibling);
 		}
 	    } else {
 		foreach $votable_param (@votable_param) {
-		    $xmldom_element_param =
-			$votable_param->{'XML::DOM::Element'};
+		    $xmldom_element_param = $votable_param->_get_XMLDOM;
 		    $xmldom_element_this->appendChild($xmldom_element_param);
 		}
 	    }
@@ -836,16 +1001,14 @@ sub set_param()
 	    # append the PARAM elements.
 	    if ($xmldom_elements[0] ne $xmldom_element_this->getLastChild) {
 		foreach $votable_param (@votable_param) {
-		    $xmldom_element_param =
-			$votable_param->{'XML::DOM::Element'};
+		    $xmldom_element_param = $votable_param->_get_XMLDOM;
 		    $xmldom_element_this->
 			insertBefore($xmldom_element_param,
 				     $xmldom_elements[0]->getNextSibling);
 		}
 	    } else {
 		foreach $votable_param (@votable_param) {
-		    $xmldom_element_param =
-			$votable_param->{'XML::DOM::Element'};
+		    $xmldom_element_param = $votable_param->_get_XMLDOM;
 		    $xmldom_element_this->appendChild($xmldom_element_param);
 		}
 	    }
@@ -855,8 +1018,7 @@ sub set_param()
 	    # No DESCRIPTION element found, so insert the PARAM
 	    # elements as the first children.
 	    foreach $votable_param (@votable_param) {
-		$xmldom_element_param =
-		    $votable_param->{'XML::DOM::Element'};
+		$xmldom_element_param = $votable_param->_get_XMLDOM;
 		$xmldom_element_this->
 		    insertBefore($xmldom_element_param,
 				 $xmldom_element_this->getFirstChild);
@@ -869,14 +1031,13 @@ sub set_param()
 	# No existing children, so these PARAM becomes the first
 	# children.
 	foreach $votable_param (@votable_param) {
-	    $xmldom_element_param =
-		$votable_param->{'XML::DOM::Element'};
+	    $xmldom_element_param = $votable_param->_get_XMLDOM;
 	    $xmldom_element_this->appendChild($xmldom_element_param);
 	}
 
     }
 
-    # Return the new object.
+    # Return the new objects.
     return($this->get_param);
 
 }
@@ -917,18 +1078,15 @@ sub set_link()
 
     #--------------------------------------------------------------------------
 
-    # Link the objects at the VOTABLE level. This is easy, since
-    # parent/child links in the VOTABLE class hierarchy are one-way,
-    # from parent to child.
+    # Link the objects at the VOTABLE level.
     $this->{'LINK'} = [@votable_link];
 
     #--------------------------------------------------------------------------
 
-    # Now link the objects at the XML::DOM level. This is more
-    # complicated, since the links are bidirectional.
+    # Link the objects at the XML::DOM level.
 
     # Get the XML::DOM::Element for this object.
-    $xmldom_element_this = $this->{'XML::DOM::Element'};
+    $xmldom_element_this = $this->_get_XMLDOM;
 
     # If any LINK elements exist for the this object, delete them.
     if ($xmldom_element_this->hasChildNodes) {
@@ -944,7 +1102,7 @@ sub set_link()
     # new VOTABLE::LINKs to the owner XML::DOM::Document of the
     # XML::DOM::Element of this VOTABLE::RESOURCE.
     for ($i = 0; $i < @votable_link; $i++) {
-	$xmldom_element_link = $votable_link[$i]->{'XML::DOM::Element'};
+	$xmldom_element_link = $votable_link[$i]->_get_XMLDOM;
 	$xmldom_element_link->setOwnerDocument($xmldom_element_this->
 					       getOwnerDocument);
     }
@@ -955,7 +1113,6 @@ sub set_link()
     # DESCRIPTION. Otherwise, just add the LINK elements as the first
     # children.
     if ($xmldom_element_this->hasChildNodes) {
-
 	if (@xmldom_elements =
 	    $xmldom_element_this->getElementsByTagName('PARAM', 0)) {
 
@@ -964,16 +1121,14 @@ sub set_link()
 	    # the LINK elements.
 	    if ($xmldom_elements[-1] ne $xmldom_element_this->getLastChild) {
 		foreach $votable_link (@votable_link) {
-		    $xmldom_element_link =
-			$votable_link->{'XML::DOM::Element'};
+		    $xmldom_element_link = $votable_link->_get_XMLDOM;
 		    $xmldom_element_this->
 			insertBefore($xmldom_element_link,
 				     $xmldom_elements[-1]->getNextSibling);
 		}
 	    } else {
 		foreach $votable_link (@votable_link) {
-		    $xmldom_element_link =
-			$votable_link->{'XML::DOM::Element'};
+		    $xmldom_element_link = $votable_link->_get_XMLDOM;
 		    $xmldom_element_this->appendChild($xmldom_element_link);
 		}
 	    }
@@ -986,16 +1141,14 @@ sub set_link()
 	    # the LINK elements.
 	    if ($xmldom_elements[-1] ne $xmldom_element_this->getLastChild) {
 		foreach $votable_link (@votable_link) {
-		    $xmldom_element_link =
-			$votable_link->{'XML::DOM::Element'};
+		    $xmldom_element_link = $votable_link->_get_XMLDOM;
 		    $xmldom_element_this->
 			insertBefore($xmldom_element_link,
 				     $xmldom_elements[-1]->getNextSibling);
 		}
 	    } else {
 		foreach $votable_link (@votable_link) {
-		    $xmldom_element_link =
-			$votable_link->{'XML::DOM::Element'};
+		    $xmldom_element_link = $votable_link->_get_XMLDOM;
 		    $xmldom_element_this->appendChild($xmldom_element_link);
 		}
 	    }
@@ -1008,16 +1161,14 @@ sub set_link()
 	    # the LINK elements.
 	    if ($xmldom_elements[-1] ne $xmldom_element_this->getLastChild) {
 		foreach $votable_link (@votable_link) {
-		    $xmldom_element_link =
-			$votable_link->{'XML::DOM::Element'};
+		    $xmldom_element_link = $votable_link->_get_XMLDOM;
 		    $xmldom_element_this->
 			insertBefore($xmldom_element_link,
 				     $xmldom_elements[-1]->getNextSibling);
 		}
 	    } else {
 		foreach $votable_link (@votable_link) {
-		    $xmldom_element_link =
-			$votable_link->{'XML::DOM::Element'};
+		    $xmldom_element_link = $votable_link->_get_XMLDOM;
 		    $xmldom_element_this->appendChild($xmldom_element_link);
 		}
 	    }
@@ -1030,16 +1181,14 @@ sub set_link()
 	    # append the LINK elements.
 	    if ($xmldom_elements[0] ne $xmldom_element_this->getLastChild) {
 		foreach $votable_link (@votable_link) {
-		    $xmldom_element_link =
-			$votable_link->{'XML::DOM::Element'};
+		    $xmldom_element_link = $votable_link->_get_XMLDOM;
 		    $xmldom_element_this->
 			insertBefore($xmldom_element_link,
 				     $xmldom_elements[0]->getNextSibling);
 		}
 	    } else {
 		foreach $votable_link (@votable_link) {
-		    $xmldom_element_link =
-			$votable_link->{'XML::DOM::Element'};
+		    $xmldom_element_link = $votable_link->_get_XMLDOM;
 		    $xmldom_element_this->appendChild($xmldom_element_link);
 		}
 	    }
@@ -1049,8 +1198,7 @@ sub set_link()
 	    # No DESCRIPTION element found, so insert the LINK
 	    # elements as the first children.
 	    foreach $votable_link (@votable_link) {
-		$xmldom_element_link =
-		    $votable_link->{'XML::DOM::Element'};
+		$xmldom_element_link = $votable_link->_get_XMLDOM;
 		$xmldom_element_this->
 		    insertBefore($xmldom_element_link,
 				 $xmldom_element_this->getFirstChild);
@@ -1063,14 +1211,13 @@ sub set_link()
 	# No existing children, so these LINK becomes the first
 	# children.
 	foreach $votable_link (@votable_link) {
-	    $xmldom_element_link =
-		$votable_link->{'XML::DOM::Element'};
+	    $xmldom_element_link = $votable_link->_get_XMLDOM;
 	    $xmldom_element_this->appendChild($xmldom_element_link);
 	}
 
     }
 
-    # Return the new object.
+    # Return the new objects.
     return($this->get_link);
 
 }
@@ -1111,18 +1258,15 @@ sub set_table()
 
     #--------------------------------------------------------------------------
 
-    # Link the objects at the VOTABLE level. This is easy, since
-    # parent/child links in the VOTABLE class hierarchy are one-way,
-    # from parent to child.
+    # Link the objects at the VOTABLE level.
     $this->{'TABLE'} = [@votable_table];
 
     #--------------------------------------------------------------------------
 
-    # Now link the objects at the XML::DOM level. This is more
-    # complicated, since the links are bidirectional.
+    # Link the objects at the XML::DOM level.
 
     # Get the XML::DOM::Element for this object.
-    $xmldom_element_this = $this->{'XML::DOM::Element'};
+    $xmldom_element_this = $this->_get_XMLDOM;
 
     # If any TABLE elements exist for the this object, delete them.
     if ($xmldom_element_this->hasChildNodes) {
@@ -1138,9 +1282,9 @@ sub set_table()
     # new VOTABLE::TABLEs to the owner XML::DOM::Document of the
     # XML::DOM::Element of this VOTABLE::RESOURCE.
     for ($i = 0; $i < @votable_table; $i++) {
-	$xmldom_element_table = $votable_table[$i]->{'XML::DOM::Element'};
+	$xmldom_element_table = $votable_table[$i]->_get_XMLDOM;
 	$xmldom_element_table->setOwnerDocument($xmldom_element_this->
-					       getOwnerDocument);
+						getOwnerDocument);
     }
 
     # If any child nodes exist for the this object, insert the new
@@ -1149,7 +1293,6 @@ sub set_table()
     # or any DESCRIPTION. Otherwise, just add the TABLE elements as
     # the first children.
     if ($xmldom_element_this->hasChildNodes) {
-
 	if (@xmldom_elements =
 	    $xmldom_element_this->getElementsByTagName('LINK', 0)) {
 
@@ -1158,16 +1301,14 @@ sub set_table()
 	    # the TABLE elements.
 	    if ($xmldom_elements[-1] ne $xmldom_element_this->getLastChild) {
 		foreach $votable_table (@votable_table) {
-		    $xmldom_element_table =
-			$votable_table->{'XML::DOM::Element'};
+		    $xmldom_element_table = $votable_table->_get_XMLDOM;
 		    $xmldom_element_this->
 			insertBefore($xmldom_element_table,
 				     $xmldom_elements[-1]->getNextSibling);
 		}
 	    } else {
 		foreach $votable_table (@votable_table) {
-		    $xmldom_element_table =
-			$votable_table->{'XML::DOM::Element'};
+		    $xmldom_element_table = $votable_table->_get_XMLDOM;
 		    $xmldom_element_this->appendChild($xmldom_element_table);
 		}
 	    }
@@ -1180,16 +1321,14 @@ sub set_table()
 	    # the TABLE elements.
 	    if ($xmldom_elements[-1] ne $xmldom_element_this->getLastChild) {
 		foreach $votable_table (@votable_table) {
-		    $xmldom_element_table =
-			$votable_table->{'XML::DOM::Element'};
+		    $xmldom_element_table = $votable_table->_get_XMLDOM;
 		    $xmldom_element_this->
 			insertBefore($xmldom_element_table,
 				     $xmldom_elements[-1]->getNextSibling);
 		}
 	    } else {
 		foreach $votable_table (@votable_table) {
-		    $xmldom_element_table =
-			$votable_table->{'XML::DOM::Element'};
+		    $xmldom_element_table = $votable_table->_get_XMLDOM;
 		    $xmldom_element_this->appendChild($xmldom_element_table);
 		}
 	    }
@@ -1202,16 +1341,14 @@ sub set_table()
 	    # the TABLE elements.
 	    if ($xmldom_elements[-1] ne $xmldom_element_this->getLastChild) {
 		foreach $votable_table (@votable_table) {
-		    $xmldom_element_table =
-			$votable_table->{'XML::DOM::Element'};
+		    $xmldom_element_table = $votable_table->_get_XMLDOM;
 		    $xmldom_element_this->
 			insertBefore($xmldom_element_table,
 				     $xmldom_elements[-1]->getNextSibling);
 		}
 	    } else {
 		foreach $votable_table (@votable_table) {
-		    $xmldom_element_table =
-			$votable_table->{'XML::DOM::Element'};
+		    $xmldom_element_table = $votable_table->_get_XMLDOM;
 		    $xmldom_element_this->appendChild($xmldom_element_table);
 		}
 	    }
@@ -1224,16 +1361,14 @@ sub set_table()
 	    # the TABLE elements.
 	    if ($xmldom_elements[-1] ne $xmldom_element_this->getLastChild) {
 		foreach $votable_table (@votable_table) {
-		    $xmldom_element_table =
-			$votable_table->{'XML::DOM::Element'};
+		    $xmldom_element_table = $votable_table->_get_XMLDOM;
 		    $xmldom_element_this->
 			insertBefore($xmldom_element_table,
 				     $xmldom_elements[-1]->getNextSibling);
 		}
 	    } else {
 		foreach $votable_table (@votable_table) {
-		    $xmldom_element_table =
-			$votable_table->{'XML::DOM::Element'};
+		    $xmldom_element_table = $votable_table->_get_XMLDOM;
 		    $xmldom_element_this->appendChild($xmldom_element_table);
 		}
 	    }
@@ -1246,16 +1381,14 @@ sub set_table()
 	    # append the TABLE elements.
 	    if ($xmldom_elements[0] ne $xmldom_element_this->getLastChild) {
 		foreach $votable_table (@votable_table) {
-		    $xmldom_element_table =
-			$votable_table->{'XML::DOM::Element'};
+		    $xmldom_element_table = $votable_table->_get_XMLDOM;
 		    $xmldom_element_this->
 			insertBefore($xmldom_element_table,
 				     $xmldom_elements[0]->getNextSibling);
 		}
 	    } else {
 		foreach $votable_table (@votable_table) {
-		    $xmldom_element_table =
-			$votable_table->{'XML::DOM::Element'};
+		    $xmldom_element_table = $votable_table->_get_XMLDOM;
 		    $xmldom_element_this->appendChild($xmldom_element_table);
 		}
 	    }
@@ -1265,8 +1398,7 @@ sub set_table()
 	    # No DESCRIPTION element found, so insert the TABLE
 	    # elements as the first children.
 	    foreach $votable_table (@votable_table) {
-		$xmldom_element_table =
-		    $votable_table->{'XML::DOM::Element'};
+		$xmldom_element_table = $votable_table->_get_XMLDOM;
 		$xmldom_element_this->
 		    insertBefore($xmldom_element_table,
 				 $xmldom_element_this->getFirstChild);
@@ -1279,14 +1411,13 @@ sub set_table()
 	# No existing children, so these TABLE becomes the first
 	# children.
 	foreach $votable_table (@votable_table) {
-	    $xmldom_element_table =
-		$votable_table->{'XML::DOM::Element'};
+	    $xmldom_element_table = $votable_table->_get_XMLDOM;
 	    $xmldom_element_this->appendChild($xmldom_element_table);
 	}
 
     }
 
-    # Return the new object.
+    # Return the new objects.
     return($this->get_table);
 
 }
@@ -1327,18 +1458,15 @@ sub set_resource()
 
     #--------------------------------------------------------------------------
 
-    # Link the objects at the VOTABLE level. This is easy, since
-    # parent/child links in the VOTABLE class hierarchy are one-way,
-    # from parent to child.
+    # Link the objects at the VOTABLE level.
     $this->{'RESOURCE'} = [@votable_resource];
 
     #--------------------------------------------------------------------------
 
-    # Now link the objects at the XML::DOM level. This is more
-    # complicated, since the links are bidirectional.
+    # Link the objects at the XML::DOM level.
 
     # Get the XML::DOM::Element for this object.
-    $xmldom_element_this = $this->{'XML::DOM::Element'};
+    $xmldom_element_this = $this->_get_XMLDOM;
 
     # If any RESOURCE elements exist for the this object, delete them.
     if ($xmldom_element_this->hasChildNodes) {
@@ -1354,10 +1482,9 @@ sub set_resource()
     # new VOTABLE::RESOURCEs to the owner XML::DOM::Document of the
     # XML::DOM::Element of this VOTABLE::RESOURCE.
     for ($i = 0; $i < @votable_resource; $i++) {
-	$xmldom_element_resource =
-	    $votable_resource[$i]->{'XML::DOM::Element'};
+	$xmldom_element_resource = $votable_resource[$i]->_get_XMLDOM;
 	$xmldom_element_resource->setOwnerDocument($xmldom_element_this->
-					       getOwnerDocument);
+						   getOwnerDocument);
     }
 
     # If any child nodes exist for the this object, insert the new
@@ -1366,7 +1493,6 @@ sub set_resource()
     # COOSYS, the last INFO, or any DESCRIPTION. Otherwise, just add
     # the RESOURCE elements as the first children.
     if ($xmldom_element_this->hasChildNodes) {
-
 	if (@xmldom_elements =
 	    $xmldom_element_this->getElementsByTagName('TABLE', 0)) {
 
@@ -1375,16 +1501,14 @@ sub set_resource()
 	    # the RESOURCE elements.
 	    if ($xmldom_elements[-1] ne $xmldom_element_this->getLastChild) {
 		foreach $votable_resource (@votable_resource) {
-		    $xmldom_element_resource =
-			$votable_resource->{'XML::DOM::Element'};
+		    $xmldom_element_resource = $votable_resource->_get_XMLDOM;
 		    $xmldom_element_this->
 			insertBefore($xmldom_element_resource,
 				     $xmldom_elements[-1]->getNextSibling);
 		}
 	    } else {
 		foreach $votable_resource (@votable_resource) {
-		    $xmldom_element_resource =
-			$votable_resource->{'XML::DOM::Element'};
+		    $xmldom_element_resource = $votable_resource->_get_XMLDOM;
 		    $xmldom_element_this->
 			appendChild($xmldom_element_resource);
 		}
@@ -1398,16 +1522,14 @@ sub set_resource()
 	    # the RESOURCE elements.
 	    if ($xmldom_elements[-1] ne $xmldom_element_this->getLastChild) {
 		foreach $votable_resource (@votable_resource) {
-		    $xmldom_element_resource =
-			$votable_resource->{'XML::DOM::Element'};
+		    $xmldom_element_resource = $votable_resource->_get_XMLDOM;
 		    $xmldom_element_this->
 			insertBefore($xmldom_element_resource,
 				     $xmldom_elements[-1]->getNextSibling);
 		}
 	    } else {
 		foreach $votable_resource (@votable_resource) {
-		    $xmldom_element_resource =
-			$votable_resource->{'XML::DOM::Element'};
+		    $xmldom_element_resource = $votable_resource->_get_XMLDOM;
 		    $xmldom_element_this->
 			appendChild($xmldom_element_resource);
 		}
@@ -1421,16 +1543,14 @@ sub set_resource()
 	    # the RESOURCE elements.
 	    if ($xmldom_elements[-1] ne $xmldom_element_this->getLastChild) {
 		foreach $votable_resource (@votable_resource) {
-		    $xmldom_element_resource =
-			$votable_resource->{'XML::DOM::Element'};
+		    $xmldom_element_resource = $votable_resource->_get_XMLDOM;
 		    $xmldom_element_this->
 			insertBefore($xmldom_element_resource,
 				     $xmldom_elements[-1]->getNextSibling);
 		}
 	    } else {
 		foreach $votable_resource (@votable_resource) {
-		    $xmldom_element_resource =
-			$votable_resource->{'XML::DOM::Element'};
+		    $xmldom_element_resource = $votable_resource->_get_XMLDOM;
 		    $xmldom_element_this->
 			appendChild($xmldom_element_resource);
 		}
@@ -1444,16 +1564,14 @@ sub set_resource()
 	    # the RESOURCE elements.
 	    if ($xmldom_elements[-1] ne $xmldom_element_this->getLastChild) {
 		foreach $votable_resource (@votable_resource) {
-		    $xmldom_element_resource =
-			$votable_resource->{'XML::DOM::Element'};
+		    $xmldom_element_resource = $votable_resource->_get_XMLDOM;
 		    $xmldom_element_this->
 			insertBefore($xmldom_element_resource,
 				     $xmldom_elements[-1]->getNextSibling);
 		}
 	    } else {
 		foreach $votable_resource (@votable_resource) {
-		    $xmldom_element_resource =
-			$votable_resource->{'XML::DOM::Element'};
+		    $xmldom_element_resource = $votable_resource->_get_XMLDOM;
 		    $xmldom_element_this->
 			appendChild($xmldom_element_resource);
 		}
@@ -1467,16 +1585,14 @@ sub set_resource()
 	    # the RESOURCE elements.
 	    if ($xmldom_elements[-1] ne $xmldom_element_this->getLastChild) {
 		foreach $votable_resource (@votable_resource) {
-		    $xmldom_element_resource =
-			$votable_resource->{'XML::DOM::Element'};
+		    $xmldom_element_resource = $votable_resource->_get_XMLDOM;
 		    $xmldom_element_this->
 			insertBefore($xmldom_element_resource,
 				     $xmldom_elements[-1]->getNextSibling);
 		}
 	    } else {
 		foreach $votable_resource (@votable_resource) {
-		    $xmldom_element_resource =
-			$votable_resource->{'XML::DOM::Element'};
+		    $xmldom_element_resource = $votable_resource->_get_XMLDOM;
 		    $xmldom_element_this->
 			appendChild($xmldom_element_resource);
 		}
@@ -1490,16 +1606,14 @@ sub set_resource()
 	    # append the RESOURCE elements.
 	    if ($xmldom_elements[0] ne $xmldom_element_this->getLastChild) {
 		foreach $votable_resource (@votable_resource) {
-		    $xmldom_element_resource =
-			$votable_resource->{'XML::DOM::Element'};
+		    $xmldom_element_resource = $votable_resource->_get_XMLDOM;
 		    $xmldom_element_this->
 			insertBefore($xmldom_element_resource,
 				     $xmldom_elements[0]->getNextSibling);
 		}
 	    } else {
 		foreach $votable_resource (@votable_resource) {
-		    $xmldom_element_resource =
-			$votable_resource->{'XML::DOM::Element'};
+		    $xmldom_element_resource = $votable_resource->_get_XMLDOM;
 		    $xmldom_element_this->
 			appendChild($xmldom_element_resource);
 		}
@@ -1510,8 +1624,7 @@ sub set_resource()
 	    # No DESCRIPTION element found, so insert the RESOURCE
 	    # elements as the first children.
 	    foreach $votable_resource (@votable_resource) {
-		$xmldom_element_resource =
-		    $votable_resource->{'XML::DOM::Element'};
+		$xmldom_element_resource = $votable_resource->_get_XMLDOM;
 		$xmldom_element_this->
 		    insertBefore($xmldom_element_resource,
 				 $xmldom_element_this->getFirstChild);
@@ -1524,24 +1637,21 @@ sub set_resource()
 	# No existing children, so these RESOURCE becomes the first
 	# children.
 	foreach $votable_resource (@votable_resource) {
-	    $xmldom_element_resource =
-		$votable_resource->{'XML::DOM::Element'};
+	    $xmldom_element_resource = $votable_resource->_get_XMLDOM;
 	    $xmldom_element_this->appendChild($xmldom_element_resource);
 	}
 
     }
 
-    # Return the new object.
+    # Return the new objects.
     return($this->get_resource);
 
 }
 
 #------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
 
-# Internal methods.
+# Internal methods
 
-#------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 
 sub _build_from_XMLDOM()
@@ -1575,7 +1685,7 @@ sub _build_from_XMLDOM()
     #--------------------------------------------------------------------------
 
     # Get a reference to the XML::DOM::Element object for this object.
-    $xmldom_element_this = $this->{'XML::DOM::Element'};
+    $xmldom_element_this = $this->_get_XMLDOM;
 
     #--------------------------------------------------------------------------
 
@@ -1659,9 +1769,34 @@ sub _build_from_XMLDOM()
 
 }
 
+#------------------------------------------------------------------------------
+
+# _get_XMLDOM()
+
+# Internal method to get a reference to the underlying
+# XML::DOM::Element object.
+
+sub _get_XMLDOM()
+{
+    my($this) = @_;
+    return($this->{$XMLDOM_BASE_CLASS});
+}
+
+#------------------------------------------------------------------------------
+
+# _set_XMLDOM()
+
+# Internal method to set the reference to the underlying
+# XML::DOM::Element object. Return the reference to the new
+# XML::DOM::Element.
+
+sub _set_XMLDOM()
+{
+    my($this, $xmldom_element) = @_;
+    $this->{$XMLDOM_BASE_CLASS} = $xmldom_element;
+    return($this->{$XMLDOM_BASE_CLASS});
+}
+
 #******************************************************************************
-
-# End of VOTABLE::RESOURCE module.
-
 1;
 __END__

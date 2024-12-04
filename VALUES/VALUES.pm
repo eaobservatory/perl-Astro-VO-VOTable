@@ -3,21 +3,179 @@
 =pod
 
 =head1 NAME
+
 VOTABLE::VALUES - VOTABLE VALUES XML element class
 
 =head1 SYNOPSIS
 
+C<use VOTABLE::VALUES;>
+
 =head1 DESCRIPTION
 
-This class implements the VALUES element from the VOTABLE DTD.
+This class implements the C<VALUES> element from the C<VOTABLE>
+DTD. This element is used to store descriptive values about other data
+items, such as minimum and maximum allowed values, and options for
+enumerated values.
+
+The C<VALUES> element is a Tier 2 element, and is described by the
+following excerpt from the C<VOTABLE> 1.0 DTD:
+
+ <!ELEMENT VALUES (MIN?, MAX?, OPTION*)>
+ <!ATTLIST VALUES
+         ID ID #IMPLIED
+         type (legal | actual) "legal"
+         null CDATA #IMPLIED
+         invalid (yes | no) "no"
+ >
+
+=head2 Methods
+
+=head3 C<new($xmldom_element, %options)>
+
+Create and return a new C<VOTABLE::VALUES> object, based on the
+supplied C<XML::DOM::Element> object, using C<%options> to set the
+attributes of the new object. If no C<XML::DOM::Element> object is
+specified, or is undefined, create and return an empty
+C<VOTABLE::VALUES> object. Return C<undef> if an error occurs.
+
+=head3 C<get_ID>
+
+Return the value of the C<ID> attribute. Return C<undef> if the
+attribute has not been set, or an error occurs.
+
+=head3 C<set_ID($id)>
+
+Set the value of the C<ID> attribute to the specified value. Return
+the new value of the attribute on success, or C<undef> if an error
+occurs.
+
+=head3 C<get_invalid>
+
+Return the value of the C<invalid> attribute. Return C<undef> if the
+attribute has not been set, or an error occurs.
+
+=head3 C<set_invalid($invalid)>
+
+Set the value of the C<invalid> attribute to the specified
+value. Return the new value of the attribute on success, or C<undef>
+if an error occurs.
+
+=head3 C<get_null>
+
+Return the value of the C<null> attribute. Return C<undef> if the
+attribute has not been set, or an error occurs.
+
+=head3 C<set_null($null)>
+
+Set the value of the C<null> attribute to the specified value. Return
+the new value of the attribute on success, or C<undef> if an error
+occurs.
+
+=head3 C<get_type>
+
+Return the value of the C<type> attribute. Return C<undef> if the
+attribute has not been set, or an error occurs.
+
+=head3 C<set_type($type)>
+
+Set the value of the C<type> attribute to the specified value. Return
+the new value of the attribute on success, or C<undef> if an error
+occurs.
+
+=head3 C<get_max>
+
+Return the C<VOTABLE::MAX> object for the C<MAX> element child of this
+C<VALUES> object. Return C<undef> if no C<MAX> element is found, or if
+an error occurs.
+
+=head3 C<set_max($votable_max)>
+
+Set the C<VOTABLE::MAX> object for the C<MAX> child element of this
+C<VALUES> element to the specified object. Any existing C<MAX> child
+element is first removed. Return the new C<MAX> object on success, or
+C<undef> if an error occurs.
+
+=head3 C<get_min>
+
+Return the C<VOTABLE::MIN> object for the C<MIN> element child of this
+C<VALUES> object. Return C<undef> if no C<MIN> element is found, or if
+an error occurs.
+
+=head3 C<set_min($votable_min)>
+
+Set the C<VOTABLE::MIN> object for the C<MIN> child element of this
+C<VALUES> element to the specified objects. Any existing C<MIN> child
+element is first removed. Return the new C<MIN> object on success, or
+C<undef> if an error occurs.
+
+=head3 C<get_option>
+
+Return a list of the C<VOTABLE::OPTION> objects for the C<OPTION>
+element children of this C<VALUES> object. Return an empty list if no
+C<OPTION> elements are found, or if an error occurs.
+
+=head3 C<set_option(@votable_option)>
+
+Set the C<VOTABLE::OPTION> objects for the C<OPTION> child elements of
+this C<VALUES> element to the specified objects. Any existing
+C<OPTION> child elements are first removed. Return the new C<OPTION>
+objects on success, or an empty list if an error occurs.
+
+=head2 Notes on class internals
+
+=over 4
+
+=item *
+
+Method names that begin with a leading underscore ('C<_>') are for
+internal use only, and should I<not> be used outside of the C<VOTABLE>
+class hierarchy.
+
+=item *
+
+The names of the C<get_XXX> and C<set_XXX> accessors for attributes
+and elements are derived directly from the names of the attributes or
+elements. Attribute and element names containing embedded hyphens
+('C<->') use accessors where the hyphen is mapped to an underscore
+('C<_>') in the name of the accessor method. This is a necessity,
+since the hyphen is not a valid name character in Perl.
+
+=back
 
 =head1 WARNINGS
 
-This code assumes that the internal state of the objects is consistent
-at all times.
+=over 4
 
-This code assumes that calls to XML::DOM methods and subroutines never
-fail.
+=item *
+
+This code (perhaps unwisely) assumes that object internal structure is
+always maintained. For example, this code assumes that every
+C<VOTABLE::TABLEDATA> object I<always> has an underlying
+C<XML::DOM::Element> object. As long as the internal structure is
+manipulated only by the publicly-available methods, this should be an
+adequate assumption. If a method detects an aberrant case, a warning
+message is printed (using the C<Carp::carp> subroutine), and the
+method fails.
+
+=item *
+
+Similarly, this code assumes that C<XML::DOM> methods always
+succeed. If a method detects an aberrant case, a warning message is
+printed (using the C<Carp::carp> subroutine), and the method fails.
+
+=item *
+
+Most attribute C<set_XXX> accessors do not perform validation of the
+new attribute values. The exceptions are the accessors for attributes
+with enumerated values; the new value is checked against the list of
+acceptable values, as defined in the DTD.
+
+=back
+
+=head1 SEE ALSO
+
+C<VOTABLE>, C<VOTABLE::FIELD>, C<VOTABLE::MAX>, C<VOTABLE::MIN>,
+C<VOTABLE::OPTION>, C<VOTABLE::PARAM>
 
 =head1 AUTHOR
 
@@ -25,15 +183,21 @@ Eric Winter, NASA GSFC (elwinter@milkyway.gsfc.nasa.gov)
 
 =head1 VERSION
 
-$Id: VALUES.pm,v 1.1.1.9 2002/05/14 17:44:35 elwinter Exp $
+$Id: VALUES.pm,v 1.1.1.11 2002/05/21 14:14:37 elwinter Exp $
 
 =cut
 
-#******************************************************************************
+#------------------------------------------------------------------------------
 
 # Revision history
 
 # $Log: VALUES.pm,v $
+# Revision 1.1.1.11  2002/05/21  14:14:37  elwinter
+# Incremented $VERSION to 0.02.
+#
+# Revision 1.1.1.10  2002/05/21  13:51:32  elwinter
+# Overhauled and updated documentation.
+#
 # Revision 1.1.1.9  2002/05/14  17:44:35  elwinter
 # Changed undef list returns to empty lists.
 #
@@ -73,15 +237,15 @@ use diagnostics;
 # Use enhanced warnings.
 use warnings;
 
-#******************************************************************************
+#------------------------------------------------------------------------------
 
 # Set up the inheritance mexhanism.
 our @ISA = qw();
 
 # Module version.
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
-#******************************************************************************
+#------------------------------------------------------------------------------
 
 # Specify external modules to use.
 
@@ -97,12 +261,15 @@ use VOTABLE::MAX;
 use VOTABLE::MIN;
 use VOTABLE::OPTION;
 
-#******************************************************************************
+#------------------------------------------------------------------------------
 
 # Class constants.
 
 # Name of XML tag for current class.
 my($TAG_NAME) = 'VALUES';
+
+# Name of underlying XML::DOM object class.
+my($XMLDOM_BASE_CLASS) = 'XML::DOM::Element';
 
 # List of valid attributes for this element.
 my(@valid_attribute_names) = ('ID', 'invalid', 'null', 'type');
@@ -113,19 +280,40 @@ my(@valid_invalids) = ('no', 'yes');
 # List of valid values for the 'type' attribute.
 my(@valid_types) = ('actual', 'legal');
 
-#******************************************************************************
+#------------------------------------------------------------------------------
 
 # Class variables.
 
 # This object is used to access the factory methods in the
 # XML::DOM::Document class. Assume it does not fail (for now).
-my($xmldom_factory_document) = new XML::DOM::Document;
+my($xmldom_document_factory);
 
 #******************************************************************************
 
-# Method definitions
+# Class methods
 
 #------------------------------------------------------------------------------
+
+# INIT()
+
+# This subroutine is run just before the main program starts. It is
+# used to initialize the package as a whole.
+
+sub INIT()
+{
+
+    # Create the factory document.
+    $xmldom_document_factory = new XML::DOM::Document;
+    if (not $xmldom_document_factory) {
+	croak('Unable to create factory document!');
+    }
+
+}
+
+#------------------------------------------------------------------------------
+
+# Object methods
+
 #------------------------------------------------------------------------------
 
 # new()
@@ -144,7 +332,7 @@ my($xmldom_factory_document) = new XML::DOM::Document;
 # value pairs to use to initialize the attributes of the new object.
 
 # Note that if you want to specify attribute values to the
-# constructor, but do not want to specify a XML::DOM::Element to use,
+# constructor, but do not want to specify an object reference to use,
 # you must pass undef as the first additional argument.
 
 sub new()
@@ -175,9 +363,6 @@ sub new()
     # Reference to new object.
     my($this);
 
-    # XML::DOM text node object for the content.
-    my($xmldom_textnode);
-
     # Code string for eval.
     my($set_attribute);
 
@@ -185,6 +370,12 @@ sub new()
 
     # Process the options.
     if (@options) {
+	if (ref($options[0])) {
+	    if (ref($options[0]) ne $XMLDOM_BASE_CLASS) {
+ 		carp('Bad input class: ', ref($options[0]));
+ 		return(undef);
+ 	    }
+	}
 	($xmldom_element_this, %attributes) = @options;
     }
 
@@ -192,7 +383,7 @@ sub new()
     if ($xmldom_element_this) {
 	$tag_name = $xmldom_element_this->getTagName;
 	if ($tag_name ne $TAG_NAME) {
-	    carp("Invalid $TAG_NAME tag name: $tag_name!");
+	    carp("Invalid tag name: $tag_name!");
 	    return(undef);
 	}
     }
@@ -200,7 +391,7 @@ sub new()
     # Make sure only valid attributes were specified.
     foreach $attribute_name (keys(%attributes)) {
 	if (not grep(/$attribute_name/, @valid_attribute_names)) {
-	    carp("Invalid $TAG_NAME attribute name: $attribute_name!");
+	    carp("Invalid attribute name: $attribute_name!");
 	    return(undef);
 	}
     }
@@ -222,32 +413,37 @@ sub new()
 
 	# Create a new XML::DOM::Element object.
 	$xmldom_element_this =
-	    $xmldom_factory_document->createElement($TAG_NAME);
+	    $xmldom_document_factory->createElement($TAG_NAME);
+	if (not $xmldom_element_this) {
+	    carp('Unable to create XML::DOM::Element.');
+	    return(undef);
+	}
 
     }
 
     # Save the new XML::DOM::Element.
-    $this->{'XML::DOM::Element'} = $xmldom_element_this;
+    if ($this->_set_XMLDOM($xmldom_element_this) ne $xmldom_element_this) {
+	carp("Unable to set $XMLDOM_BASE_CLASS.");
+	return(undef);
+    }
 
-    # Process any specified attributes. This code assumes that the
-    # name of each attribute can be directly mapped to a subroutine
-    # name.
+    # Process any specified attributes.
     while (($attribute_name, $attribute_value) = each(%attributes)) {
+	$attribute_name =~ s/-/_/;
 	$set_attribute = "\$this->set_${attribute_name}(\$attribute_value)";
 	eval($set_attribute);
 	if ($EVAL_ERROR) {
-	    carp("Error evaluating $TAG_NAME '$set_attribute': $EVAL_ERROR!");
+	    carp("Error evaluating '$set_attribute': $EVAL_ERROR!");
 	    return(undef);
 	}
     }
 
-    # Construct the VOTABLE object from the XML::DOM object.
+    # Construct the VOTABLE::VALUES object from the XML::DOM object.
     if (not $this->_build_from_XMLDOM) {
-	carp('Unable to build $TAG_NAME object from XML::DOM object!');
+	carp("Unable to build VOTABLE::$TAG_NAME object from " .
+	     "XML::DOM::Element!");
 	return(undef);
     }
-
-    #--------------------------------------------------------------------------
 
     # Return the object.
     return($this);
@@ -255,126 +451,76 @@ sub new()
 }
 
 #------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
 
-# Attribute accessor methods.
+# Attribute accessor methods
 
-# These methods assume they are called for a valid VOTABLE
-# object. Therefore, no error checking is done on the object
-# internals.
-
-# For each attribute get_xxx() method, simply return the result of the
-# getAttribute() method for the corresponding attribute of the
-# XML::DOM::Element object.
-
-# For each attribute set_xxx() method, validate the new value if
-# possible, then call the setAttribute() method for the
-# XML::DOM::Element object. Return the new value with a call to the
-# getAttribute() method.
-
-#------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 
 sub get_ID()
 {
     my($this) = @_;
-    return($this->{'XML::DOM::Element'}->getAttribute('ID'));
+    return($this->_get_XMLDOM->getAttribute('ID'));
 }
 
 sub set_ID()
 {
     my($this, $id) = @_;
-    $this->{'XML::DOM::Element'}->setAttribute('ID', $id);
+    $this->_get_XMLDOM->setAttribute('ID', $id);
     return($this->get_ID);
 }
 
 sub get_invalid()
 {
     my($this) = @_;
-    return($this->{'XML::DOM::Element'}->getAttribute('invalid'));
+    return($this->_get_XMLDOM->getAttribute('invalid'));
 }
 
 sub set_invalid()
 {
     my($this, $invalid) = @_;
     if (not grep(/$invalid/, @valid_invalids)) {
-	carp("Invalid $TAG_NAME attribute value: $invalid!");
+	carp("Invalid $TAG_NAME 'invalid' attribute value: $invalid!");
 	return(undef);
     }
-    $this->{'XML::DOM::Element'}->setAttribute('invalid', $invalid);
+    $this->_get_XMLDOM->setAttribute('invalid', $invalid);
     return($this->get_invalid);
 }
 
 sub get_null()
 {
     my($this) = @_;
-    return($this->{'XML::DOM::Element'}->getAttribute('null'));
+    return($this->_get_XMLDOM->getAttribute('null'));
 }
 
 sub set_null()
 {
     my($this, $null) = @_;
-    $this->{'XML::DOM::Element'}->setAttribute('null', $null);
+    $this->_get_XMLDOM->setAttribute('null', $null);
     return($this->get_null);
 }
 
 sub get_type()
 {
     my($this) = @_;
-    return($this->{'XML::DOM::Element'}->getAttribute('type'));
+    return($this->_get_XMLDOM->getAttribute('type'));
 }
 
 sub set_type()
 {
     my($this, $type) = @_;
     if (not grep(/$type/, @valid_types)) {
-	carp("Invalid $TAG_NAME attribute value: $type!");
+	carp("Invalid $TAG_NAME 'type' attribute value: $type!");
 	return(undef);
     }
-    $this->{'XML::DOM::Element'}->setAttribute('type', $type);
+    $this->_get_XMLDOM->setAttribute('type', $type);
     return($this->get_type);
 }
 
 #------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
 
-# Element accessor methods.
-
-# These methods assume they are called for a valid VOTABLE::VALUES
-# object. Therefore, no error checking is done on the object
-# internals.
-
-# For each element get_xxx() method, check to see if the element(s)
-# exists. If so, return a reference to the VOTABLE object for the
-# element (or a list of VOTABLE object references for multiple
-# elements). Note that these methods use exists() to check for the
-# element(s), to avoid creation on non-existence (which is what
-# defined() would do if we used it instead of exists()). If the child
-# is not found, return undef. If an error occurs, carp() a message and
-# return undef.
-
-# For each set_xxx() method, check to see if the element(s) currently
-# exist. If so, remove them before attaching the new elements. Note
-# that the set_xxx() methods must maintain the element order specified
-# in the DTD. The current object (always referred to as $this) and its
-# children must be linked at two levels - the VOTABLE level, and the
-# XML::DOM level. Linking at the VOTABLE level is easy, since links
-# are unidirectional, from parent to child. At the XML::DOM level,
-# many more steps must be taken to establish the links. Return the
-# supplied argument, using the matching get_xxx() method, to ensure
-# success. Otherwise, carp() and error message and return undef.
-
-# These methods follow the standard naming convention that variables
-# referring to VOTABLE objects have a 'votable_' prefix, and those
-# referring to XML::DOM objects have a 'xmldom_' prefix.
+# Element accessor methods
 
 #------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
-
-# get_max()
-
-# Return a reference to the VOTABLE::MAX child of this
-# VOTABLE::VALUES, or undef if no VOTABLE::MAX child exists.
 
 sub get_max()
 {
@@ -385,13 +531,6 @@ sub get_max()
 	return(undef);
     }
 }
-
-#------------------------------------------------------------------------------
-
-# set_max()
-
-# Set the MAX child of the VALUES to the specified value. Return a
-# reference to the MAX child, or undef if an error occurs.
 
 sub set_max()
 {
@@ -429,22 +568,18 @@ sub set_max()
 	return(undef);
     }
 
-    #--------------------------------------------------------------------------
-
-    # Link the VOTABLE::VALUES and the VOTABLE::MAX at the VOTABLE
-    # level.
+    # Link the objects at the VOTABLE level.
     $this->{'MAX'} = $votable_max;
 
     #--------------------------------------------------------------------------
 
-    # Link the VOTABLE::VALUES and the VOTABLE::MAX at the XML::DOM
-    # level.
+    # Link the objects at the XML::DOM level.
 
     # Get the XML::DOM::Element for this VALUES.
-    $xmldom_element_this = $this->{'XML::DOM::Element'};
+    $xmldom_element_this = $this->_get_XMLDOM;
 
     # Get the XML::DOM::Element for the new MAX.
-    $xmldom_element_max = $votable_max->{'XML::DOM::Element'};
+    $xmldom_element_max = $votable_max->_get_XMLDOM;
     if (not $xmldom_element_max) {
 	carp('Unable to find XML::DOM::Element for VOTABLE::MAX!');
 	return(undef);
@@ -504,13 +639,6 @@ sub set_max()
 
 }
 
-#------------------------------------------------------------------------------
-
-# get_min()
-
-# Return a reference to the VOTABLE::MIN child of this
-# VOTABLE::VALUES, or undef if no VOTABLE::MIN child exists.
-
 sub get_min()
 {
     my($this) = @_;
@@ -557,22 +685,18 @@ sub set_min()
 	return(undef);
     }
 
-    #--------------------------------------------------------------------------
-
-    # Link the VOTABLE::VALUES and the VOTABLE::MIN at the VOTABLE
-    # level.
+    # Link the objects at the VOTABLE level.
     $this->{'MIN'} = $votable_min;
 
     #--------------------------------------------------------------------------
 
-    # Link the VOTABLE::VALUES and the VOTABLE::MIN at the XML::DOM
-    # level.
+    # Link the objects at the XML::DOM level.
 
     # Get the XML::DOM::Element for this VALUES.
-    $xmldom_element_this = $this->{'XML::DOM::Element'};
+    $xmldom_element_this = $this->_get_XMLDOM;
 
     # Get the XML::DOM::Element for the new MIN.
-    $xmldom_element_min = $votable_min->{'XML::DOM::Element'};
+    $xmldom_element_min = $votable_min->_get_XMLDOM;
     if (not $xmldom_element_min) {
 	carp('Unable to find XML::DOM::Element for VOTABLE::MIN!');
 	return(undef);
@@ -612,13 +736,6 @@ sub set_min()
 
 }
 
-#------------------------------------------------------------------------------
-
-# get_option()
-
-# Return a list of references to the VOTABLE::OPTION children of this
-# VOTABLE::VALUES, or undef if no VOTABLE::OPTION child exists.
-
 sub get_option()
 {
     my($this) = @_;
@@ -628,14 +745,6 @@ sub get_option()
 	return(());
     }
 }
-
-#------------------------------------------------------------------------------
-
-# set_option()
-
-# Set the OPTION children of the VALUES to the specified
-# values. Return a list of the OPTION children, or undef if an error
-# occurs.
 
 sub set_option()
 {
@@ -653,10 +762,6 @@ sub set_option()
     # Reference to the XML::DOM::Element object for this
     # VOTABLE::VALUES.
     my($xmldom_element_this);
-
-    # Temporary reference to the XML::DOM::Document object for this
-    # object.
-    my($xmldom_document);
 
     # Reference to a single new VOTABLE::OPTION.
     my($votable_option);
@@ -676,35 +781,28 @@ sub set_option()
     # Make sure a valid list of VOTABLE::OPTIONs was supplied.
     if (not @votable_option) {
 	carp('Empty VOTABLE::OPTION list!');
-	return(undef);
+	return(());
     }
     foreach $votable_option (@votable_option) {
 	if (not $votable_option) {
 	    carp('Undefined VOTABLE::OPTION!');
-	    return(undef);
+	    return(());
 	}
 	if (ref($votable_option) ne 'VOTABLE::OPTION') {
 	    carp('Not a VOTABLE::OPTION!');
-	    return(undef);
+	    return(());
 	}
     }
 
-    #--------------------------------------------------------------------------
-
-    # Link the VOTABLE::VALUES and the VOTABLE::OPTIONs at the VOTABLE
-    # level.
+    # Link the objects at the VOTABLE level.
     $this->{'OPTION'} = [@votable_option];
 
     #--------------------------------------------------------------------------
 
-    # Link the VOTABLE::VALUES and the VOTABLE::OPTION at the XML::DOM
-    # level.
+    # Link the objects at the XML::DOM level.
 
     # Get the XML::DOM::Element for this VALUES.
-    $xmldom_element_this = $this->{'XML::DOM::Element'};
-
-    # Get the owner XML::DOM::Document object for this object.
-    $xmldom_document = $xmldom_element_this->getOwnerDocument;
+    $xmldom_element_this = $this->_get_XMLDOM;
 
     # If any OPTION elements exist for the this object, delete them.
     if ($xmldom_element_this->hasChildNodes) {
@@ -717,11 +815,12 @@ sub set_option()
     }
 
     # Set the owner XML::DOM::Document of the XML::DOM::Element of the
-    # new VOTABLE::OPTION to the owner XML::DOM::Document of the
+    # new VOTABLE::OPTIONs to the owner XML::DOM::Document of the
     # XML::DOM::Element of this VOTABLE::VALUES.
     for ($i = 0; $i <= $#votable_option; $i++) {
-	$xmldom_element_option = $votable_option[$i]->{'XML::DOM::Element'};
-	$xmldom_element_option->setOwnerDocument($xmldom_document);
+	$xmldom_element_option = $votable_option[$i]->_get_XMLDOM;
+	$xmldom_element_option->setOwnerDocument($xmldom_element_this->
+						 getOwnerDocument);
     }
 
     # If any children exist for this VOTABLE::VALUES, insert the new
@@ -742,13 +841,13 @@ sub set_option()
 	    if ($xmldom_elements[0] ne $xmldom_element_this->getLastChild) {
 		foreach $votable_option (@votable_option) {
 		    $xmldom_element_this->
-			insertBefore($votable_option->{'XML::DOM::Element'},
+			insertBefore($votable_option->_get_XMLDOM,
 				     $xmldom_elements[0]->getNextSibling);
 		}
 	    } else {
 		foreach $votable_option (@votable_option) {
 		    $xmldom_element_this->
-			appendChild($votable_option->{'XML::DOM::Element'});
+			appendChild($votable_option->_get_XMLDOM);
 		}
 	    }
 
@@ -761,13 +860,13 @@ sub set_option()
 	    if ($xmldom_elements[0] ne $xmldom_element_this->getLastChild) {
 		foreach $votable_option (@votable_option) {
 		    $xmldom_element_this->
-			insertBefore($votable_option->{'XML::DOM::Element'},
+			insertBefore($votable_option->_get_XMLDOM,
 				     $xmldom_elements[0]->getNextSibling);
 		}
 	    } else {
 		foreach $votable_option (@votable_option) {
 		    $xmldom_element_this->
-			appendChild($votable_option->{'XML::DOM::Element'});
+			appendChild($votable_option->_get_XMLDOM);
 		}
 	    }
 
@@ -776,14 +875,20 @@ sub set_option()
 	    # No MIN or MAX elements, so insert as the first children.
 	    foreach $votable_option (@votable_option) {
 		$xmldom_element_this->
-		    insertBefore($votable_option->{'XML::DOM::Element'},
+		    insertBefore($votable_option->_get_XMLDOM,
 				 $xmldom_element_this->getFirstChild);
 	    }
 
 	}
 
-    }
+    } else {
 
+	# No children, so these OPTIONs are the first.
+	foreach $votable_option (@votable_option) {
+	    $xmldom_element_this->appendChild($votable_option->_get_XMLDOM);
+	}
+
+    }
 
     # Return the new objects.
     return($this->get_option);
@@ -791,14 +896,9 @@ sub set_option()
 }
 
 #------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
 
-# PCDATA content accessor methods.
+# PCDATA content accessor methods
 
-#------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
-
-#------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 
 # Internal methods.
@@ -813,8 +913,9 @@ sub _build_from_XMLDOM()
 
     # Local variables.
 
-    # Reference to XML::DOM::Element object for current VOTABLE object.
-    my($this_xmldom_element);
+    # Reference to XML::DOM::Element object for current VOTABLE
+    # object.
+    my($xmldom_element_this);
 
     # Temporary array of XML::DOM::Element objects.
     my(@xmldom_elements);
@@ -833,7 +934,7 @@ sub _build_from_XMLDOM()
     #--------------------------------------------------------------------------
 
     # Fetch the current XML::DOM::Element object.
-    $this_xmldom_element = $this->{'XML::DOM::Element'};
+    $xmldom_element_this = $this->_get_XMLDOM;
 
     #--------------------------------------------------------------------------
 
@@ -841,10 +942,10 @@ sub _build_from_XMLDOM()
 
     # The current element should contain at most a single MIN element.
     @xmldom_elements =
-	$this_xmldom_element->getElementsByTagName('MIN', 0);
+	$xmldom_element_this->getElementsByTagName('MIN', 0);
     if (@xmldom_elements > 1) {
 	carp('Multiple MIN elements!');
-	return(undef);
+	return(0);
     }
     if (@xmldom_elements) {
 	$votable_min = new VOTABLE::MIN $xmldom_elements[0];
@@ -857,10 +958,10 @@ sub _build_from_XMLDOM()
 
     # The current element should contain at most a single MAX element.
     @xmldom_elements =
-	$this_xmldom_element->getElementsByTagName('MAX', 0);
+	$xmldom_element_this->getElementsByTagName('MAX', 0);
     if (@xmldom_elements > 1) {
 	carp('Multiple MAX elements!');
-	return(undef);
+	return(0);
     }
     if (@xmldom_elements) {
 	$votable_max = new VOTABLE::MAX $xmldom_elements[0];
@@ -873,7 +974,7 @@ sub _build_from_XMLDOM()
 
     # Any number of OPTIONs are allowed.
     if (@xmldom_elements =
-	$this_xmldom_element->getElementsByTagName('OPTION', 0)) {
+	$xmldom_element_this->getElementsByTagName('OPTION', 0)) {
 	foreach $xmldom_element (@xmldom_elements) {
 	    $votable_option = new VOTABLE::OPTION $xmldom_element;
 	    push(@votable_option, $votable_option);
@@ -886,6 +987,34 @@ sub _build_from_XMLDOM()
     # Return normally.
     return(1);
 
+}
+
+#------------------------------------------------------------------------------
+
+# _get_XMLDOM()
+
+# Internal method to get a reference to the underlying
+# XML::DOM::Element object.
+
+sub _get_XMLDOM()
+{
+    my($this) = @_;
+    return($this->{$XMLDOM_BASE_CLASS});
+}
+
+#------------------------------------------------------------------------------
+
+# _set_XMLDOM()
+
+# Internal method to set the reference to the underlying
+# XML::DOM::Element object. Return the reference to the new
+# XML::DOM::Element.
+
+sub _set_XMLDOM()
+{
+    my($this, $xmldom_element) = @_;
+    $this->{$XMLDOM_BASE_CLASS} = $xmldom_element;
+    return($this->{$XMLDOM_BASE_CLASS});
 }
 
 #******************************************************************************

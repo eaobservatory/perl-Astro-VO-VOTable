@@ -217,8 +217,7 @@ sub test_get_option()
 {
     my($votable_values) = new VOTABLE::VALUES
 	or return(0);
-    my($test_option) = '100';
-    my($votable_option) = new VOTABLE::OPTION $test_option
+    my($votable_option) = new VOTABLE::OPTION
 	or return(0);
     $votable_values->set_option(($votable_option))
 	or return(0);
@@ -231,8 +230,7 @@ sub test_set_option()
 {
     my($votable_values) = new VOTABLE::VALUES
 	or return(0);
-    my($test_option) = '100';
-    my($votable_option) = new VOTABLE::OPTION $test_option
+    my($votable_option) = new VOTABLE::OPTION
 	or return(0);
     $votable_values->set_option(($votable_option))
 	or return(0);

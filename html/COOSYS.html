@@ -1,0 +1,190 @@
+<HTML>
+<HEAD>
+<TITLE>VOTABLE::COOSYS - VOTABLE COOSYS XML element class</TITLE>
+<LINK REV="made" HREF="mailto:elwinter@olegacy.gsfc.nasa.gov">
+</HEAD>
+
+<BODY>
+
+<A NAME="__index__"></A>
+<!-- INDEX BEGIN -->
+
+<UL>
+
+	<LI><A HREF="#name">NAME</A></LI>
+	<LI><A HREF="#synopsis">SYNOPSIS</A></LI>
+	<LI><A HREF="#description">DESCRIPTION</A></LI>
+	<UL>
+
+		<LI><A HREF="#methods">Methods</A></LI>
+		<UL>
+
+			<LI><A HREF="#new($str_or_ref, %options)"><CODE>new($str_or_ref, %options)</CODE></A></LI>
+			<LI><A HREF="#get_id"><CODE>get_ID</CODE></A></LI>
+			<LI><A HREF="#set_id($id)"><CODE>set_ID($id)</CODE></A></LI>
+			<LI><A HREF="#get_epoch"><CODE>get_epoch</CODE></A></LI>
+			<LI><A HREF="#set_epoch($epoch)"><CODE>set_epoch($epoch)</CODE></A></LI>
+			<LI><A HREF="#get_equinox"><CODE>get_equinox</CODE></A></LI>
+			<LI><A HREF="#set_equinox($equinox)"><CODE>set_equinox($equinox)</CODE></A></LI>
+			<LI><A HREF="#get_system"><CODE>get_system</CODE></A></LI>
+			<LI><A HREF="#set_system($system)"><CODE>set_system($system)</CODE></A></LI>
+			<LI><A HREF="#get"><CODE>get</CODE></A></LI>
+			<LI><A HREF="#set($str)"><CODE>set($str)</CODE></A></LI>
+		</UL>
+
+		<LI><A HREF="#notes on class internals">Notes on class internals</A></LI>
+	</UL>
+
+	<LI><A HREF="#warnings">WARNINGS</A></LI>
+	<LI><A HREF="#see also">SEE ALSO</A></LI>
+	<LI><A HREF="#author">AUTHOR</A></LI>
+	<LI><A HREF="#version">VERSION</A></LI>
+</UL>
+<!-- INDEX END -->
+
+<HR>
+<P>
+<HR>
+<H1><A NAME="name">NAME</A></H1>
+<P>VOTABLE::COOSYS - VOTABLE COOSYS XML element class</P>
+<P>
+<HR>
+<H1><A NAME="synopsis">SYNOPSIS</A></H1>
+<P><CODE>use VOTABLE::COOSYS;</CODE></P>
+<P>
+<HR>
+<H1><A NAME="description">DESCRIPTION</A></H1>
+<P>This class implements the <CODE>COOSYS</CODE> element from the <CODE>VOTABLE</CODE>
+DTD. This element is used to store coordinate system information
+(hence the element tag name). Other elements of a <CODE>VOTABLE</CODE> document,
+such as <CODE>FIELD</CODE> elements for coordinates, typically reference a
+<CODE>COOSYS</CODE> element (using the value of the <CODE>ID</CODE> attribute of the
+<CODE>COOSYS</CODE> element) to indicate the coordinate system which should be
+used to interpret the coordinates.</P>
+<P>The <CODE>COOSYS</CODE> element is a Tier 0 element, and is described by the
+following excerpt from the <CODE>VOTABLE</CODE> 1.0 DTD:</P>
+<PRE>
+ &lt;!ELEMENT COOSYS (#PCDATA)&gt;
+ &lt;!ATTLIST COOSYS
+         ID ID #IMPLIED
+         equinox CDATA #IMPLIED
+         epoch CDATA #IMPLIED
+         system (eq_FK4 | eq_FK5 | ICRS | ecl_FK4 | ecl_FK5 | galactic
+                | supergalactic | xy | barycentric | geo_app) &quot;eq_FK5&quot;
+ &gt;</PRE>
+<P>
+<H2><A NAME="methods">Methods</A></H2>
+<P>
+<H3><A NAME="new($str_or_ref, %options)"><CODE>new($str_or_ref, %options)</CODE></A></H3>
+<P>Create a new <CODE>VOTABLE::COOSYS</CODE> object, and return a reference to
+it. If the first argument (<CODE>$str_or_ref</CODE>) is a string, it is used as
+the initial <CODE>PCDATA</CODE> content of the <CODE>COOSYS</CODE> element. If the first
+argument is a reference to a <CODE>XML::DOM::Element</CODE> object, that object
+is used to initialize the new <CODE>COOSYS</CODE> element (implicitly assuming
+that the <CODE>XML::DOM::Element</CODE> object contains a valid <CODE>COOSYS</CODE>
+element). The <CODE>%options</CODE> hash is used to set the attributes of the
+new element. If the first argument is missing or undefined, or an
+empty string, create and return an empty <CODE>VOTABLE::COOSYS</CODE>
+object. Return <CODE>undef</CODE> if an error occurs.</P>
+<P>
+<H3><A NAME="get_id"><CODE>get_ID</CODE></A></H3>
+<P>Return the value of the <CODE>ID</CODE> attribute. Return <CODE>undef</CODE> if the
+attribute has not been set, or an error occurs.</P>
+<P>
+<H3><A NAME="set_id($id)"><CODE>set_ID($id)</CODE></A></H3>
+<P>Set the value of the <CODE>ID</CODE> attribute to the specified value. Return
+the new value of the attribute on success, or <CODE>undef</CODE> if an error
+occurs.</P>
+<P>
+<H3><A NAME="get_epoch"><CODE>get_epoch</CODE></A></H3>
+<P>Return the value of the <CODE>epoch</CODE> attribute. Return <CODE>undef</CODE> if the
+attribute has not been set, or an error occurs.</P>
+<P>
+<H3><A NAME="set_epoch($epoch)"><CODE>set_epoch($epoch)</CODE></A></H3>
+<P>Set the value of the <CODE>epoch</CODE> attribute to the specified value. Return
+the new value of the attribute on success, or <CODE>undef</CODE> if an error
+occurs.</P>
+<P>
+<H3><A NAME="get_equinox"><CODE>get_equinox</CODE></A></H3>
+<P>Return the value of the <CODE>equinox</CODE> attribute. Return <CODE>undef</CODE> if the
+attribute has not been set, or an error occurs.</P>
+<P>
+<H3><A NAME="set_equinox($equinox)"><CODE>set_equinox($equinox)</CODE></A></H3>
+<P>Set the value of the <CODE>equinox</CODE> attribute to the specified
+value. Return the new value of the attribute on success, or <CODE>undef</CODE>
+if an error occurs.</P>
+<P>
+<H3><A NAME="get_system"><CODE>get_system</CODE></A></H3>
+<P>Return the value of the <CODE>system</CODE> attribute. Return <CODE>undef</CODE> if the
+attribute has not been set, or an error occurs.</P>
+<P>
+<H3><A NAME="set_system($system)"><CODE>set_system($system)</CODE></A></H3>
+<P>Set the value of the <CODE>system</CODE> attribute to the specified
+value. Return the new value of the attribute on success, or <CODE>undef</CODE>
+if an error occurs.</P>
+<P>
+<H3><A NAME="get"><CODE>get</CODE></A></H3>
+<P>Return a string containing the <CODE>PCDATA</CODE> content of the <CODE>COOSYS</CODE>
+element. Return <CODE>undef</CODE> if the element has no <CODE>PCDATA</CODE> content, or
+an error occurs.</P>
+<P>
+<H3><A NAME="set($str)"><CODE>set($str)</CODE></A></H3>
+<P>Set the <CODE>PCDATA</CODE> content of the <CODE>COOSYS</CODE> element to the specified
+string. Return the string on success, or <CODE>undef</CODE> if an error occurs.</P>
+<P>
+<H2><A NAME="notes on class internals">Notes on class internals</A></H2>
+<UL>
+<LI>
+Method names that begin with a leading underscore ('<CODE>_</CODE>') are for
+internal use only, and should <EM>not</EM> be used outside of the <CODE>VOTABLE</CODE>
+class hierarchy.
+<P></P>
+<LI>
+The names of the <CODE>get_XXX</CODE> and <CODE>set_XXX</CODE> accessors for attributes
+and elements are derived directly from the names of the attributes or
+elements. Attribute and element names containing embedded hyphens
+('<CODE>-</CODE>') use accessors where the hyphen is mapped to an underscore
+('<CODE>_</CODE>') in the name of the accessor method. This is a necessity,
+since the hyphen is not a valid name character in Perl.
+<P></P></UL>
+<P>
+<HR>
+<H1><A NAME="warnings">WARNINGS</A></H1>
+<UL>
+<LI>
+This code (perhaps unwisely) assumes that object internal structure is
+always maintained. For example, this code assumes that every
+<CODE>VOTABLE::COOSYS</CODE> object <EM>always</EM> has an underlying
+<CODE>XML::DOM::Element</CODE> object. As long as the internal structure is
+manipulated only by the publicly-available methods, this should be an
+adequate assumption. If a method detects an aberrant case, a warning
+message is printed (using the <CODE>Carp::carp</CODE> subroutine), and the
+method fails.
+<P></P>
+<LI>
+Similarly, this code assumes that <CODE>XML::DOM</CODE> methods always
+succeed. If a method detects an aberrant case, a warning message is
+printed (using the <CODE>Carp::carp</CODE> subroutine), and the method fails.
+<P></P>
+<LI>
+Most attribute <CODE>set_XXX</CODE> accessors do not perform validation of the
+new attribute values. The exceptions are the accessors for attributes
+with enumerated values; the new value is checked against the list of
+acceptable values, as defined in the DTD.
+<P></P></UL>
+<P>
+<HR>
+<H1><A NAME="see also">SEE ALSO</A></H1>
+<P><CODE>VOTABLE</CODE>, <CODE>VOTABLE::DEFINITIONS</CODE>, <CODE>VOTABLE::RESOURCE</CODE></P>
+<P>
+<HR>
+<H1><A NAME="author">AUTHOR</A></H1>
+<P>Eric Winter, NASA GSFC (<A HREF="mailto:elwinter@milkyway.gsfc.nasa.gov">elwinter@milkyway.gsfc.nasa.gov</A>)</P>
+<P>
+<HR>
+<H1><A NAME="version">VERSION</A></H1>
+<P>$Id: COOSYS.pm,v 1.1.1.8 2002/05/21 14:08:05 elwinter Exp $</P>
+
+</BODY>
+
+</HTML>

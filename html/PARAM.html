@@ -1,0 +1,277 @@
+<HTML>
+<HEAD>
+<TITLE>VOTABLE::PARAM - VOTABLE PARAM XML element class</TITLE>
+<LINK REV="made" HREF="mailto:elwinter@olegacy.gsfc.nasa.gov">
+</HEAD>
+
+<BODY>
+
+<A NAME="__index__"></A>
+<!-- INDEX BEGIN -->
+
+<UL>
+
+	<LI><A HREF="#name">NAME</A></LI>
+	<LI><A HREF="#synopsis">SYNOPSIS</A></LI>
+	<LI><A HREF="#description">DESCRIPTION</A></LI>
+	<UL>
+
+		<UL>
+
+			<LI><A HREF="#new($xmldom_element, %options)"><CODE>new($xmldom_element, %options)</CODE></A></LI>
+			<LI><A HREF="#get_id"><CODE>get_ID</CODE></A></LI>
+			<LI><A HREF="#set_id($id)"><CODE>set_ID($id)</CODE></A></LI>
+			<LI><A HREF="#get_arraysize"><CODE>get_arraysize</CODE></A></LI>
+			<LI><A HREF="#set_arraysize($arraysize)"><CODE>set_arraysize($arraysize)</CODE></A></LI>
+			<LI><A HREF="#get_datatype"><CODE>get_datatype</CODE></A></LI>
+			<LI><A HREF="#set_datatype($datatype)"><CODE>set_datatype($datatype)</CODE></A></LI>
+			<LI><A HREF="#get_name"><CODE>get_name</CODE></A></LI>
+			<LI><A HREF="#set_name($name)"><CODE>set_name($name)</CODE></A></LI>
+			<LI><A HREF="#get_precision"><CODE>get_precision</CODE></A></LI>
+			<LI><A HREF="#set_precision($precision)"><CODE>set_precision($precision)</CODE></A></LI>
+			<LI><A HREF="#get_ref"><CODE>get_ref</CODE></A></LI>
+			<LI><A HREF="#set_ref($ref)"><CODE>set_ref($ref)</CODE></A></LI>
+			<LI><A HREF="#get_ucd"><CODE>get_ucd</CODE></A></LI>
+			<LI><A HREF="#set_ucd($ucd)"><CODE>set_ucd($ucd)</CODE></A></LI>
+			<LI><A HREF="#get_unit"><CODE>get_unit</CODE></A></LI>
+			<LI><A HREF="#set_unit($unit)"><CODE>set_unit($unit)</CODE></A></LI>
+			<LI><A HREF="#get_value"><CODE>get_value</CODE></A></LI>
+			<LI><A HREF="#set_value($value)"><CODE>set_value($value)</CODE></A></LI>
+			<LI><A HREF="#get_width"><CODE>get_width</CODE></A></LI>
+			<LI><A HREF="#set_width($width)"><CODE>set_width($width)</CODE></A></LI>
+			<LI><A HREF="#get_description"><CODE>get_description</CODE></A></LI>
+			<LI><A HREF="#set_description($votable_description)"><CODE>set_description($votable_description)</CODE></A></LI>
+			<LI><A HREF="#get_link"><CODE>get_link</CODE></A></LI>
+			<LI><A HREF="#set_link(@votable_link)"><CODE>set_link(@votable_link)</CODE></A></LI>
+			<LI><A HREF="#get_values"><CODE>get_values</CODE></A></LI>
+			<LI><A HREF="#set_values(@votable_values)"><CODE>set_values(@votable_values)</CODE></A></LI>
+		</UL>
+
+		<LI><A HREF="#notes on class internals">Notes on class internals</A></LI>
+	</UL>
+
+	<LI><A HREF="#warnings">WARNINGS</A></LI>
+	<LI><A HREF="#see also">SEE ALSO</A></LI>
+	<LI><A HREF="#author">AUTHOR</A></LI>
+	<LI><A HREF="#version">VERSION</A></LI>
+</UL>
+<!-- INDEX END -->
+
+<HR>
+<P>
+<HR>
+<H1><A NAME="name">NAME</A></H1>
+<P>VOTABLE::PARAM - VOTABLE PARAM XML element class</P>
+<P>
+<HR>
+<H1><A NAME="synopsis">SYNOPSIS</A></H1>
+<P><CODE>use VOTABLE::PARAM;</CODE></P>
+<P>
+<HR>
+<H1><A NAME="description">DESCRIPTION</A></H1>
+<P>This class implements the <CODE>PARAM</CODE> element from the <CODE>VOTABLE</CODE>
+DTD. This element is used to store arbitrary, defined-format metadata.</P>
+<P>The <CODE>PARAM</CODE> element is a Tier 3 element, and is described by the
+following excerpt from the <CODE>VOTABLE</CODE> 1.0 DTD:</P>
+<PRE>
+ &lt;!ELEMENT PARAM (DESCRIPTION?, VALUES?, LINK*)&gt;
+ &lt;!ATTLIST PARAM
+         ID ID #IMPLIED
+         unit CDATA #IMPLIED
+         datatype (boolean | bit | unsignedByte | short | int | long | char
+        | unicodeChar | float | double | floatComplex | doubleComplex) #IMPLIED
+         precision CDATA #IMPLIED
+         width CDATA #IMPLIED
+         ref IDREF #IMPLIED
+         name CDATA #IMPLIED
+         ucd CDATA #IMPLIED
+         value CDATA #IMPLIED
+         arraysize CDATA #IMPLIED
+ &gt;</PRE>
+<P>
+<H3><A NAME="new($xmldom_element, %options)"><CODE>new($xmldom_element, %options)</CODE></A></H3>
+<P>Create and return a new <CODE>VOTABLE::PARAM</CODE> object, based on the
+supplied <CODE>XML::DOM::Element</CODE> object, using <CODE>%options</CODE> to set the
+attributes of the new object. If no <CODE>XML::DOM::Element</CODE> object is
+specified, or is undefined, create and return an empty
+<CODE>VOTABLE::PARAM</CODE> object. Return <CODE>undef</CODE> if an error occurs.</P>
+<P>
+<H3><A NAME="get_id"><CODE>get_ID</CODE></A></H3>
+<P>Return the value of the <CODE>ID</CODE> attribute. Return <CODE>undef</CODE> if the
+attribute has not been set, or an error occurs.</P>
+<P>
+<H3><A NAME="set_id($id)"><CODE>set_ID($id)</CODE></A></H3>
+<P>Set the value of the <CODE>ID</CODE> attribute to the specified value. Return
+the new value of the attribute on success, or <CODE>undef</CODE> if an error
+occurs.</P>
+<P>
+<H3><A NAME="get_arraysize"><CODE>get_arraysize</CODE></A></H3>
+<P>Return the value of the <CODE>arraysize</CODE> attribute. Return <CODE>undef</CODE> if the
+attribute has not been set, or an error occurs.</P>
+<P>
+<H3><A NAME="set_arraysize($arraysize)"><CODE>set_arraysize($arraysize)</CODE></A></H3>
+<P>Set the value of the <CODE>arraysize</CODE> attribute to the specified
+value. Return the new value of the attribute on success, or <CODE>undef</CODE>
+if an error occurs.</P>
+<P>
+<H3><A NAME="get_datatype"><CODE>get_datatype</CODE></A></H3>
+<P>Return the value of the <CODE>datatype</CODE> attribute. Return <CODE>undef</CODE> if the
+attribute has not been set, or an error occurs.</P>
+<P>
+<H3><A NAME="set_datatype($datatype)"><CODE>set_datatype($datatype)</CODE></A></H3>
+<P>Set the value of the <CODE>datatype</CODE> attribute to the specified
+value. Return the new value of the attribute on success, or <CODE>undef</CODE>
+if an error occurs.</P>
+<P>
+<H3><A NAME="get_name"><CODE>get_name</CODE></A></H3>
+<P>Return the value of the <CODE>name</CODE> attribute. Return <CODE>undef</CODE> if the
+attribute has not been set, or an error occurs.</P>
+<P>
+<H3><A NAME="set_name($name)"><CODE>set_name($name)</CODE></A></H3>
+<P>Set the value of the <CODE>name</CODE> attribute to the specified value. Return
+the new value of the attribute on success, or <CODE>undef</CODE> if an error
+occurs.</P>
+<P>
+<H3><A NAME="get_precision"><CODE>get_precision</CODE></A></H3>
+<P>Return the value of the <CODE>precision</CODE> attribute. Return <CODE>undef</CODE> if the
+attribute has not been set, or an error occurs.</P>
+<P>
+<H3><A NAME="set_precision($precision)"><CODE>set_precision($precision)</CODE></A></H3>
+<P>Set the value of the <CODE>precision</CODE> attribute to the specified
+value. Return the new value of the attribute on success, or <CODE>undef</CODE>
+if an error occurs.</P>
+<P>
+<H3><A NAME="get_ref"><CODE>get_ref</CODE></A></H3>
+<P>Return the value of the <CODE>ref</CODE> attribute. Return <CODE>undef</CODE> if the
+attribute has not been set, or an error occurs.</P>
+<P>
+<H3><A NAME="set_ref($ref)"><CODE>set_ref($ref)</CODE></A></H3>
+<P>Set the value of the <CODE>ref</CODE> attribute to the specified value. Return
+the new value of the attribute on success, or <CODE>undef</CODE> if an error
+occurs.</P>
+<P>
+<H3><A NAME="get_ucd"><CODE>get_ucd</CODE></A></H3>
+<P>Return the value of the <CODE>ucd</CODE> attribute. Return <CODE>undef</CODE> if the
+attribute has not been set, or an error occurs.</P>
+<P>
+<H3><A NAME="set_ucd($ucd)"><CODE>set_ucd($ucd)</CODE></A></H3>
+<P>Set the value of the <CODE>ucd</CODE> attribute to the specified value. Return
+the new value of the attribute on success, or <CODE>undef</CODE> if an error
+occurs.</P>
+<P>
+<H3><A NAME="get_unit"><CODE>get_unit</CODE></A></H3>
+<P>Return the value of the <CODE>unit</CODE> attribute. Return <CODE>undef</CODE> if the
+attribute has not been set, or an error occurs.</P>
+<P>
+<H3><A NAME="set_unit($unit)"><CODE>set_unit($unit)</CODE></A></H3>
+<P>Set the value of the <CODE>unit</CODE> attribute to the specified value. Return
+the new value of the attribute on success, or <CODE>undef</CODE> if an error
+occurs.</P>
+<P>
+<H3><A NAME="get_value"><CODE>get_value</CODE></A></H3>
+<P>Return the value of the <CODE>value</CODE> attribute. Return <CODE>undef</CODE> if the
+attribute has not been set, or an error occurs.</P>
+<P>
+<H3><A NAME="set_value($value)"><CODE>set_value($value)</CODE></A></H3>
+<P>Set the value of the <CODE>value</CODE> attribute to the specified value. Return
+the new value of the attribute on success, or <CODE>undef</CODE> if an error
+occurs.</P>
+<P>
+<H3><A NAME="get_width"><CODE>get_width</CODE></A></H3>
+<P>Return the value of the <CODE>width</CODE> attribute. Return <CODE>undef</CODE> if the
+attribute has not been set, or an error occurs.</P>
+<P>
+<H3><A NAME="set_width($width)"><CODE>set_width($width)</CODE></A></H3>
+<P>Set the value of the <CODE>width</CODE> attribute to the specified value. Return
+the new value of the attribute on success, or <CODE>undef</CODE> if an error
+occurs.</P>
+<P>
+<H3><A NAME="get_description"><CODE>get_description</CODE></A></H3>
+<P>Return the <CODE>VOTABLE::DESCRIPTION</CODE> object for the <CODE>DESCRIPTION</CODE>
+element of this <CODE>PARAM</CODE> element. Return <CODE>undef</CODE> If no <CODE>DESCRIPTION</CODE>
+element is found, or an error occurs.</P>
+<P>
+<H3><A NAME="set_description($votable_description)"><CODE>set_description($votable_description)</CODE></A></H3>
+<P>Set the <CODE>DESCRIPTION</CODE> element for this <CODE>PARAM</CODE> element to the
+supplied <CODE>VOTABLE::DESCRIPTION</CODE> object. Return the
+<CODE>VOTABLE::DESCRIPTION</CODE> object on success, or <CODE>undef</CODE> if an error
+occurs.</P>
+<P>
+<H3><A NAME="get_link"><CODE>get_link</CODE></A></H3>
+<P>Return a list of the <CODE>VOTABLE::LINK</CODE> objects for the <CODE>LINK</CODE> elements
+which are the children of this <CODE>PARAM</CODE> element. Return an empty list
+if no <CODE>LINK</CODE> elements are found, or if an error occurs.</P>
+<P>
+<H3><A NAME="set_link(@votable_link)"><CODE>set_link(@votable_link)</CODE></A></H3>
+<P>Set the <CODE>LINK</CODE> elements for this <CODE>PARAM</CODE> element using the supplied
+list of <CODE>VOTABLE::LINK</CODE> objects. Any previously existing <CODE>LINK</CODE>
+elements are first removed. Return the input list on success, or an
+empty list if an error occurs.</P>
+<P>
+<H3><A NAME="get_values"><CODE>get_values</CODE></A></H3>
+<P>Return a list of the <CODE>VOTABLE::VALUES</CODE> objects for the <CODE>VALUES</CODE>
+elements which are the children of this <CODE>PARAM</CODE> element. Return an
+empty list if no <CODE>VALUES</CODE> elements are found, or if an error occurs.</P>
+<P>
+<H3><A NAME="set_values(@votable_values)"><CODE>set_values(@votable_values)</CODE></A></H3>
+<P>Set the <CODE>VALUES</CODE> elements for this <CODE>PARAM</CODE> element using the
+supplied list of <CODE>VOTABLE::VALUES</CODE> objects. Any previously existing
+<CODE>VALUES</CODE> elements are first removed. Return the input list on
+success, or an empty list if an error occurs.</P>
+<P>
+<H2><A NAME="notes on class internals">Notes on class internals</A></H2>
+<UL>
+<LI>
+Method names that begin with a leading underscore ('<CODE>_</CODE>') are for
+internal use only, and should <EM>not</EM> be used outside of the <CODE>VOTABLE</CODE>
+class hierarchy.
+<P></P>
+<LI>
+The names of the <CODE>get_XXX</CODE> and <CODE>set_XXX</CODE> accessors for attributes
+and elements are derived directly from the names of the attributes or
+elements. Attribute and element names containing embedded hyphens
+('<CODE>-</CODE>') use accessors where the hyphen is mapped to an underscore
+('<CODE>_</CODE>') in the name of the accessor method. This is a necessity,
+since the hyphen is not a valid name character in Perl.
+<P></P></UL>
+<P>
+<HR>
+<H1><A NAME="warnings">WARNINGS</A></H1>
+<UL>
+<LI>
+This code (perhaps unwisely) assumes that object internal structure is
+always maintained. For example, this code assumes that every
+<CODE>VOTABLE::TABLEDATA</CODE> object <EM>always</EM> has an underlying
+<CODE>XML::DOM::Element</CODE> object. As long as the internal structure is
+manipulated only by the publicly-available methods, this should be an
+adequate assumption. If a method detects an aberrant case, a warning
+message is printed (using the <CODE>Carp::carp</CODE> subroutine), and the
+method fails.
+<P></P>
+<LI>
+Similarly, this code assumes that <CODE>XML::DOM</CODE> methods always
+succeed. If a method detects an aberrant case, a warning message is
+printed (using the <CODE>Carp::carp</CODE> subroutine), and the method fails.
+<P></P>
+<LI>
+Most attribute <CODE>set_XXX</CODE> accessors do not perform validation of the
+new attribute values. The exceptions are the accessors for attributes
+with enumerated values; the new value is checked against the list of
+acceptable values, as defined in the DTD.
+<P></P></UL>
+<P>
+<HR>
+<H1><A NAME="see also">SEE ALSO</A></H1>
+<P><CODE>VOTABLE</CODE>, <CODE>VOTABLE::RESOURCE</CODE></P>
+<P>
+<HR>
+<H1><A NAME="author">AUTHOR</A></H1>
+<P>Eric Winter, NASA GSFC (<A HREF="mailto:elwinter@milkyway.gsfc.nasa.gov">elwinter@milkyway.gsfc.nasa.gov</A>)</P>
+<P>
+<HR>
+<H1><A NAME="version">VERSION</A></H1>
+<P>$Id: PARAM.pm,v 1.1.1.9 2002/05/21 14:12:14 elwinter Exp $</P>
+
+</BODY>
+
+</HTML>
