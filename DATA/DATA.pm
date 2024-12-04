@@ -1,107 +1,52 @@
 # DATA.pm
 
+# $Id: DATA.pm,v 1.1.1.25 2003/11/14 15:38:11 elwinter Exp $
+
+# NOTE: All internal subroutine names start with a leading underscore
+# (_) character, and assume that their inputs are valid.
+
+#******************************************************************************
+
 =pod
 
 =head1 NAME
 
-VOTable::DATA - VOTable DATA element class
+Astro::VO::VOTable::DATA - VOTable DATA element class
 
 =head1 SYNOPSIS
 
-use VOTable::DATA
+use Astro::VO::VOTable::DATA;
 
 =head1 DESCRIPTION
 
 This class implements an interface to VOTable DATA elements. This
-class inherits from VOTable::Element, and therefore all of the methods
-from that class are available to this class.
+class inherits from Astro::VO::VOTable::Element, and therefore all of
+the methods from that class are available to this class. This file
+will only document the methods specific to this class.
 
 =head2 Methods
-
-=head3 new($arg)
-
-Create and return a new VOTable::DATA object. Throw an exception if an
-error occurs. If $arg is supplied, and is a XML::LibXML::Element
-object for a 'DATA' element, that object is used to create the
-VOTable::DATA object (just by reblessing).
-
-=head3 get_TABLEDATA()
-
-Return the VOTable::TABLEDATA object for the TABLEDATA child element
-of this DATA element, or undef if this DATA has no TABLEDATA. Throw an
-exception if an error occurs.
-
-=head3 set_TABLEDATA($tabledata)
-
-Use $tabledata (a VOTable::TABLEDATA object, or a XML::LibXML::Element
-object for a TABLEDATA element) to set the TABLEDATA element child of
-this DATA element. Any existing TABLEDATA, BINARY, or FITS child
-element in this DATA element is deleted first. Throw an exception if
-an error occurs.
-
-=head3 remove_TABLEDATA()
-
-Remove any existing TABLEDATA child element. Throw an exception if an
-error occurs.
-
-=head3 get_BINARY()
-
-Return the VOTable::BINARY object for the BINARY child element of this
-DATA element, or undef if this DATA has no BINARY. Throw an exception
-if an error occurs.
-
-=head3 set_BINARY($binary)
-
-Use $binary (a VOTable::BINARY object, or a XML::LibXML::Element
-object for a BINARY element) to set the BINARY element child of this
-DATA element. Any existing TABLEDATA, BINARY, or FITS child element in
-this DATA element is deleted first. Throw an exception if an error
-occurs.
-
-=head3 remove_BINARY()
-
-Remove any existing BINARY child element. Throw an exception if an
-error occurs.
-
-=head3 get_FITS()
-
-Return the VOTable::FITS object for the FITS child element of this
-DATA element, or undef if this DATA has no FITS. Throw an exception if
-an error occurs.
-
-=head3 set_FITS($fits)
-
-Use $fits (a VOTable::FITS object, or a XML::LibXML::Element object
-for a FITS element) to set the FITS element child of this DATA
-element. Any existing TABLEDATA, BINARY, or FITS child element in this
-DATA element is deleted first. Throw an exception if an error occurs.
-
-=head3 remove_FITS()
-
-Remove any existing FITS child element. Throw an exception if an error
-occurs.
 
 =head3 get_array()
 
 Return a reference to a 2-D array containing the data contents of the
-table. Throw an exception if an error occurs.
+table. Return undef if an error occurs.
 
 =head3 get_row($rownum)
 
 Return row $rownum of the data, as an array of values. The array
 elements should be interpreted in the same order as the FIELD elements
-in the enclosing TABLE element. Throw an exception if an error occurs.
+in the enclosing TABLE element. Return undef if an error occurs.
 
 =head3 get_cell($i, $j)
 
-Return column $j of row $i of the data, as a string. Throw an
-exception if an error occurs. Note that row and field indices start at
-0. NOTE: This method is slow, and should only be used in situations
-where speed is not a concern.
+Return column $j of row $i of the data, as a string. Return undef if
+an error occurs. Note that row and field indices start at 0. NOTE:
+This method is slow, and should only be used in situations where speed
+is not a concern.
 
 =head3 get_num_rows()
 
-Return the number of rows in the table. Throw an exception if an error
+Return the number of rows in the table. Return undef if an error
 occurs.
 
 =head1 WARNINGS
@@ -120,7 +65,7 @@ None.
 
 =item
 
-VOTable::Element
+Astro::VO::VOTable::Element
 
 =back
 
@@ -130,7 +75,7 @@ Eric Winter, NASA GSFC (Eric.L.Winter.1@gsfc.nasa.gov)
 
 =head1 VERSION
 
-$Id: DATA.pm,v 1.1.1.23 2003/05/31 21:37:17 elwinter Exp $
+$Id: DATA.pm,v 1.1.1.25 2003/11/14 15:38:11 elwinter Exp $
 
 =cut
 
@@ -139,6 +84,12 @@ $Id: DATA.pm,v 1.1.1.23 2003/05/31 21:37:17 elwinter Exp $
 # Revision history
 
 # $Log: DATA.pm,v $
+# Revision 1.1.1.25  2003/11/14 15:38:11  elwinter
+# Switched to Astro::VO::VOTable:: namespace.
+#
+# Revision 1.1.1.24  2003/10/31 13:52:19  elwinter
+# Overhauled in preparation for redesign.
+#
 # Revision 1.1.1.23  2003/05/31 21:37:17  elwinter
 # Rearranged the code and updated documentation.
 #
@@ -215,42 +166,36 @@ $Id: DATA.pm,v 1.1.1.23 2003/05/31 21:37:17 elwinter Exp $
 #******************************************************************************
 
 # Begin the package definition.
-package VOTable::DATA;
+package Astro::VO::VOTable::DATA;
 
-# Specify the minimum acceptable Perl version.
-use 5.6.1;
+#******************************************************************************
 
-# Turn on strict syntax checking.
+# Compiler pragmas.
 use strict;
-
-# Use enhanced diagnostic messages.
 use diagnostics;
-
-# Use enhanced warnings.
 use warnings;
 
 #******************************************************************************
 
 # Set up the inheritance mechanism.
-use VOTable::Element;
-our @ISA = qw(VOTable::Element);
+use Astro::VO::VOTable::Element;
+our(@ISA) = qw(Astro::VO::VOTable::Element);
 
 # Module version.
-our $VERSION = 1.0;
+our($VERSION) = 1.1;
 
 #******************************************************************************
 
 # Specify external modules to use.
 
 # Standard modules
-use Carp;
 
 # Third-party modules
 
 # Project modules
-use VOTable::BINARY;
-use VOTable::FITS;
-use VOTable::TABLEDATA;
+use Astro::VO::VOTable::BINARY;
+use Astro::VO::VOTable::FITS;
+use Astro::VO::VOTable::TABLEDATA;
 
 #******************************************************************************
 
@@ -260,173 +205,12 @@ use VOTable::TABLEDATA;
 
 # Class variables
 
+our(@valid_attribute_names) = ();
 our(@valid_child_element_names) = qw(TABLEDATA BINARY FITS);
 
 #******************************************************************************
 
 # Method definitions
-
-#******************************************************************************
-
-sub get_TABLEDATA()
-{
-
-    # Save arguments.
-    my($self) = @_;
-
-    #--------------------------------------------------------------------------
-
-    # Local variables
-
-    # VOTable::TABLEDATA object for the TABLEDATA child element (if
-    # any) of this DATA element.
-    my($tabledata);
-
-    #--------------------------------------------------------------------------
-
-    # Find the first TABLEDATA child element, if any.
-    ($tabledata) = $self->getChildrenByTagName('TABLEDATA');
-
-    # If found and not yet a VOTable::TABLEDATA object, convert the
-    # TABLEDATA object to a VOTable::TABLEDATA object.
-    if ($tabledata and not $tabledata->isa('VOTable::TABLEDATA')) {
-	$tabledata = VOTable::TABLEDATA->new($tabledata) or
-	    croak('Unable to convert TABLEDATA object!');
-    }
-
-    # Return the TABLEDATA element object, or undef if none.
-    return($tabledata);
-
-}
-
-#******************************************************************************
-
-sub set_TABLEDATA()
-{
-
-    # Save arguments.
-    my($self, $tabledata) = @_;
-
-    #--------------------------------------------------------------------------
-
-    # Delete any existing TABLEDATA, BINARY, or FITS elements.
-    $self->_remove_child_elements('TABLEDATA');
-    $self->_remove_child_elements('BINARY');
-    $self->_remove_child_elements('FITS');
-
-    # Set the new TABLEDATA element as the first child of this DATA
-    # element.
-    $self->_append_child_elements($tabledata);
-
-}
-
-#******************************************************************************
-
-sub get_BINARY()
-{
-
-    # Save arguments.
-    my($self) = @_;
-
-    #--------------------------------------------------------------------------
-
-    # Local variables
-
-    # VOTable::BINARY object for the BINARY child element (if any) of
-    # this DATA element.
-    my($binary);
-
-    #--------------------------------------------------------------------------
-
-    # Find the first BINARY child element, if any.
-    ($binary) = $self->getChildrenByTagName('BINARY');
-
-    # If found and not yet a VOTable::BINARY object, convert the
-    # BINARY object to a VOTable::BINARY object.
-    if ($binary and not $binary->isa('VOTable::BINARY')) {
-	$binary = VOTable::BINARY->new($binary) or
-	    croak('Unable to convert BINARY object!');
-    }
-
-    # Return the BINARY element object, or undef if none.
-    return($binary);
-
-}
-
-#******************************************************************************
-
-sub set_BINARY()
-{
-
-    # Save arguments.
-    my($self, $binary) = @_;
-
-    #--------------------------------------------------------------------------
-
-    # Delete any existing TABLEDATA, BINARY, or FITS elements.
-    $self->_remove_child_elements('TABLEDATA');
-    $self->_remove_child_elements('BINARY');
-    $self->_remove_child_elements('FITS');
-
-    # Set the new BINARY element as the first child of this DATA
-    # element.
-    $self->_append_child_elements($binary);
-
-}
-
-#******************************************************************************
-
-sub get_FITS()
-{
-
-    # Save arguments.
-    my($self) = @_;
-
-    #--------------------------------------------------------------------------
-
-    # Local variables
-
-    # VOTable::FITS object for the FITS child element (if any) of this
-    # DATA element.
-    my($fits);
-
-    #--------------------------------------------------------------------------
-
-    # Find the first FITS child element, if any.
-    ($fits) = $self->getChildrenByTagName('FITS');
-
-    # If found and not yet a VOTable::FITS object, convert the FITS
-    # object to a VOTable::FITS object.
-    if ($fits and not $fits->isa('VOTable::FITS')) {
-	$fits = VOTable::FITS->new($fits) or
-	    croak('Unable to convert FITS object!');
-    }
-
-    # Return the FITS element object, or undef if none.
-    return($fits);
-
-}
-
-#******************************************************************************
-
-sub set_FITS()
-{
-
-    # Save arguments.
-    my($self, $fits) = @_;
-
-    #--------------------------------------------------------------------------
-
-    # Delete any existing TABLEDATA, BINARY, or FITS elements.
-    $self->_remove_child_elements('TABLEDATA');
-    $self->_remove_child_elements('BINARY');
-    $self->_remove_child_elements('FITS');
-
-    # Set the new FITS element as the first child of this DATA
-    # element.
-    $self->_append_child_elements($fits);
-
-}
 
 #******************************************************************************
 
@@ -446,14 +230,10 @@ sub get_array()
     #--------------------------------------------------------------------------
 
     # Extract the data based on the underlying data format.
-    if ($self->get_TABLEDATA) {
-	$array = ($self->get_TABLEDATA)[0]->get_array;
-    } elsif ($self->get_binary) {
-	croak('BINARY not supported yet!');
-    } elsif ($self->get_fits) {
-	croak('FITS not supported yet!');
+    if ($self->get_TABLEDATA(0)) {
+	$array = $self->get_TABLEDATA(0)->get_array;
     } else {
-	croak('No data found!');
+	return(undef);
     }
 
     # Return the array.
@@ -479,14 +259,10 @@ sub get_row()
     #--------------------------------------------------------------------------
 
     # Extract the row based on the underlying data format.
-    if ($self->get_TABLEDATA) {
-	@row = ($self->get_TABLEDATA)[0]->get_row($rownum);
-    } elsif ($self->get_binary) {
-	croak('BINARY not supported yet!');
-    } elsif ($self->get_fits) {
-	croak('FITS not supported yet!');
+    if ($self->get_TABLEDATA(0)) {
+	@row = $self->get_TABLEDATA(0)->get_row($rownum);
     } else {
-	croak('No data found!');
+	return(undef);
     }
 
     # Return the row.
@@ -512,14 +288,10 @@ sub get_cell()
     #--------------------------------------------------------------------------
 
     # Extract the cell based on the underlying data format.
-    if ($self->get_TABLEDATA) {
-	$cell = ($self->get_TABLEDATA)[0]->get_cell($i, $j);
-    } elsif ($self->get_binary) {
-	croak('BINARY not supported yet!');
-    } elsif ($self->get_fits) {
-	croak('FITS not supported yet!');
+    if ($self->get_TABLEDATA(0)) {
+	$cell = $self->get_TABLEDATA(0)->get_cell($i, $j);
     } else {
-	croak('No data found!');
+	return(undef);
     }
 
     # Return the cell.
@@ -545,44 +317,15 @@ sub get_num_rows()
     #--------------------------------------------------------------------------
 
     # Extract the row count based on the underlying data format.
-    if ($self->get_TABLEDATA) {
-	$num_rows = ($self->get_TABLEDATA)[0]->get_num_rows;
-    } elsif ($self->get_BINARY) {
-	croak('BINARY not supported yet!');
-    } elsif ($self->get_FITS) {
-	croak('FITS not supported yet!');
+    if ($self->get_TABLEDATA(0)) {
+	$num_rows = $self->get_TABLEDATA(0)->get_num_rows;
     } else {
-	croak('No data found!');
+	return(undef);
     }
 
     # Return row count.
     return($num_rows);
 
-}
-
-#******************************************************************************
-#******************************************************************************
-
-# Use overriding methods below to prevent certain methods from being
-# invoked via AUTOLOAD in the VOTable::Element class.
-
-sub append_TABLEDATA()
-{
-    croak('Invalid method!');
-}
-
-#******************************************************************************
-
-sub append_BINARY()
-{
-    croak('Invalid method!');
-}
-
-#******************************************************************************
-
-sub append_FITS()
-{
-    croak('Invalid method!');
 }
 
 #******************************************************************************

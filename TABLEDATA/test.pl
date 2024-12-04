@@ -6,8 +6,8 @@
 # change 'tests => 1' to 'tests => last_test_to_print';
 
 use Test;
-BEGIN { plan tests => 6 };
-use VOTable::TABLEDATA;
+BEGIN { plan tests => 8 };
+use Astro::VO::VOTable::TABLEDATA;
 ok(1); # If we made it this far, we're ok.
 
 #########################
@@ -22,6 +22,8 @@ use XML::LibXML;
 
 # Subroutine prototypes
 sub test_new();
+sub test_get_TR();
+sub test_set_TR();
 sub test_get_array();
 sub test_get_row();
 sub test_get_cell();
@@ -31,6 +33,8 @@ sub test_get_num_rows();
 
 # Test.
 ok(test_new, 1);
+ok(test_get_TR, 1);
+ok(test_set_TR, 1);
 ok(test_get_array, 1);
 ok(test_get_row, 1);
 ok(test_get_cell, 1);
@@ -40,9 +44,56 @@ ok(test_get_num_rows, 1);
 
 sub test_new()
 {
-    my($tabledata);
-    $tabledata = new VOTable::TABLEDATA or return(0);
+
+    # Test the plain-vanilla constructor.
+    Astro::VO::VOTable::TABLEDATA->new or return(0);
+
+    # Try creating from a XML::LibXML::Element object.
+    Astro::VO::VOTable::TABLEDATA->new(XML::LibXML::Element->new('TABLEDATA'))
+	or return(0);
+
+    # Make sure the constructor fails when a bad reference is passed
+    # in.
+    not eval { Astro::VO::VOTable::TABLEDATA->new(XML::LibXML::Element->new('JUNK')) }
+      or return(0);
+    not eval { Astro::VO::VOTable::TABLEDATA->new(\0) } or return(0);
+    not eval { Astro::VO::VOTable::TABLEDATA->new([]) } or return(0);
+
+    #--------------------------------------------------------------------------
+
+    # Return success.
     return(1);
+
+}
+
+sub test_get_TR()
+{
+    my($tabledata);
+    my($tr);
+
+    $tabledata = Astro::VO::VOTable::TABLEDATA->new or return(0);
+    $tr = Astro::VO::VOTable::TR->new or return(0);
+    $tabledata->appendChild($tr);
+    $tr->isSameNode($tabledata->get_TR(0)) or return(0);
+
+    # All tests passed.
+    return(1);
+
+}
+
+sub test_set_TR()
+{
+    my($tabledata);
+    my($tr);
+
+    $tabledata = Astro::VO::VOTable::TABLEDATA->new or return(0);
+    $tr = Astro::VO::VOTable::TR->new or return(0);
+    $tabledata->set_TR($tr);
+    $tr->isSameNode($tabledata->get_TR(0)) or return(0);
+
+    # All tests passed.
+    return(1);
+
 }
 
 sub test_get_array()
@@ -82,8 +133,8 @@ _EOS_
     $votable = $document->documentElement or return(0);
     $tabledata = ($votable->getElementsByTagName('TABLEDATA'))[0] or return(0);
 
-    # Create a VOTable::TABLEDATA object.
-    bless $tabledata => 'VOTable::TABLEDATA';
+    # Create a Astro::VO::VOTable::TABLEDATA object.
+    bless $tabledata => 'Astro::VO::VOTable::TABLEDATA';
 
     # Fetch the table contents as an array.
     $array = $tabledata->get_array or return(0);
@@ -134,8 +185,8 @@ _EOS_
     $votable = $document->documentElement or return(0);
     $tabledata = ($votable->getElementsByTagName('TABLEDATA'))[0] or return(0);
 
-    # Create a VOTable::TABLEDATA object.
-    bless $tabledata => 'VOTable::TABLEDATA';
+    # Create a Astro::VO::VOTable::TABLEDATA object.
+    bless $tabledata => 'Astro::VO::VOTable::TABLEDATA';
 
     # Retrieve the contents of the TR elements as arrays and verify
     # the contents.
@@ -192,8 +243,8 @@ _EOS_
     $votable = $document->documentElement or return(0);
     $tabledata = ($votable->getElementsByTagName('TABLEDATA'))[0] or return(0);
 
-    # Create a VOTable::TABLEDATA object.
-    bless $tabledata => 'VOTable::TABLEDATA';
+    # Create a Astro::VO::VOTable::TABLEDATA object.
+    bless $tabledata => 'Astro::VO::VOTable::TABLEDATA';
 
     # Retrieve and verify the row count.
     $tabledata->get_num_rows == 2 or return(0);

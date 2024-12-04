@@ -1,75 +1,28 @@
 # TD.pm
 
+# $Id: TD.pm,v 1.1.1.15 2003/11/14 15:38:11 elwinter Exp $
+
+# NOTE: All internal subroutine names start with a leading underscore
+# (_) character, and assume that their inputs are valid.
+
+#******************************************************************************
+
 =pod
 
 =head1 NAME
 
-VOTable::TD - VOTable TD element class
+Astro::VO::VOTable::TD - VOTable TD element class
 
 =head1 SYNOPSIS
 
-use VOTable::TD
+use Astro::VO::VOTable::TD;
 
 =head1 DESCRIPTION
 
 This class implements an interface to VOTable TD elements. This class
-inherits from VOTable::Element, and therefore all of the methods from
-that class are available to this class.
-
-=head2 Methods
-
-=head3 new($arg)
-
-Create and return a new VOTable::TD object. Throw an exception if an
-error occurs. If $arg is supplied, and is a XML::LibXML::Element
-object for a 'TD' element, that object is used to create the
-VOTable::TD object (just by reblessing).
-
-=head3 get()
-
-Return all of the text from within this element as a single
-string. Return an empty string if there is no text. Text which
-contains character entities is NOT converted to entity
-references. Throw an exception if an error occurs.
-
-=head3 set($str)
-
-Set the text content of the element to the specified string. Throw an
-exception if an error occurs. Note that the existing text content of
-the element is deleted first. Character entities should _not_ be
-replaced with the corresponding entity references before this method
-is called.
-
-=head3 empty()
-
-Empty the text content of the element. Throw an exception if an error
-occurs.
-
-=head3 get_ref()
-
-Return the value of the 'ref' attribute for this TD element. Return an
-empty string if the 'ref' attribute has not been set. Throw an
-exception if an error occurs.
-
-=head3 set_ref($ref)
-
-Set the value of the 'ref' attribute for this TD element to the
-specified value. Throw an exception if an error occurs.
-
-=head3 remove_ref()
-
-Remove the the 'ref' attribute for this TD element. Throw an exception
-if an error occurs.
-
-=head3 toString($arg)
-
-Return a string representation of the element and all of its
-children. Character entities are replaced with entity references where
-appropriate. If $arg is '1', the output has extra whitespace for
-readability. If $arg is '2', text content is surrounded by
-newlines. This method is directly inherited from XML::LibXML::Element,
-so further documentation may be found in the XML::LibXML::Element
-manual page.
+inherits from Astro::VO::VOTable::Element, and therefore all of the
+methods from that class are available to this class. This file will
+only document the methods specific to this class.
 
 =head1 WARNINGS
 
@@ -77,7 +30,7 @@ manual page.
 
 =item
 
-Valid attribute values are not currently enforced.
+None.
 
 =back
 
@@ -87,7 +40,7 @@ Valid attribute values are not currently enforced.
 
 =item
 
-VOTable::Element
+Astro::VO::VOTable::Element
 
 =back
 
@@ -97,7 +50,7 @@ Eric Winter, NASA GSFC (Eric.L.Winter.1@gsfc.nasa.gov)
 
 =head1 VERSION
 
-$Id: TD.pm,v 1.1.1.12 2003/04/09 16:25:00 elwinter Exp $
+$Id: TD.pm,v 1.1.1.15 2003/11/14 15:38:11 elwinter Exp $
 
 =cut
 
@@ -106,6 +59,15 @@ $Id: TD.pm,v 1.1.1.12 2003/04/09 16:25:00 elwinter Exp $
 # Revision history
 
 # $Log: TD.pm,v $
+# Revision 1.1.1.15  2003/11/14 15:38:11  elwinter
+# Switched to Astro::VO::VOTable:: namespace.
+#
+# Revision 1.1.1.14  2003/10/30 18:36:04  elwinter
+# Updated pod.
+#
+# Revision 1.1.1.13  2003/10/30 15:44:34  elwinter
+# Overhauled in preparation for redesign.
+#
 # Revision 1.1.1.12  2003/04/09 16:25:00  elwinter
 # Changed VERSION to 1.0.
 #
@@ -149,28 +111,23 @@ $Id: TD.pm,v 1.1.1.12 2003/04/09 16:25:00 elwinter Exp $
 #******************************************************************************
 
 # Begin the package definition.
-package VOTable::TD;
+package Astro::VO::VOTable::TD;
 
-# Specify the minimum acceptable Perl version.
-use 5.6.1;
+#******************************************************************************
 
-# Turn on strict syntax checking.
+# Compiler pragmas.
 use strict;
-
-# Use enhanced diagnostic messages.
 use diagnostics;
-
-# Use enhanced warnings.
 use warnings;
 
 #******************************************************************************
 
 # Set up the inheritance mechanism.
-use VOTable::Element;
-our @ISA = qw(VOTable::Element);
+use Astro::VO::VOTable::Element;
+our(@ISA) = qw(Astro::VO::VOTable::Element);
 
 # Module version.
-our $VERSION = 1.0;
+our($VERSION) = 1.1;
 
 #******************************************************************************
 
@@ -191,6 +148,7 @@ our $VERSION = 1.0;
 # Class variables
 
 our(@valid_attribute_names) = qw(ref);
+our(@valid_child_element_names) = ();
 
 #******************************************************************************
 

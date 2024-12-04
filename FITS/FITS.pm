@@ -1,73 +1,33 @@
 # FITS.pm
 
+# $Id: FITS.pm,v 1.1.1.16 2003/11/14 15:38:11 elwinter Exp $
+
+# NOTE: All internal subroutine names start with a leading underscore
+# (_) character, and assume that their inputs are valid.
+
+#******************************************************************************
+
 =pod
 
 =head1 NAME
 
-VOTable::FITS - VOTable FITS element class
+Astro::VO::VOTable::FITS - VOTable FITS element class
 
 =head1 SYNOPSIS
 
-use VOTable::FITS
+use Astro::VO::VOTable::FITS;
 
 =head1 DESCRIPTION
 
 This class implements an interface to VOTable FITS elements. This
-class inherits from VOTable::Element, and therefore all of the methods
-from that class are available to this class.
-
-=head2 Methods
-
-=head3 new($arg)
-
-Create and return a new VOTable::FITS object. Throw an exception if an
-error occurs. If $arg is supplied, and is a XML::LibXML::Element
-object for a 'FITS' element, that object is used to create the
-VOTable::FITS object (just by reblessing).
-
-=head3 get_extnum()
-
-Return the value of the 'extnum' attribute for this FITS
-element. Return an empty string if the 'extnum' attribute has not been
-set. Throw an exception if an error occurs.
-
-=head3 set_extnum($extnum)
-
-Set the value of the 'extnum' attribute for this FITS element to the
-specified value. Throw an exception if an error occurs.
-
-=head3 remove_extnum()
-
-Remove the the 'extnum' attribute for this FITS element. Throw an
-exception if an error occurs.
-
-=head3 get_STREAM()
-
-Return the VOTable::STREAM object for the STREAM child element of this
-BINARY element, or undef if this BINARY has no STREAM. Throw an
-exception if an error occurs.
-
-=head3 set_STREAM(@stream)
-
-Use @stream (a list of one VOTable::STREAM object) to set the STREAM
-element child of this FITS element. Any existing STREAM element in
-this FITS element are deleted first. Each FITS can only have one
-STREAM, so the list should contain a single element. Throw an
-exception if an error occurs.
-
-=head3 toString($arg)
-
-Return a string representation of the element and all of its
-children. Character entities are replaced with entity references where
-appropriate. If $arg is '1', the output has extra whitespace for
-readability. If $arg is '2', text content is surrounded by
-newlines. This method is directly inherited from XML::LibXML::Element,
-so further documentation may be found in the XML::LibXML::Element
-manual page.
+class inherits from Astro::VO::VOTable::Element, and therefore all of
+the methods from that class are available to this class. This file
+will only document the methods specific to this class.
 
 =head1 WARNINGS
 
 =over 4
+
 =item
 
 The code does NOT currently enforce the restriction of a FITS element
@@ -81,7 +41,7 @@ having only a single STREAM child element.
 
 =item
 
-VOTable::Element
+Astro::VO::VOTable::Element
 
 =back
 
@@ -91,7 +51,7 @@ Eric Winter, NASA GSFC (Eric.L.Winter.1@gsfc.nasa.gov)
 
 =head1 VERSION
 
-$Id: FITS.pm,v 1.1.1.13 2003/05/16 19:29:39 elwinter Exp $
+$Id: FITS.pm,v 1.1.1.16 2003/11/14 15:38:11 elwinter Exp $
 
 =cut
 
@@ -100,6 +60,15 @@ $Id: FITS.pm,v 1.1.1.13 2003/05/16 19:29:39 elwinter Exp $
 # Revision history
 
 # $Log: FITS.pm,v $
+# Revision 1.1.1.16  2003/11/14 15:38:11  elwinter
+# Switched to Astro::VO::VOTable:: namespace.
+#
+# Revision 1.1.1.15  2003/10/30 18:36:04  elwinter
+# Updated pod.
+#
+# Revision 1.1.1.14  2003/10/30 18:07:19  elwinter
+# Overhauled in preparation for redesign.
+#
 # Revision 1.1.1.13  2003/05/16 19:29:39  elwinter
 # Invalidated append_STREAM() method.
 #
@@ -146,28 +115,23 @@ $Id: FITS.pm,v 1.1.1.13 2003/05/16 19:29:39 elwinter Exp $
 #******************************************************************************
 
 # Begin the package definition.
-package VOTable::FITS;
+package Astro::VO::VOTable::FITS;
 
-# Specify the minimum acceptable Perl version.
-use 5.6.1;
+#******************************************************************************
 
-# Turn on strict syntax checking.
+# Compiler pragmas.
 use strict;
-
-# Use enhanced diagnostic messages.
 use diagnostics;
-
-# Use enhanced warnings.
 use warnings;
 
 #******************************************************************************
 
 # Set up the inheritance mechanism.
-use VOTable::Element;
-our @ISA = qw(VOTable::Element);
+use Astro::VO::VOTable::Element;
+our(@ISA) = qw(Astro::VO::VOTable::Element);
 
 # Module version.
-our $VERSION = 1.0;
+our($VERSION) = 1.1;
 
 #******************************************************************************
 
@@ -178,7 +142,7 @@ our $VERSION = 1.0;
 # Third-party modules
 
 # Project modules
-use VOTable::STREAM;
+use Astro::VO::VOTable::STREAM;
 
 #******************************************************************************
 
@@ -194,46 +158,6 @@ our(@valid_child_element_names) = qw(STREAM);
 #******************************************************************************
 
 # Method definitions
-
-#******************************************************************************
-
-sub get_STREAM()
-{
-
-    # Save arguments.
-    my($self) = @_;
-
-    #--------------------------------------------------------------------------
-
-    # Local variables
-
-    # VOTable::STREAM object for the STREAM child element (if any) of
-    # this FITS element.
-    my($stream);
-
-    #--------------------------------------------------------------------------
-
-    # Find the first STREAM child element, if any.
-    ($stream) = $self->getChildrenByTagName('STREAM');
-
-    # If found and not yet a VOTable::STREAM object, convert the
-    # STREAM object to a VOTable::STREAM object.
-    if ($stream and not $stream->isa('VOTable::STREAM')) {
-	$stream = VOTable::STREAM->new($stream) or
-	    croak('Unable to convert STREAM object!');
-    }
-
-    # Return the STREAM element object, or undef if none.
-    return($stream);
-
-}
-
-#******************************************************************************
-
-sub append_STREAM()
-{
-    croak('Invalid method!');
-}
 
 #******************************************************************************
 1;

@@ -6,8 +6,8 @@
 # change 'tests => 1' to 'tests => last_test_to_print';
 
 use Test;
-BEGIN { plan tests => 4 };
-use VOTable::VOTABLE;
+BEGIN { plan tests => 14 };
+use Astro::VO::VOTable::VOTABLE;
 ok(1); # If we made it this far, we're ok.
 
 #########################
@@ -18,122 +18,258 @@ ok(1); # If we made it this far, we're ok.
 #########################
 
 # External modules
-use VOTable::Document;
 
 # Subroutine prototypes
 sub test_new();
+sub test_get_ID();
+sub test_set_ID();
+sub test_get_version();
+sub test_set_version();
 sub test_get_DESCRIPTION();
+sub test_set_DESCRIPTION();
 sub test_get_DEFINITIONS();
+sub test_set_DEFINITIONS();
+sub test_get_INFO();
+sub test_set_INFO();
+sub test_get_RESOURCE();
+sub test_set_RESOURCE();
 
 #########################
 
 # Test.
 ok(test_new, 1);
+ok(test_get_ID, 1);
+ok(test_set_ID, 1);
+ok(test_get_version, 1);
+ok(test_set_version, 1);
 ok(test_get_DESCRIPTION, 1);
+ok(test_set_DESCRIPTION, 1);
 ok(test_get_DEFINITIONS, 1);
+ok(test_set_DEFINITIONS, 1);
+ok(test_get_INFO, 1);
+ok(test_set_INFO, 1);
+ok(test_get_RESOURCE, 1);
+ok(test_set_RESOURCE, 1);
 
 #########################
 
 sub test_new()
 {
 
-    # Local variables
+    # Test the plain-vanilla constructor.
+    Astro::VO::VOTable::VOTABLE->new or return(0);
 
-    # New VOTable::VOTABLE object.
-    my($votable);
+    # Try creating from a XML::LibXML::Element object.
+    Astro::VO::VOTable::VOTABLE->new(XML::LibXML::Element->new('VOTABLE'))
+	or return(0);
 
-    # XML parser for manufacturing objects.
-    my($libxml);
-
-    # Document object for LibXML document.
-    my($document);
+    # Make sure the constructor fails when a bad reference is passed
+    # in.
+    not eval {
+	Astro::VO::VOTable::VOTABLE->new(XML::LibXML::Element->new('JUNK'))
+	} or return(0);
+    not eval { Astro::VO::VOTable::VOTABLE->new(\0) } or return(0);
+    not eval { Astro::VO::VOTable::VOTABLE->new([]) } or return(0);
 
     #--------------------------------------------------------------------------
 
-    # Test the plain vanilla constructor.
-    $votable = new VOTable::VOTABLE or return(0);
+    # Return success.
+    return(1);
 
-    # Create a VOTABLE element via LibXML.
-    $libxml = new XML::LibXML or return(0);
-    $document = $libxml->parse_string('<VOTABLE/>') or return(0);
+}
 
-    # Convert the XML::LibXML object to a VOTable::VOTABLE object.
-    $votable = new VOTable::VOTABLE $document->documentElement() or return(0);
+sub test_get_ID()
+{
 
-    # All tests succeeded.
+    my($votable);
+
+    # Read ID from a new VOTABLE.
+    $votable = Astro::VO::VOTable::VOTABLE->new or return(0);
+    $votable->setAttribute('ID', 'test');
+    $votable->get_ID eq 'test' or return(0);
+
+    # Read ID from a empty VOTABLE.
+    $votable->removeAttribute('ID');
+    not defined($votable->get_ID) or return(0);
+
+    # All tests passed.
+    return(1);
+
+}
+
+sub test_set_ID()
+{
+
+    my($votable);
+
+    # Set then read ID from a new VOTABLE.
+    $votable = Astro::VO::VOTable::VOTABLE->new or return(0);
+    $votable->set_ID('test');
+    $votable->get_ID eq 'test' or return(0);
+
+    # Read ID from a empty VOTABLE.
+    $votable->set_ID('');
+    $votable->get_ID eq '' or return(0);
+
+    # All tests passed.
+    return(1);
+
+}
+
+sub test_get_version()
+{
+
+    my($votable);
+
+    # Read version from a new VOTABLE.
+    $votable = Astro::VO::VOTable::VOTABLE->new or return(0);
+    $votable->setAttribute('version', 'test');
+    $votable->get_version eq 'test' or return(0);
+
+    # Read version from a empty VOTABLE.
+    $votable->removeAttribute('version');
+    not defined($votable->get_version) or return(0);
+
+    # All tests passed.
+    return(1);
+
+}
+
+sub test_set_version()
+{
+
+    my($votable);
+
+    # Set then read version from a new VOTABLE.
+    $votable = Astro::VO::VOTable::VOTABLE->new or return(0);
+    $votable->set_version('test');
+    $votable->get_version eq 'test' or return(0);
+
+    # Read version from a empty VOTABLE.
+    $votable->set_version('');
+    $votable->get_version eq '' or return(0);
+
+    # All tests passed.
     return(1);
 
 }
 
 sub test_get_DESCRIPTION()
 {
-
-    # Local variables
-
-    # String of XML to parse.
-    my($xml);
-
-    # VOTable::Document object for current document.
-    my($document);
-
-    # VOTable::VOTABLE element object for the document element.
     my($votable);
-
-    # VOTable::DESCRIPTION element object for the VOTABLE DESCRIPTION
-    # element.
     my($description);
 
-    #--------------------------------------------------------------------------
+    $votable = Astro::VO::VOTable::VOTABLE->new or return(0);
+    $description = Astro::VO::VOTable::DESCRIPTION->new or return(0);
+    $votable->appendChild($description);
+    $description->isSameNode($votable->get_DESCRIPTION(0)) or return(0);
 
-    # Parse the XML.
-    $xml = '<VOTABLE><DESCRIPTION>This is a description!</DESCRIPTION></VOTABLE>';
-    $document = VOTable::Document->new_from_string($xml) or return(0);
+    # All tests passed.
+    return(1);
 
-    # Fetch the VOTABLE element.
-    $votable = $document->get_VOTABLE or return(0);
+}
 
-    # Fetch the DESCRIPTION element.
-    $description = $votable->get_DESCRIPTION or return(0);
-    $description->isa('VOTable::DESCRIPTION') or return(0);
-    $description->get eq 'This is a description!' or return(0);
+sub test_set_DESCRIPTION()
+{
+    my($votable);
+    my($description);
 
-    # All tests succeeded.
+    $votable = Astro::VO::VOTable::VOTABLE->new or return(0);
+    $description = Astro::VO::VOTable::DESCRIPTION->new or return(0);
+    $votable->set_DESCRIPTION($description);
+    $description->isSameNode($votable->get_DESCRIPTION(0)) or return(0);
+
+    # All tests passed.
     return(1);
 
 }
 
 sub test_get_DEFINITIONS()
 {
-
-    # Local variables
-
-    # String of XML to parse.
-    my($xml);
-
-    # VOTable::Document object for current document.
-    my($document);
-
-    # VOTable::VOTABLE element object for the document element.
     my($votable);
-
-    # VOTable::DEFINITIONS element object for the VOTABLE DEFINITIONS
-    # element.
     my($definitions);
 
-    #--------------------------------------------------------------------------
+    $votable = Astro::VO::VOTable::VOTABLE->new or return(0);
+    $definitions = Astro::VO::VOTable::DEFINITIONS->new or return(0);
+    $votable->appendChild($definitions);
+    $definitions->isSameNode($votable->get_DEFINITIONS(0)) or return(0);
 
-    # Parse the XML.
-    $xml = '<VOTABLE><DEFINITIONS/></VOTABLE>';
-    $document = VOTable::Document->new_from_string($xml) or return(0);
+    # All tests passed.
+    return(1);
 
-    # Fetch the VOTABLE element.
-    $votable = $document->get_VOTABLE or return(0);
+}
 
-    # Fetch the DEFINITIONS element.
-    $definitions = $votable->get_DEFINITIONS or return(0);
-    $definitions->isa('VOTable::DEFINITIONS') or return(0);
+sub test_set_DEFINITIONS()
+{
+    my($votable);
+    my($definitions);
 
-    # All tests succeeded.
+    $votable = Astro::VO::VOTable::VOTABLE->new or return(0);
+    $definitions = Astro::VO::VOTable::DEFINITIONS->new or return(0);
+    $votable->set_DEFINITIONS($definitions);
+    $definitions->isSameNode($votable->get_DEFINITIONS(0)) or return(0);
+
+    # All tests passed.
+    return(1);
+
+}
+
+sub test_get_INFO()
+{
+    my($votable);
+    my($info);
+
+    $votable = Astro::VO::VOTable::VOTABLE->new or return(0);
+    $info = Astro::VO::VOTable::INFO->new or return(0);
+    $votable->appendChild($info);
+    $info->isSameNode($votable->get_INFO(0)) or return(0);
+
+    # All tests passed.
+    return(1);
+
+}
+
+sub test_set_INFO()
+{
+    my($votable);
+    my($info);
+
+    $votable = Astro::VO::VOTable::VOTABLE->new or return(0);
+    $info = Astro::VO::VOTable::INFO->new or return(0);
+    $votable->set_INFO($info);
+    $info->isSameNode($votable->get_INFO(0)) or return(0);
+
+    # All tests passed.
+    return(1);
+
+}
+
+sub test_get_RESOURCE()
+{
+    my($votable);
+    my($resource);
+
+    $votable = Astro::VO::VOTable::VOTABLE->new or return(0);
+    $resource = Astro::VO::VOTable::RESOURCE->new or return(0);
+    $votable->appendChild($resource);
+    $resource->isSameNode($votable->get_RESOURCE(0)) or return(0);
+
+    # All tests passed.
+    return(1);
+
+}
+
+sub test_set_RESOURCE()
+{
+    my($votable);
+    my($resource);
+
+    $votable = Astro::VO::VOTable::VOTABLE->new or return(0);
+    $resource = Astro::VO::VOTable::RESOURCE->new or return(0);
+    $votable->set_RESOURCE($resource);
+    $resource->isSameNode($votable->get_RESOURCE(0)) or return(0);
+
+    # All tests passed.
     return(1);
 
 }

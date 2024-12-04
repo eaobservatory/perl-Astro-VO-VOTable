@@ -1,30 +1,34 @@
 # VOTable.pm
 
+# $Id: VOTable.pm,v 1.1.1.2 2003/11/13 21:31:24 elwinter Exp $
+
+# NOTE: All internal subroutine names start with a leading underscore
+# (_) character, and assume that their inputs are valid.
+
+#******************************************************************************
+
 =pod
 
 =head1 NAME
 
-VOTable - VOTable XML manipulation package
+Astro::VO::VOTable - VOTable document manipulation package
 
 =head1 SYNOPSIS
 
-use VOTable;
+use Astro::VO::VOTable;
 
 =head1 DESCRIPTION
 
-This code will replace the VOTABLE classes.
+This code can be used to manipulate VOTable-format XML documents. See
+the subsidiary module documentation for details.
 
 =head1 WARNINGS
 
 =over 4
 
-=item *
+=item
 
-Alpha code. Caveat programmor.
-
-=item *
-
-No testing has been done with Perl prior to version 5.6.1.
+None.
 
 =back
 
@@ -34,17 +38,17 @@ No testing has been done with Perl prior to version 5.6.1.
 
 =item
 
-XML::DOM
+XML::LibXML
 
 =back
 
 =head1 AUTHOR
 
-Eric Winter, NASA GSFC (elwinter@milkyway.gsfc.nasa.gov)
+Eric Winter, NASA GSFC (Eric.L.Winter.1@gsfc.nasa.gov)
 
 =head1 VERSION
 
-$Id: VOTable.pm,v 1.1.1.1 2002/10/25 18:30:48 elwinter Exp $
+$Id: VOTable.pm,v 1.1.1.2 2003/11/13 21:31:24 elwinter Exp $
 
 =cut
 
@@ -53,6 +57,9 @@ $Id: VOTable.pm,v 1.1.1.1 2002/10/25 18:30:48 elwinter Exp $
 # Revision history
 
 # $Log: VOTable.pm,v $
+# Revision 1.1.1.2  2003/11/13 21:31:24  elwinter
+# Changed name to Astro::VO::VOTable.
+#
 # Revision 1.1.1.1  2002/10/25 18:30:48  elwinter
 # Changed required Perl version to 5.6.0.
 #
@@ -63,24 +70,19 @@ $Id: VOTable.pm,v 1.1.1.1 2002/10/25 18:30:48 elwinter Exp $
 #******************************************************************************
 
 # Begin the package definition.
-package VOTable;
+package Astro::VO::VOTable;
 
-# Specify the minimum acceptable Perl version.
-use 5.6.0;
+#******************************************************************************
 
-# Turn on strict syntax checking.
+# Compiler pragmas.
 use strict;
-
-# Use enhanced diagnostic messages.
 use diagnostics;
-
-# Use enhanced warnings.
 use warnings;
 
 #******************************************************************************
 
 # Module version.
-our $VERSION = '0.01';
+our($VERSION) = '1.1';
 
 #******************************************************************************
 
@@ -99,6 +101,10 @@ our $VERSION = '0.01';
 #******************************************************************************
 
 # Class variables.
+
+#******************************************************************************
+
+# Local subroutines.
 
 #******************************************************************************
 

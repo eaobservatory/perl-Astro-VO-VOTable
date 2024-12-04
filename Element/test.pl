@@ -6,8 +6,8 @@
 # change 'tests => 1' to 'tests => last_test_to_print';
 
 use Test;
-BEGIN { plan tests => 9 };
-use VOTable::Element;
+BEGIN { plan tests => 8 };
+use Astro::VO::VOTable::Element;
 ok(1); # If we made it this far, we're ok.
 
 #########################
@@ -26,10 +26,9 @@ sub test_new();
 sub test_get();
 sub test_set();
 sub test_empty();
-sub test_AUTOLOAD();
 sub test_get_valid_attribute_names();
 sub test_get_valid_child_element_names();
-sub test_toString();
+sub test_AUTOLOAD();
 
 #########################
 
@@ -38,10 +37,9 @@ ok(test_new, 1);
 ok(test_get, 1);
 ok(test_set, 1);
 ok(test_empty, 1);
-ok(test_AUTOLOAD, 1);
 ok(test_get_valid_attribute_names, 1);
 ok(test_get_valid_child_element_names, 1);
-ok(test_toString, 1);
+ok(test_AUTOLOAD, 1);
 
 #########################
 
@@ -56,18 +54,15 @@ sub test_new()
     #--------------------------------------------------------------------------
 
     # Test the plain-vanilla constructor.
-    $element = VOTable::Element->new or return(0);
+    Astro::VO::VOTable::Element->new or return(0);
 
     # Try creating from a XML::LibXML::Element object.
-    $element = VOTable::Element->new(new XML::LibXML::Element('Element'))
+    Astro::VO::VOTable::Element->new(XML::LibXML::Element->new('Element'))
 	or return(0);
 
-    # Make sure the constructor fails when a bad reference is passed
-    # in.
-    $element = eval { VOTable::Element->new(\0) };
-    return(0) if not $EVAL_ERROR;
-    $element = eval { VOTable::Element->new([]) };
-    return(0) if not $EVAL_ERROR;
+    # Make sure the constructor fails when a bad reference is passed.
+    not eval { Astro::VO::VOTable::Element->new(\0) } or return(0);
+    not eval { Astro::VO::VOTable::Element->new([]) } or return(0);
 
     #--------------------------------------------------------------------------
 
@@ -96,7 +91,7 @@ sub test_get()
     #--------------------------------------------------------------------------
 
     # Create the parser.
-    $parser = new XML::LibXML or return(0);
+    $parser = XML::LibXML->new or return(0);
 
     # Parse the XML into a document object.
     $xml = '<VOTABLE><DESCRIPTION>This is a test.</DESCRIPTION></VOTABLE>';
@@ -107,14 +102,14 @@ sub test_get()
   		    getChildrenByTagName('DESCRIPTION'))[0] or return(0);
 
     # Manually bless the XML::LibXML::Element object to a
-    # VOTable::Element object.
-    bless $description => 'VOTable::Element';
+    # Astro::VO::VOTable::Element object.
+    bless $description => 'Astro::VO::VOTable::Element';
 
     # Retrieve the content of the DESCRIPTION element.
     $description->get eq 'This is a test.' or return(0);
 
     # Make sure an empty element returns an empty string.
-    $description = new VOTable::Element or return(0);
+    $description = Astro::VO::VOTable::Element->new or return(0);
     $description->get eq '' or return(0);
 
     #--------------------------------------------------------------------------
@@ -125,40 +120,40 @@ sub test_get()
     $xml = '<VOTABLE><DESCRIPTION>&amp;</DESCRIPTION></VOTABLE>';
     $document = $parser->parse_string($xml) or return(0);
     $description = ($document->documentElement->
-  		    getChildrenByTagName('DESCRIPTION'))[0] or return(0);
-    bless $description => 'VOTable::Element';
+    		    getChildrenByTagName('DESCRIPTION'))[0] or return(0);
+    bless $description => 'Astro::VO::VOTable::Element';
     $description->get eq '&' or return(0);
 
     # Less-than ('<' => '&lt').
     $xml = '<VOTABLE><DESCRIPTION>&lt;</DESCRIPTION></VOTABLE>';
     $document = $parser->parse_string($xml) or return(0);
     $description = ($document->documentElement->
-  		    getChildrenByTagName('DESCRIPTION'))[0] or return(0);
-    bless $description => 'VOTable::Element';
+    		    getChildrenByTagName('DESCRIPTION'))[0] or return(0);
+    bless $description => 'Astro::VO::VOTable::Element';
     $description->get eq '<' or return(0);
 
     # Greater-than ('>' => '&gt').
     $xml = '<VOTABLE><DESCRIPTION>&gt;</DESCRIPTION></VOTABLE>';
     $document = $parser->parse_string($xml) or return(0);
     $description = ($document->documentElement->
-  		    getChildrenByTagName('DESCRIPTION'))[0] or return(0);
-    bless $description => 'VOTable::Element';
+    		    getChildrenByTagName('DESCRIPTION'))[0] or return(0);
+    bless $description => 'Astro::VO::VOTable::Element';
     $description->get eq '>' or return(0);
 
     # Quote ('"' => '&quot').
     $xml = '<VOTABLE><DESCRIPTION>&quot;</DESCRIPTION></VOTABLE>';
     $document = $parser->parse_string($xml) or return(0);
     $description = ($document->documentElement->
-    		    getChildrenByTagName('DESCRIPTION'))[0] or return(0);
-    bless $description => 'VOTable::Element';
+      		    getChildrenByTagName('DESCRIPTION'))[0] or return(0);
+    bless $description => 'Astro::VO::VOTable::Element';
     $description->get eq '"' or return(0);
 
     # Apostrophe ("'" => '&apos').
     $xml = '<VOTABLE><DESCRIPTION>&apos;</DESCRIPTION></VOTABLE>';
     $document = $parser->parse_string($xml) or return(0);
     $description = ($document->documentElement->
-    		    getChildrenByTagName('DESCRIPTION'))[0] or return(0);
-    bless $description => 'VOTable::Element';
+      		    getChildrenByTagName('DESCRIPTION'))[0] or return(0);
+    bless $description => 'Astro::VO::VOTable::Element';
     $description->get eq "'" or return(0);
 
     #--------------------------------------------------------------------------
@@ -172,8 +167,8 @@ _EOS_
     ;
     $document = $parser->parse_string($xml) or return(0);
     $description = ($document->documentElement->
-    		    getChildrenByTagName('DESCRIPTION'))[0] or return(0);
-    bless $description => 'VOTable::Element';
+      		    getChildrenByTagName('DESCRIPTION'))[0] or return(0);
+    bless $description => 'Astro::VO::VOTable::Element';
     $description->get eq '&<>"\'' or return(0);
 
     #--------------------------------------------------------------------------
@@ -203,7 +198,7 @@ sub test_set()
     #--------------------------------------------------------------------------
 
     # Create the parser.
-    $parser = new XML::LibXML or return(0);
+    $parser = XML::LibXML->new or return(0);
 
     # Parse the XML into a document object.
     $xml = '<VOTABLE><DESCRIPTION/></VOTABLE>';
@@ -214,8 +209,8 @@ sub test_set()
 		    getChildrenByTagName('DESCRIPTION'))[0] or return(0);
 
     # Manually bless the XML::DOM::Element object to a
-    # VOTable::Element object.
-    bless $description => 'VOTable::Element';
+    # Astro::VO::VOTable::Element object.
+    bless $description => 'Astro::VO::VOTable::Element';
 
     # Set then retrieve the content of the DESCRIPTION element.
     $description->set('This is a test.') or return(0);
@@ -265,14 +260,14 @@ sub test_set()
 sub test_empty()
 {
     my($parser);
-    my($xml) = '<VOTABLE><DESCRIPTION>This is a test.</DESCRIPTION></VOTABLE>';
+    my($xml) = '<VOTABLE><DESCRIPTION>This is a test.<![CDATA[So is this.]]></DESCRIPTION></VOTABLE>';
     my($document);
     my($description);
 
     #--------------------------------------------------------------------------
 
     # Create the parser.
-    $parser = new XML::LibXML or return(0);
+    $parser = XML::LibXML->new or return(0);
 
     # Parse the XML into a document object.
     $document = $parser->parse_string($xml) or return(0);
@@ -282,81 +277,12 @@ sub test_empty()
 		    getChildrenByTagName('DESCRIPTION'))[0] or return(0);
 
     # Manually bless the XML::DOM::Element object to a
-    # VOTable::Element object.
-    bless $description => 'VOTable::Element';
+    # Astro::VO::VOTable::Element object.
+    bless $description => 'Astro::VO::VOTable::Element';
 
     # Empty then check the content of the DESCRIPTION element.
     $description->empty;
     $description->get eq '' or return(0);
-
-    # All tests passed.
-    return(1);
-
-}
-
-sub test_AUTOLOAD()
-{
-    my($parser);
-    my($xml) = '<VOTABLE><RESOURCE ID="test"/></VOTABLE>';
-    my($document);
-    my($votable);
-    my($resource1);
-    my($resource2);
-    my($resource3);
-    my($resource4);
-    my(@resources);
-
-    #--------------------------------------------------------------------------
-
-    # Create the parser.
-    $parser = new XML::LibXML or return(0);
-
-    # Parse the XML into a document object.
-    $document = $parser->parse_string($xml) or return(0);
-
-    # Drill down to the VOTABLE element.
-    $votable = $document->documentElement or return(0);
-    bless $votable => 'VOTable::Element';
-
-    #--------------------------------------------------------------------------
-
-    # Test the element 'get' mechanism.
-    use vars @VOTable::Element::valid_child_element_names;
-    @VOTable::Element::valid_child_element_names = qw(RESOURCE);
-    $resource1 = $votable->get_RESOURCE(0) or return(0);
-    ref($resource1) eq 'VOTable::RESOURCE' or return(0);
-
-    # Test the element 'set' mechanism.
-    $resource2 = new VOTable::Element or return(0);
-    $resource2->setNodeName('RESOURCE');
-    $votable->set_RESOURCE($resource2);
-    $resource3 = ($votable->get_RESOURCE)[0] or return(0);
-    $resource2->isSameNode($resource3) or return(0);
-
-    # Test the element 'append' mechanism.
-    $resource4 = new VOTable::Element or return(0);
-    $resource4->setNodeName('RESOURCE');
-    $votable->append_RESOURCE($resource4);
-    @resources = $votable->get_RESOURCE;
-    $resource4->isSameNode($resources[1]) or return(0);
-
-    # Test the element 'remove' mechanism.
-    $votable->remove_RESOURCE;
-    not defined($votable->get_RESOURCE) or return(0);
-
-    #--------------------------------------------------------------------------
-
-    # Test the attribute 'set' and 'get' mechanisms.
-    use vars @VOTable::Element::valid_attribute_names;
-    @VOTable::Element::valid_attribute_names = qw(ID);
-    $resource4->set_ID('another test');
-    $resource4->get_ID eq 'another test' or return(0);
-
-    # Test the attribute 'remove' mechanism.
-    $resource4->remove_ID;
-    not defined($resource4->get_ID) or return(0);
-
-    #--------------------------------------------------------------------------
 
     # All tests passed.
     return(1);
@@ -369,15 +295,15 @@ sub test_get_valid_attribute_names()
     my(@attribute_names);
 
     # Create a new Element object.
-    $element = new VOTable::Element or return(0);
-    use vars @VOTable::Element::valid_attribute_names;
-    @VOTable::Element::valid_attribute_names = ();
+    $element = Astro::VO::VOTable::Element->new or return(0);
+    use vars @Astro::VO::VOTable::Element::valid_attribute_names;
+    @Astro::VO::VOTable::Element::valid_attribute_names = ();
 
     # Make sure it has no attributes.
     not $element->get_valid_attribute_names or return(0);
 
     # Now add some and check them.
-    @VOTable::Element::valid_attribute_names = qw(ID);
+    @Astro::VO::VOTable::Element::valid_attribute_names = qw(ID);
     @attribute_names = $element->get_valid_attribute_names;
     @attribute_names == 1 or return(0);
     $attribute_names[0] eq 'ID' or return(0);
@@ -393,15 +319,15 @@ sub test_get_valid_child_element_names()
     my(@names);
 
     # Create a new Element object.
-    $element = new VOTable::Element or return(0);
-    use vars @VOTable::Element::valid_child_element_names;
-    @VOTable::Element::valid_child_element_names = ();
+    $element = Astro::VO::VOTable::Element->new or return(0);
+    use vars @Astro::VO::VOTable::Element::valid_child_element_names;
+    @Astro::VO::VOTable::Element::valid_child_element_names = ();
 
     # Make sure it has no child elements.
     not $element->get_valid_child_element_names or return(0);
 
     # Now add some and check them.
-    @VOTable::Element::valid_child_element_names = qw(VOTABLE);
+    @Astro::VO::VOTable::Element::valid_child_element_names = qw(VOTABLE);
     @names = $element->get_valid_child_element_names;
     @names == 1 or return(0);
     $names[0] eq 'VOTABLE' or return(0);
@@ -411,77 +337,84 @@ sub test_get_valid_child_element_names()
 
 }
 
-sub test_toString()
+sub test_AUTOLOAD()
 {
-    my($xml) = '<VOTABLE><DESCRIPTION>This is a test.</DESCRIPTION></VOTABLE>';
     my($parser);
+    my($xml);
     my($document);
-    my($description);
+    my($votable);
+    my($resource);
+    my($resource2);
+    my($resource3);
 
     #--------------------------------------------------------------------------
 
-    # Create the new parser.
-    $parser = new XML::LibXML or return(0);
+    # Create the parser.
+    $parser = XML::LibXML->new or return(0);
 
-    # Create the document.
+    # Parse the XML into a document object.
+    $xml = '<VOTABLE><RESOURCE ID="0"/></VOTABLE>';
     $document = $parser->parse_string($xml) or return(0);
 
-    # Fetch the description.
-    $description = ($document->documentElement->
-		    getChildrenByTagName('DESCRIPTION'))[0] or return(0);
-    bless $description => 'VOTable::Element';
-    $description->toString eq '<DESCRIPTION>This is a test.</DESCRIPTION>'
-	or return(0);
-    $description->toString(1) eq '<DESCRIPTION>This is a test.</DESCRIPTION>'
-	or return(0);
-    $description->toString(2) eq
-	"<DESCRIPTION>\nThis is a test.\n</DESCRIPTION>"
-	    or return(0);
+    # Drill down to the VOTABLE element.
+    $votable = $document->documentElement or return(0);
+    bless $votable => 'Astro::VO::VOTable::Element';
 
     #--------------------------------------------------------------------------
 
-    # Test that character entities are properly handled.
+    # Test attribute accessors.
 
-    # Ampersand ('&' => '&amp;').
-    $xml = '<VOTABLE><DESCRIPTION>&amp;</DESCRIPTION></VOTABLE>';
-    $document = $parser->parse_string($xml) or return(0);
-    $description = ($document->documentElement->
-  		    getChildrenByTagName('DESCRIPTION'))[0] or return(0);
-    bless $description => 'VOTable::Element';
-    $description->toString eq '<DESCRIPTION>&amp;</DESCRIPTION>' or return(0);
+    # Create a RESOURCE element for testing.
+    $resource = Astro::VO::VOTable::Element->new or return(0);
+    $resource->setNodeName('RESOURCE');
+    $resource->setAttribute('ID', '1');
 
-    # Less-than ('<' => '&lt').
-    $xml = '<VOTABLE><DESCRIPTION>&lt;</DESCRIPTION></VOTABLE>';
-    $document = $parser->parse_string($xml) or return(0);
-    $description = ($document->documentElement->
-  		    getChildrenByTagName('DESCRIPTION'))[0] or return(0);
-    bless $description => 'VOTable::Element';
-    $description->toString eq '<DESCRIPTION>&lt;</DESCRIPTION>' or return(0);
+    # Test the attribute 'set' and 'get' mechanisms.
+    use vars @Astro::VO::VOTable::Element::valid_attribute_names;
+    @Astro::VO::VOTable::Element::valid_attribute_names = qw(ID);
+    $resource->set_ID('another test');
+    $resource->get_ID eq 'another test' or return(0);
+    $resource->set_ID('yet another test');
+    $resource->get_ID eq 'yet another test' or return(0);
 
-    # Greater-than ('>' => '&gt').
-    $xml = '<VOTABLE><DESCRIPTION>&gt;</DESCRIPTION></VOTABLE>';
-    $document = $parser->parse_string($xml) or return(0);
-    $description = ($document->documentElement->
-  		    getChildrenByTagName('DESCRIPTION'))[0] or return(0);
-    bless $description => 'VOTable::Element';
-    $description->toString eq '<DESCRIPTION>&gt;</DESCRIPTION>' or return(0);
+    # Test the attribute 'remove' mech`xanism.
+    $resource->remove_ID;
+    not defined($resource->get_ID) or return(0);
 
-    # Quote ('"' => '&quot').
-    $xml = '<VOTABLE><DESCRIPTION>&quot;</DESCRIPTION></VOTABLE>';
-    $document = $parser->parse_string($xml) or return(0);
-    $description = ($document->documentElement->
-    		    getChildrenByTagName('DESCRIPTION'))[0] or return(0);
-    bless $description => 'VOTable::Element';
-    $description->toString eq '<DESCRIPTION>&quot;</DESCRIPTION>' or return(0);
+    #--------------------------------------------------------------------------
 
-    # Apostrophe ("'" => '&apos').
-    $xml = '<VOTABLE><DESCRIPTION>&apos;</DESCRIPTION></VOTABLE>';
-    $document = $parser->parse_string($xml) or return(0);
-    $description = ($document->documentElement->
-    		    getChildrenByTagName('DESCRIPTION'))[0] or return(0);
-    bless $description => 'VOTable::Element';
-    $description->toString eq '<DESCRIPTION>\'</DESCRIPTION>' or return(0);
-    # N.B. This should be '&apos;'!
+    # Test element accessors.
+
+    use vars @Astro::VO::VOTable::Element::valid_child_element_names;
+    @Astro::VO::VOTable::Element::valid_child_element_names = qw(RESOURCE);
+
+    # Test the element 'get' mechanism.
+    $resource = $votable->get_RESOURCE(0) or return(0);
+    ref($resource) eq 'Astro::VO::VOTable::RESOURCE' or return(0);
+
+    # Test the element 'set' mechanism.
+    $resource2 = Astro::VO::VOTable::Element->new or return(0);
+    $resource2->setNodeName('RESOURCE');
+    $resource2->setAttribute('ID', '2');
+    $votable->set_RESOURCE($resource2);
+    $resource = $votable->get_RESOURCE(0) or return(0);
+    bless $resource => 'Astro::VO::VOTable::Element';
+    $resource->isSameNode($resource2) or return(0);
+
+    # Test the element 'append' mechanism.
+    $resource3 = Astro::VO::VOTable::Element->new or return(0);
+    $resource3->setNodeName('RESOURCE');
+    $resource3->setAttribute('ID', '3');
+    $votable->append_RESOURCE($resource3);
+    $resource = $votable->get_RESOURCE(1);
+    bless $resource => 'Astro::VO::VOTable::Element';
+    $resource->isSameNode($resource3) or return(0);
+
+    # Test the element 'remove' mechanism.
+    $votable->remove_RESOURCE;
+    not $votable->get_RESOURCE or return(0);
+
+    #--------------------------------------------------------------------------
 
     # All tests passed.
     return(1);

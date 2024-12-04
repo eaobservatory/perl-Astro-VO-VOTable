@@ -1,225 +1,28 @@
 # RESOURCE.pm
 
+# $Id: RESOURCE.pm,v 1.1.1.16 2003/11/14 15:38:11 elwinter Exp $
+
+# NOTE: All internal subroutine names start with a leading underscore
+# (_) character, and assume that their inputs are valid.
+
+#******************************************************************************
+
 =pod
 
 =head1 NAME
 
-VOTable::RESOURCE - VOTable RESOURCE element class
+Astro::VO::VOTable::RESOURCE - VOTable RESOURCE element class
 
 =head1 SYNOPSIS
 
-use VOTable::RESOURCE
+use Astro::VO::VOTable::RESOURCE;
 
 =head1 DESCRIPTION
 
 This class implements an interface to VOTable RESOURCE elements. This
-class inherits from VOTable::Element, and therefore all of the methods
-from that class are available to this class.
-
-=head2 Methods
-
-=head3 new($arg)
-
-Create and return a new VOTable::RESOURCE object. Throw an exception
-if an error occurs. If $arg is supplied, and is a XML::LibXML::Element
-object for a 'RESOURCE' element, that object is used to create the
-VOTable::RESOURCE object (just by reblessing).
-
-=head3 get_name()
-
-Return the value of the 'name' attribute for this RESOURCE
-element. Return an empty string if the 'name' attribute has not been
-set. Throw an exception if an error occurs.
-
-=head3 set_name($name)
-
-Set the value of the 'name' attribute for this RESOURCE element to the
-specified value. Throw an exception if an error occurs.
-
-=head3 remove_name()
-
-Remove the the 'name' attribute for this RESOURCE element. Throw an
-exception if an error occurs.
-
-=head3 get_ID()
-
-Return the value of the 'ID' attribute for this RESOURCE
-element. Return an empty string if the 'ID' attribute has not been
-set. Throw an exception if an error occurs.
-
-=head3 set_ID($id)
-
-Set the value of the 'ID' attribute for this RESOURCE element to the
-specified value. Throw an exception if an error occurs.
-
-=head3 remove_ID()
-
-Remove the the 'ID' attribute for this RESOURCE element. Throw an
-exception if an error occurs.
-
-=head3 get_type()
-
-Return the value of the 'type' attribute for this RESOURCE
-element. Return an empty string if the 'type' attribute has not been
-set. Throw an exception if an error occurs.
-
-=head3 set_type($type)
-
-Set the value of the 'type' attribute for this RESOURCE element to the
-specified value. Throw an exception if an error occurs. Valid types
-are 'results' and 'meta'.
-
-=head3 remove_type()
-
-Remove the the 'type' attribute for this RESOURCE element. Throw an
-exception if an error occurs.
-
-=head3 get_DESCRIPTION()
-
-Return the VOTable::DESCRIPTION object for the DESCRIPTION child
-element of this RESOURCE element, or undef if this RESOURCE has no
-DESCRIPTION. Throw an exception if an error occurs.
-
-=head3 set_DESCRIPTION(@description)
-
-Use @description (a list of a single VOTable::DESCRIPTION object) to
-set the DESCRIPTION element child of this RESOURCE element. Any
-existing DESCRIPTION element in this RESOURCE element is deleted
-first. Throw an exception if an error occurs.
-
-=head3 get_INFO()
-
-Return a list containing the VOTable::INFO objects for the INFO child
-elements of this RESOURCE element. Return an empty list if no INFO
-elements exist as a child of this RESOURCE element. Throw an exception
-if an error occurs.
-
-=head3 set_INFO(@info)
-
-Use @info (a list of VOTable::INFO objects) to set the INFO element
-children of this RESOURCE element. Any existing INFO elements in this
-RESOURCE element are deleted first. Throw an exception if an error
-occurs.
-
-=head3 append_INFO(@info)
-
-Use @info (a list of VOTable::INFO objects) to append the INFO element
-children to this RESOURCE element. Any existing INFO elements in this
-RESOURCE element are retained. Throw an exception if an error occurs.
-
-=head3 get_COOSYS()
-
-Return a list containing the VOTable::COOSYS objects for the COOSYS
-child elements of this RESOURCE element. Return an empty list if no
-COOSYS elements exist as a child of this RESOURCE element. Throw an
-exception if an error occurs.
-
-=head3 set_COOSYS(@coosys)
-
-Use @coosys (a list of VOTable::COOSYS objects) to set the COOSYS
-element children of this RESOURCE element. Any existing COOSYS
-elements in this RESOURCE element are deleted first. Throw an
-exception if an error occurs.
-
-=head3 append_COOSYS(@coosys)
-
-Use @coosys (a list of VOTable::COOSYS objects) to append the COOSYS
-element children to this RESOURCE element. Any existing COOSYS
-elements in this RESOURCE element are retained. Throw an exception if
-an error occurs.
-
-=head3 get_PARAM()
-
-Return a list containing the VOTable::PARAM objects for the PARAM
-child elements of this RESOURCE element. Return an empty list if no
-PARAM elements exist as a child of this RESOURCE element. Throw an
-exception if an error occurs.
-
-=head3 set_PARAM(@param)
-
-Use @param (a list of VOTable::PARAM objects) to set the PARAM element
-children of this RESOURCE element. Any existing PARAM elements in this
-RESOURCE element are deleted first. Throw an exception if an error
-occurs.
-
-=head3 append_PARAM(@param)
-
-Use @param (a list of VOTable::PARAM objects) to append the PARAM
-element children to this RESOURCE element. Any existing PARAM elements
-in this RESOURCE element are retained. Throw an exception if an error
-occurs.
-
-=head3 get_LINK()
-
-Return a list containing the VOTable::LINK objects for the LINK child
-elements of this RESOURCE element. Return an empty list if no LINK
-elements exist as a child of this RESOURCE element. Throw an exception
-if an error occurs.
-
-=head3 set_LINK(@link)
-
-Use @link (a list of VOTable::LINK objects) to set the LINK element
-children of this RESOURCE element. Any existing LINK elements in this
-RESOURCE element are deleted first. Throw an exception if an error
-occurs.
-
-=head3 append_LINK(@link)
-
-Use @link (a list of VOTable::LINK objects) to append the LINK element
-children to this RESOURCE element. Any existing LINK elements in this
-RESOURCE element are retained. Throw an exception if an error occurs.
-
-=head3 get_TABLE()
-
-Return a list containing the VOTable::TABLE objects for the TABLE
-child elements of this RESOURCE element. Return an empty list if no
-TABLE elements exist as a child of this RESOURCE element. Throw an
-exception if an error occurs.
-
-=head3 set_TABLE(@table)
-
-Use @table (a list of VOTable::TABLE objects) to set the TABLE element
-children of this RESOURCE element. Any existing TABLE elements in this
-RESOURCE element are deleted first. Throw an exception if an error
-occurs.
-
-=head3 append_TABLE(@table)
-
-Use @table (a list of VOTable::TABLE objects) to append the TABLE
-element children to this RESOURCE element. Any existing TABLE elements
-in this RESOURCE element are retained. Throw an exception if an error
-occurs.
-
-=head3 get_RESOURCE()
-
-Return a list containing the single VOTable::RESOURCE object for the
-RESOURCE child element of this RESOURCE element. Return an empty list
-if no RESOURCE element exists as a child of this RESOURCE
-element. Throw an exception if an error occurs.
-
-=head3 set_RESOURCE(@resource)
-
-Use @resource (a list of a single VOTable::RESOURCE object) to set the
-RESOURCE element child of this RESOURCE element. Any existing RESOURCE
-element in this RESOURCE element is deleted first. Throw an exception
-if an error occurs.
-
-=head3 append_RESOURCE(@resource)
-
-Use @resource (a list of a single VOTable::RESOURCE object) to append
-the RESOURCE element child to this RESOURCE element. Any existing
-RESOURCE element in this RESOURCE element is retained, which is an
-error condition. Throw an exception if an error occurs.
-
-=head3 toString($arg)
-
-Return a string representation of the element and all of its
-children. Character entities are replaced with entity references where
-appropriate. If $arg is '1', the output has extra whitespace for
-readability. If $arg is '2', text content is surrounded by
-newlines. This method is directly inherited from XML::LibXML::Element,
-so further documentation may be found in the XML::LibXML::Element
-manual page.
+class inherits from Astro::VO::VOTable::Element, and therefore all of
+the methods from that class are available to this class. This file
+will only document the methods specific to this class.
 
 =head1 WARNINGS
 
@@ -237,7 +40,7 @@ None.
 
 =item
 
-VOTable::Element
+Astro::VO::VOTable::Element
 
 =back
 
@@ -247,7 +50,7 @@ Eric Winter, NASA GSFC (Eric.L.Winter.1@gsfc.nasa.gov)
 
 =head1 VERSION
 
-$Id: RESOURCE.pm,v 1.1.1.14 2003/05/16 19:47:30 elwinter Exp $
+$Id: RESOURCE.pm,v 1.1.1.16 2003/11/14 15:38:11 elwinter Exp $
 
 =cut
 
@@ -256,6 +59,12 @@ $Id: RESOURCE.pm,v 1.1.1.14 2003/05/16 19:47:30 elwinter Exp $
 # Revision history
 
 # $Log: RESOURCE.pm,v $
+# Revision 1.1.1.16  2003/11/14 15:38:11  elwinter
+# Switched to Astro::VO::VOTable:: namespace.
+#
+# Revision 1.1.1.15  2003/10/31 16:10:27  elwinter
+# Overhauled in preparation for redesign.
+#
 # Revision 1.1.1.14  2003/05/16 19:47:30  elwinter
 # Invalidated append_DESCRIPTION() method.
 #
@@ -308,28 +117,23 @@ $Id: RESOURCE.pm,v 1.1.1.14 2003/05/16 19:47:30 elwinter Exp $
 #******************************************************************************
 
 # Begin the package definition.
-package VOTable::RESOURCE;
+package Astro::VO::VOTable::RESOURCE;
 
-# Specify the minimum acceptable Perl version.
-use 5.6.1;
+#******************************************************************************
 
-# Turn on strict syntax checking.
+# Compiler pragmas.
 use strict;
-
-# Use enhanced diagnostic messages.
 use diagnostics;
-
-# Use enhanced warnings.
 use warnings;
 
 #******************************************************************************
 
 # Set up the inheritance mechanism.
-use VOTable::Element;
-our @ISA = qw(VOTable::Element);
+use Astro::VO::VOTable::Element;
+our(@ISA) = qw(Astro::VO::VOTable::Element);
 
 # Module version.
-our $VERSION = 1.0;
+our($VERSION) = 1.1;
 
 #******************************************************************************
 
@@ -340,12 +144,12 @@ our $VERSION = 1.0;
 # Third-party modules
 
 # Project modules
-use VOTable::COOSYS;
-use VOTable::DESCRIPTION;
-use VOTable::INFO;
-use VOTable::LINK;
-use VOTable::PARAM;
-use VOTable::TABLE;
+use Astro::VO::VOTable::COOSYS;
+use Astro::VO::VOTable::DESCRIPTION;
+use Astro::VO::VOTable::INFO;
+use Astro::VO::VOTable::LINK;
+use Astro::VO::VOTable::PARAM;
+use Astro::VO::VOTable::TABLE;
 
 #******************************************************************************
 
@@ -362,71 +166,6 @@ our(@valid_child_element_names) = qw(DESCRIPTION INFO COOSYS PARAM LINK TABLE
 #******************************************************************************
 
 # Method definitions
-
-#******************************************************************************
-
-sub set_type()
-{
-
-    # Save arguments.
-    my($self, $type) = @_;
-
-    #--------------------------------------------------------------------------
-
-    # Local variables
-
-    # List of valid values for the 'type' attribute.
-    my(@valids) = qw(results meta);
-
-    #--------------------------------------------------------------------------
-
-    # Make sure the specified value is allowed.
-    die "Invalid type: $type!" if not grep(/^$type$/, @valids);
-
-    # Set the attribute.
-    $self->setAttribute('type', $type);
-
-}
-
-#******************************************************************************
-
-sub get_DESCRIPTION()
-{
-
-    # Save arguments.
-    my($self) = @_;
-
-    #--------------------------------------------------------------------------
-
-    # Local variables
-
-    # VOTable::DESCRIPTION object for the DESCRIPTION child element
-    # (if any) of this RESOURCE element.
-    my($description);
-
-    #--------------------------------------------------------------------------
-
-    # Find the first DESCRIPTION child element, if any.
-    ($description) = $self->getChildrenByTagName('DESCRIPTION');
-
-    # If found and not yet a VOTable::DESCRIPTION object, convert the
-    # DESCRIPTION object to a VOTable::DESCRIPTION object.
-    if ($description and not $description->isa('VOTable::DESCRIPTION')) {
-	$description = VOTable::DESCRIPTION->new($description) or
-	    croak('Unable to convert DESCRIPTION object!');
-    }
-
-    # Return the DESCRIPTION element object, or undef if none.
-    return($description);
-
-}
-
-#******************************************************************************
-
-sub append_DESCRIPTION()
-{
-    croak('Invalid method!');
-}
 
 #******************************************************************************
 1;

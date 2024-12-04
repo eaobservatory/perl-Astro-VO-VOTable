@@ -1,26 +1,27 @@
-#!/skyview/bin/perl -w
+#!/usr/bin/perl -w
 
-# read_votable.pl - Sample program illustrating the use of the VOTable
+# read_votable - Sample program illustrating the use of the VOTable
 # modules to read a VOTABLE document and access its parts.
 
 # External modules
-use VOTable::Document;
+use blib '../blib';
+use Astro::VO::VOTable;
 
 # Read the VOTABLE document.
-my $doc = new_from_file VOTable::Document 'votable.xml' or die;
+my $doc = Astro::VO::VOTable::Document->new_from_file($ARGV[0]) or die;
 
-# Get the VOTABLE element.
-my $votable = ($doc->get_VOTABLE)[0] or die;
+# Get the (only) VOTABLE element.
+my $votable = $doc->get_VOTABLE or die;
 
-# Get the RESOURCE element.
-my $resource = ($votable->get_RESOURCE)[0] or die;
+# Get the first RESOURCE element.
+my $resource = $votable->get_RESOURCE(0) or die;
 
-# Get the DESCRIPTION element and its contents.
-my $description = ($resource->get_DESCRIPTION)[0] or die;
+# Get the first DESCRIPTION element and its contents.
+my $description = $resource->get_DESCRIPTION(0) or die;
 print $description->get, "\n";
 
-# Get the TABLE element.
-my $table = ($resource->get_TABLE)[0] or die;
+# Get the first TABLE element.
+my $table = $resource->get_TABLE(0) or die;
 
 # Get the FIELD elements.
 my(@field_names) = ();
@@ -28,12 +29,13 @@ my($field);
 foreach $field ($table->get_FIELD) {
     push(@field_names, $field->get_name);
 }
+print "field names are @field_names\n";
 
 # Get the DATA element.
-my $data = ($table->get_DATA)[0] or die;
+my $data = $table->get_DATA or die;
 
 # Get the TABLEDATA element.
-my $tabledata = ($data->get_TABLEDATA)[0] or die;
+my $tabledata = $data->get_TABLEDATA or die;
 
 # Get each TR element, then each TD element, and print its contents.
 my($tr, $td);
@@ -43,8 +45,8 @@ foreach $tr ($tabledata->get_TR) {
     print "Data for target $i:\n";
     $j = 0;
     foreach $td ($tr->get_TD) {
-	print "$field_names[$j] = ", $td->get, "\n";
-	$j++;
+ 	print "$field_names[$j] = ", $td->get, "\n";
+ 	$j++;
     }
     $i++;
 }
@@ -67,7 +69,7 @@ for ($i = 0; $i < $num_rows; $i++) {
 my $cells = $table->get_array or die;
 for ($i = 0; $i < @{$cells}; $i++) {
     for ($j = 0; $j < @{$cells->[$i]}; $j++) {
-	print "i = $i, j = $j, cell = ", $cells->[$i][$j], "\n";
+ 	print "i = $i, j = $j, cell = ", $cells->[$i][$j], "\n";
     }
 }
 
@@ -75,13 +77,6 @@ for ($i = 0; $i < @{$cells}; $i++) {
 print "\n";
 for ($i = 0; $i < @{$cells}; $i++) {
     for ($j = 0; $j < @{$cells->[$i]}; $j++) {
-	print "i = $i, j = $j, cell = ", $table->get_cell($i, $j), "\n";
+ 	print "i = $i, j = $j, cell = ", $table->get_cell($i, $j), "\n";
     }
 }
-
-use Data::Dumper;
-my(@kids) = $table->getElementsByTagName('FRED');
-print "kids = >", Dumper(@kids), "<\n";
-print scalar(@kids);
-
-print $table->nodeName;

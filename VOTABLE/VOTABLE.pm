@@ -1,138 +1,30 @@
 # VOTABLE.pm
 
+# $Id: VOTABLE.pm,v 1.1.1.16 2003/11/14 15:38:11 elwinter Exp $
+
+# NOTE: All internal subroutine names start with a leading underscore
+# (_) character, and assume that their inputs are valid.
+
+#******************************************************************************
+
 =pod
 
 =head1 NAME
 
-VOTable::VOTABLE - VOTable VOTABLE element class
+Astro::VO::VOTable::VOTABLE - VOTable VOTABLE element class
 
 =head1 SYNOPSIS
 
-use VOTable::VOTABLE
+use Astro::VO::VOTable::VOTABLE;
 
 =head1 DESCRIPTION
 
 This class implements an interface to VOTable VOTABLE elements. This
 class inherits from VOTable::Element, and therefore all of the methods
-from that class are available to this class.
+from that class are available to this class. This file will only
+document the methods specific to this class.
 
 =head2 Methods
-
-=head3 new($arg)
-
-Create and return a new VOTable::VOTABLE object. Throw an exception if
-an error occurs. If $arg is supplied, and is a XML::LibXML::Element
-object for a 'VOTABLE' element, that object is used to create the
-VOTable::VOTABLE object (just by reblessing).
-
-=head3 get_ID()
-
-Return the value of the 'ID' attribute for this VOTABLE
-element. Return an empty string if the 'ID' attribute has not been
-set. Throw an exception if an error occurs.
-
-=head3 set_ID($id)
-
-Set the value of the 'ID' attribute for this VOTABLE element to the
-specified value. Throw an exception if an error occurs.
-
-=head3 remove_ID()
-
-Remove the the 'ID' attribute for this VOTABLE element. Throw an
-exception if an error occurs.
-
-=head3 get_version()
-
-Return the value of the 'version' attribute for this VOTABLE
-element. Return an empty string if the 'version' attribute has not
-been set. Throw an exception if an error occurs.
-
-=head3 set_version($version)
-
-Set the value of the 'version' attribute for this VOTABLE element to
-the specified value. Throw an exception if an error occurs.
-
-=head3 remove_version()
-
-Remove the the 'version' attribute for this VOTABLE element. Throw an
-exception if an error occurs.
-
-=head3 get_DESCRIPTION()
-
-Return the VOTable::DESCRIPTION object for the DESCRIPTION child
-element of this VOTABLE element, or undef if this VOTABLE has no
-DESCRIPTION. Throw an exception if an error occurs.
-
-=head3 set_DESCRIPTION(@description)
-
-Use @description (a list of a single VOTable::DESCRIPTION object) to
-set the DESCRIPTION element child of this VOTABLE element. Any
-existing DESCRIPTION element in this VOTABLE element is deleted
-first. Throw an exception if an error occurs.
-
-=head3 get_DEFINITIONS()
-
-Return the VOTable::DEFINITIONS object for the DEFINITIONS child
-element of this VOTABLE element, or undef if this VOTABLE has no
-DEFINITIONS. Throw an exception if an error occurs.
-
-=head3 set_DEFINITIONS(@definitions)
-
-Use @definitions (a list of a single VOTable::DEFINITIONS object) to
-set the DEFINITIONS element child of this VOTABLE element. Any
-existing DEFINITIONS element in this VOTABLE element is deleted
-first. Throw an exception if an error occurs.
-
-=head3 get_INFO()
-
-Return a list containing the VOTable::INFO objects for the INFO child
-elements of this VOTABLE element. Return an empty list if no INFO
-elements exist as a child of this VOTABLE element. Throw an exception
-if an error occurs.
-
-=head3 set_INFO(@info)
-
-Use @info (a list of VOTable::INFO objects) to set the INFO element
-children of this VOTABLE element. Any existing INFO elements in this
-VOTABLE element are deleted first. Throw an exception if an error
-occurs.
-
-=head3 append_INFO(@info)
-
-Use @info (a list of VOTable::INFO objects) to append the INFO element
-children to this VOTABLE element. Any existing INFO elements in this
-VOTABLE element are retained. Throw an exception if an error occurs.
-
-=head3 get_RESOURCE()
-
-Return a list containing the single VOTable::RESOURCE object for the
-RESOURCE child element of this VOTABLE element. Return an empty list
-if no RESOURCE element exists as a child of this VOTABLE
-element. Throw an exception if an error occurs.
-
-=head3 set_RESOURCE(@resource)
-
-Use @resource (a list of a single VOTable::RESOURCE object) to set the
-RESOURCE element child of this VOTABLE element. Any existing RESOURCE
-element in this VOTABLE element is deleted first. Throw an exception
-if an error occurs.
-
-=head3 append_RESOURCE(@resource)
-
-Use @resource (a list of a single VOTable::RESOURCE object) to append
-the RESOURCE element child to this VOTABLE element. Any existing
-RESOURCE element in this VOTABLE element is retained, which is an
-error condition. Throw an exception if an error occurs.
-
-=head3 toString($arg)
-
-Return a string representation of the element and all of its
-children. Character entities are replaced with entity references where
-appropriate. If $arg is '1', the output has extra whitespace for
-readability. If $arg is '2', text content is surrounded by
-newlines. This method is directly inherited from XML::LibXML::Element,
-so further documentation may be found in the XML::LibXML::Element
-manual page.
 
 =head1 WARNINGS
 
@@ -150,7 +42,7 @@ None.
 
 =item
 
-VOTable::Element
+Astro::VO::VOTable::Element
 
 =back
 
@@ -160,7 +52,7 @@ Eric Winter, NASA GSFC (Eric.L.Winter.1@gsfc.nasa.gov)
 
 =head1 VERSION
 
-$Id: VOTABLE.pm,v 1.1.1.14 2003/05/16 19:48:49 elwinter Exp $
+$Id: VOTABLE.pm,v 1.1.1.16 2003/11/14 15:38:11 elwinter Exp $
 
 =cut
 
@@ -169,6 +61,12 @@ $Id: VOTABLE.pm,v 1.1.1.14 2003/05/16 19:48:49 elwinter Exp $
 # Revision history
 
 # $Log: VOTABLE.pm,v $
+# Revision 1.1.1.16  2003/11/14 15:38:11  elwinter
+# Switched to Astro::VO::VOTable:: namespace.
+#
+# Revision 1.1.1.15  2003/10/31 16:20:25  elwinter
+# Overhauled in preparation for redesign.
+#
 # Revision 1.1.1.14  2003/05/16 19:48:49  elwinter
 # Invalidated append_DESCRIPTION() and append_DEFINITIONS() methods.
 #
@@ -218,28 +116,23 @@ $Id: VOTABLE.pm,v 1.1.1.14 2003/05/16 19:48:49 elwinter Exp $
 #******************************************************************************
 
 # Begin the package definition.
-package VOTable::VOTABLE;
+package Astro::VO::VOTable::VOTABLE;
 
-# Specify the minimum acceptable Perl version.
-use 5.6.1;
+#******************************************************************************
 
-# Turn on strict syntax checking.
+# Compiler pragmas.
 use strict;
-
-# Use enhanced diagnostic messages.
 use diagnostics;
-
-# Use enhanced warnings.
 use warnings;
 
 #******************************************************************************
 
 # Set up the inheritance mechanism.
-use VOTable::Element;
-our @ISA = qw(VOTable::Element);
+use Astro::VO::VOTable::Element;
+our(@ISA) = qw(Astro::VO::VOTable::Element);
 
 # Module version.
-our $VERSION = 1.0;
+our($VERSION) = 1.1;
 
 #******************************************************************************
 
@@ -250,10 +143,10 @@ our $VERSION = 1.0;
 # Third-party modules
 
 # Project modules
-use VOTable::DEFINITIONS;
-use VOTable::DESCRIPTION;
-use VOTable::INFO;
-use VOTable::RESOURCE;
+use Astro::VO::VOTable::RESOURCE;
+use Astro::VO::VOTable::DEFINITIONS;
+use Astro::VO::VOTable::DESCRIPTION;
+use Astro::VO::VOTable::INFO;
 
 #******************************************************************************
 
@@ -269,86 +162,6 @@ our(@valid_child_element_names) = qw(DESCRIPTION DEFINITIONS INFO RESOURCE);
 #******************************************************************************
 
 # Method definitions
-
-#******************************************************************************
-
-sub get_DESCRIPTION()
-{
-
-    # Save arguments.
-    my($self) = @_;
-
-    #--------------------------------------------------------------------------
-
-    # Local variables
-
-    # VOTable::DESCRIPTION object for the DESCRIPTION child element
-    # (if any) of this VOTABLE object.
-    my($description);
-
-    #--------------------------------------------------------------------------
-
-    # Find the first DESCRIPTION child element, if any.
-    ($description) = $self->getChildrenByTagName('DESCRIPTION');
-
-    # If found and not yet a VOTable::DESCRIPTION object, convert the
-    # DESCRIPTION object to a VOTable::DESCRIPTION object.
-    if ($description and not $description->isa('VOTable::DESCRIPTION')) {
-	$description = VOTable::DESCRIPTION->new($description) or
-	    croak('Unable to convert DESCRIPTION object!');
-    }
-
-    # Return the DESCRIPTION element object, or undef if none.
-    return($description);
-
-}
-
-#******************************************************************************
-
-sub get_DEFINITIONS()
-{
-
-    # Save arguments.
-    my($self) = @_;
-
-    #--------------------------------------------------------------------------
-
-    # Local variables
-
-    # VOTable::DEFINITIONS object for the DEFINITIONS child element
-    # (if any) of this VOTABLE object.
-    my($definitions);
-
-    #--------------------------------------------------------------------------
-
-    # Find the first DEFINITIONS child element, if any.
-    ($definitions) = $self->getChildrenByTagName('DEFINITIONS');
-
-    # If found and not yet a VOTable::DEFINITIONS object, convert the
-    # DEFINITIONS object to a VOTable::DEFINITIONS object.
-    if ($definitions and not $definitions->isa('VOTable::DEFINITIONS')) {
-	$definitions = VOTable::DEFINITIONS->new($definitions) or
-	    croak('Unable to convert DEFINITIONS object!');
-    }
-
-    # Return the DEFINITIONS element object, or undef if none.
-    return($definitions);
-
-}
-
-#******************************************************************************
-
-sub append_DESCRIPTION()
-{
-    croak('Invalid method!');
-}
-
-#******************************************************************************
-
-sub append_DEFINITIONS()
-{
-    croak('Invalid method!');
-}
 
 #******************************************************************************
 1;

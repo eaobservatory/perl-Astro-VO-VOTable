@@ -2,7 +2,7 @@ use ExtUtils::MakeMaker;
 
 # Write the Makefile.
 WriteMakefile(
-	      'NAME' => 'VOTable::BINARY',
+	      'NAME' => 'Astro::VO::VOTable::BINARY',
 	      'VERSION_FROM' => 'BINARY.pm',
 	      'PREREQ_PM' => {},
 	      'ABSTRACT_FROM' => 'BINARY.pm',

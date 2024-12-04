@@ -2,7 +2,7 @@ use ExtUtils::MakeMaker;
 
 # Write the Makefile.
 WriteMakefile(
-	      'NAME' => 'VOTable::LINK',
+	      'NAME' => 'Astro::VO::VOTable::LINK',
 	      'VERSION_FROM' => 'LINK.pm',
 	      'PREREQ_PM' => {},
 	      'ABSTRACT_FROM' => 'LINK.pm',

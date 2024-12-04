@@ -6,8 +6,8 @@
 # change 'tests => 1' to 'tests => last_test_to_print';
 
 use Test;
-BEGIN { plan tests => 2 };
-use VOTable::MAX;
+BEGIN { plan tests => 8 };
+use Astro::VO::VOTable::MAX;
 ok(1); # If we made it this far, we're ok.
 
 #########################
@@ -18,46 +18,142 @@ ok(1); # If we made it this far, we're ok.
 #########################
 
 # External modules
-use English;
 
 # Subroutine prototypes
+sub test_new();
+sub test_get_value();
+sub test_set_value();
+sub test_get_inclusive();
 sub test_set_inclusive();
+sub test_get();
+sub test_set();
 
 #########################
 
 # Test.
+ok(test_new, 1);
+ok(test_get_value, 1);
+ok(test_set_value, 1);
+ok(test_get_inclusive, 1);
 ok(test_set_inclusive, 1);
+ok(test_get, 1);
+ok(test_set, 1);
 
 #########################
 
-sub test_set_inclusive()
+sub test_new()
 {
 
-    # Local variables
+    # Test the plain-vanilla constructor.
+    Astro::VO::VOTable::MAX->new or return(0);
 
-    # Reference to test MAX object.
-    my($max);
+    # Try creating from a XML::LibXML::Element object.
+    Astro::VO::VOTable::MAX->new(XML::LibXML::Element->new('MAX')) or return(0);
 
-    # Current inclusive value.
-    my($inclusive);
-
-    # Valid inclusive attribute values.
-    my(@valids) = qw(yes no);
+    # Make sure the constructor fails when a bad reference is passed
+    # in.
+    not eval { Astro::VO::VOTable::MAX->new(XML::LibXML::Element->new('JUNK')) }
+      or return(0);
+    not eval { Astro::VO::VOTable::MAX->new(\0) } or return(0);
+    not eval { Astro::VO::VOTable::MAX->new([]) } or return(0);
 
     #--------------------------------------------------------------------------
 
+    # Return success.
+    return(1);
+
+}
+
+sub test_get_value()
+{
+    my($max);
+
     # Create the object.
-    $max = new VOTable::MAX or return(0);
+    $max = Astro::VO::VOTable::MAX->new or return(0);
 
     # Try each of the valid values.
-    foreach $inclusive (@valids) {
-	$max->set_inclusive($inclusive);
-	$max->get_inclusive eq $inclusive or return(0);
-    }
+    $max->setAttribute('value', 'This is a test!');
+    $max->get_value eq 'This is a test!' or return(0);
 
-    # Make sure bad values fail.
-    eval { $max->set_inclusive('BAD_VALUE!'); };
-    return(0) if not $EVAL_ERROR;
+    # All tests passed.
+    return(1);
+
+}
+
+sub test_set_value()
+{
+    my($max);
+
+    # Create the object.
+    $max = Astro::VO::VOTable::MAX->new or return(0);
+
+    # Try each of the valid values.
+    $max->set_value('This is also a test!');
+    $max->get_value eq 'This is also a test!' or return(0);
+
+    # All tests passed.
+    return(1);
+
+}
+
+sub test_get_inclusive()
+{
+    my($max);
+
+    # Create the object.
+    $max = Astro::VO::VOTable::MAX->new or return(0);
+
+    # Try each of the valid inclusives.
+    $max->setAttribute('inclusive', 'yes');
+    $max->get_inclusive eq 'yes' or return(0);
+
+    # All tests passed.
+    return(1);
+
+}
+
+sub test_set_inclusive()
+{
+    my($max);
+
+    # Create the object.
+    $max = Astro::VO::VOTable::MAX->new or return(0);
+
+    # Try each of the valid inclusives.
+    $max->set_inclusive('no');
+    $max->get_inclusive eq 'no' or return(0);
+
+    # All tests passed.
+    return(1);
+
+}
+
+sub test_get()
+{
+    my($max);
+
+    # Create the object.
+    $max = Astro::VO::VOTable::MAX->new or return(0);
+
+    # Add then read the text.
+    $max->appendChild(XML::LibXML::Text->new('Infinity'));
+    $max->get eq 'Infinity' or return(0);
+
+    # All tests passed.
+    return(1);
+
+}
+
+sub test_set()
+{
+    my($max);
+
+    # Create the object.
+    $max = Astro::VO::VOTable::MAX->new or return(0);
+
+    # Add then read the text.
+    $max->set('Infinity');
+    $max->get eq 'Infinity' or return(0);
 
     # All tests passed.
     return(1);

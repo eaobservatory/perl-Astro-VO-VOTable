@@ -1,80 +1,50 @@
 # TABLEDATA.pm
 
+# $Id: TABLEDATA.pm,v 1.1.1.19 2003/11/14 15:38:11 elwinter Exp $
+
+# NOTE: All internal subroutine names start with a leading underscore
+# (_) character, and assume that their inputs are valid.
+
+#******************************************************************************
+
 =pod
 
 =head1 NAME
 
-VOTable::TABLEDATA - VOTable TABLEDATA element class
+Astro::VO::VOTable::TABLEDATA - VOTable TABLEDATA element class
 
 =head1 SYNOPSIS
 
-use VOTable::TABLEDATA
+use Astro::VO::VOTable::TABLEDATA;
 
 =head1 DESCRIPTION
 
 This class implements an interface to VOTable TABLEDATA elements. This
-class inherits from VOTable::Element, and therefore all of the methods
-from that class are available to this class.
+class inherits from Astro::VO::VOTable::Element, and therefore all of
+the methods from that class are available to this class. This file
+will only document the methods specific to this class.
 
 =head2 Methods
-
-=head3 new($arg)
-
-Create and return a new VOTable::TABLEDATA object. Throw an exception
-if an error occurs. If $arg is supplied, and is a XML::LibXML::Element
-object for a 'TABLEDATA' element, that object is used to create the
-VOTable::TABLEDATA object (just by reblessing).
-
-=head3 get_TR()
-
-Return a list containing the VOTable::TR objects for the TR child
-elements of this TABLEDATA element. Return an empty list if no TR
-elements exist as children of this TABLEDATA element. Throw an
-exception if an error occurs.
-
-=head3 set_TR(@trs)
-
-Use @trs (a list of VOTable::TR objects) to set the TR element
-children of this TABLEDATA element. Any existing TR elements in this
-TABLEDATA element are deleted first. Throw an exception if an error
-occurs.
-
-=head3 append_TR(@trs)
-
-Use @trs (a list of VOTable::TR objects) to append the TR element
-children to this TABLEDATA element. Any existing TR elements in this
-TABLEDATA element are retained. Throw an exception if an error occurs.
-
-=head3 toString($arg)
-
-Return a string representation of the element and all of its
-children. Character entities are replaced with entity references where
-appropriate. If $arg is '1', the output has extra whitespace for
-readability. If $arg is '2', text content is surrounded by
-newlines. This method is directly inherited from XML::LibXML::Element,
-so further documentation may be found in the XML::LibXML::Element
-manual page.
 
 =head3 get_array()
 
 Return a reference to a 2-D array containing the data contents of the
-table. Throw an exception if an error occurs.
+table. Return undef if an error occurs.
 
 =head3 get_row($rownum)
 
 Return row $rownum of the data, as an array of values. The array
 elements should be interpreted in the same order as the FIELD elements
-in the enclosing TABLE element. Throw an exception if an error occurs.
+in the enclosing TABLE element. Return undef if an error occurs.
 
 =head3 get_cell($i, $j)
 
-Return column $j of row $i of the data, as a string. Throw an
-exception if an error occurs. Note that row and field indices start at
-0.
+Return column $j of row $i of the data, as a string. Return undef if
+an error occurs. Note that row and field indices start at 0.
 
 =head3 get_num_rows()
 
-Return the number of rows in the table. Throw an exception if an error
+Return the number of rows in the table. Return undef if an error
 occurs.
 
 =head1 WARNINGS
@@ -93,7 +63,7 @@ None.
 
 =item
 
-VOTable::Element
+Astro::VO::VOTable::Element
 
 =back
 
@@ -103,7 +73,7 @@ Eric Winter, NASA GSFC (Eric.L.Winter.1@gsfc.nasa.gov)
 
 =head1 VERSION
 
-$Id: TABLEDATA.pm,v 1.1.1.17 2003/04/09 16:25:00 elwinter Exp $
+$Id: TABLEDATA.pm,v 1.1.1.19 2003/11/14 15:38:11 elwinter Exp $
 
 =cut
 
@@ -112,6 +82,12 @@ $Id: TABLEDATA.pm,v 1.1.1.17 2003/04/09 16:25:00 elwinter Exp $
 # Revision history
 
 # $Log: TABLEDATA.pm,v $
+# Revision 1.1.1.19  2003/11/14 15:38:11  elwinter
+# Switched to Astro::VO::VOTable:: namespace.
+#
+# Revision 1.1.1.18  2003/10/30 19:14:51  elwinter
+# Overhauled in preparation for redesign.
+#
 # Revision 1.1.1.17  2003/04/09 16:25:00  elwinter
 # Changed VERSION to 1.0.
 #
@@ -170,40 +146,34 @@ $Id: TABLEDATA.pm,v 1.1.1.17 2003/04/09 16:25:00 elwinter Exp $
 #******************************************************************************
 
 # Begin the package definition.
-package VOTable::TABLEDATA;
+package Astro::VO::VOTable::TABLEDATA;
 
-# Specify the minimum acceptable Perl version.
-use 5.6.1;
+#******************************************************************************
 
-# Turn on strict syntax checking.
+# Compiler pragmas.
 use strict;
-
-# Use enhanced diagnostic messages.
 use diagnostics;
-
-# Use enhanced warnings.
 use warnings;
 
 #******************************************************************************
 
 # Set up the inheritance mechanism.
-use VOTable::Element;
-our @ISA = qw(VOTable::Element);
+use Astro::VO::VOTable::Element;
+our(@ISA) = qw(Astro::VO::VOTable::Element);
 
 # Module version.
-our $VERSION = 1.0;
+our($VERSION) = 1.1;
 
 #******************************************************************************
 
 # Specify external modules to use.
 
 # Standard modules
-use Carp;
 
 # Third-party modules
 
 # Project modules
-use VOTable::TR;
+use Astro::VO::VOTable::TR;
 
 #******************************************************************************
 
@@ -213,6 +183,7 @@ use VOTable::TR;
 
 # Class variables
 
+our(@valid_attribute_names) = ();
 our(@valid_child_element_names) = qw(TR);
 
 #******************************************************************************
@@ -256,12 +227,12 @@ sub get_array()
     return(undef) if not $nodelist;
 
     # Fetch the number of rows in the table.
-    $num_rows = $nodelist->size or croak;
+    $num_rows = $nodelist->size;
 
     # Process each TR element.
     for ($i = 0; $i < $num_rows; $i++) {
-	$tr = $nodelist->get_node($i + 1) or croak;
-	bless $tr => 'VOTable::TR';
+	$tr = $nodelist->get_node($i + 1) or return(undef);
+	$tr = Astro::VO::VOTable::TR->new($tr) or return(undef);
 	$array->[$i] = [$tr->as_array];
     }
 
@@ -294,14 +265,11 @@ sub get_row()
     #--------------------------------------------------------------------------
 
     # Fetch a list of the TR elements.
-    $nodelist = $self->getChildrenByTagName('TR')
-	or croak('TABLEDATA has no TR!');
+    $nodelist = $self->getChildrenByTagName('TR') or return(undef);
 
     # Fetch the specific TR element.
-    $tr = $nodelist->get_node($rownum + 1)
-	or croak('Undefined TR!');
-    $tr = new VOTable::TR($tr)
-	or croak('Unable to convert TR!');
+    $tr = $nodelist->get_node($rownum + 1) or return(undef);
+    $tr = new Astro::VO::VOTable::TR($tr) or return(undef);
 
     # Fetch the fields for the row.
     @row = $tr->as_array;
@@ -341,22 +309,17 @@ sub get_cell()
     #--------------------------------------------------------------------------
 
     # Fetch a list of the TR elements.
-    $tr_nodelist = $self->getChildrenByTagName('TR')
-	or croak('TABLEDATA has no TR!');
+    $tr_nodelist = $self->getChildrenByTagName('TR') or return(undef);
 
     # Fetch the specific TR element.
-    $tr = $tr_nodelist->get_node($i + 1)
-	or croak("Undefined TR $i!");
+    $tr = $tr_nodelist->get_node($i + 1) or return(undef);
 
     # Fetch a list of the TD elements.
-    $td_nodelist = $tr->getChildrenByTagName('TD')
-	or croak('TR has no TD!');
+    $td_nodelist = $tr->getChildrenByTagName('TD') or return(undef);
 
     # Fetch the specific TD element.
-    $td = $td_nodelist->get_node($j + 1)
-	or croak("TR $i had no TD $j!");
-    $td = new VOTable::TD($td)
-	or croak('Unable to convert TD!');
+    $td = $td_nodelist->get_node($j + 1) or return(undef);
+    $td = new Astro::VO::VOTable::TD($td) or return(undef);
 
     # Fetch the value of the cell.
     $cell = $td->get;
@@ -367,11 +330,6 @@ sub get_cell()
 }
 
 #------------------------------------------------------------------------------
-
-# get_num_rows()
-
-# Fetch the number of rows in the table. Return undef if an error
-# occurs.
 
 sub get_num_rows()
 {
@@ -392,8 +350,7 @@ sub get_num_rows()
     #--------------------------------------------------------------------------
 
     # Fetch a list of the TR elements.
-    $nodelist = $self->getChildrenByTagName('TR');
-    return(0) if not $nodelist;
+    $nodelist = $self->getChildrenByTagName('TR') or return(undef);
 
     # Count the number of TR elements.
     $num_rows = $nodelist->size;

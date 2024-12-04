@@ -1,18 +1,32 @@
 # Document.pm
 
+# $Id: Document.pm,v 1.1.1.15 2003/11/14 15:38:11 elwinter Exp $
+
+# NOTE: All internal subroutine names start with a leading underscore
+# (_) character, and assume that their inputs are valid.
+
+#******************************************************************************
+
 =pod
 
 =head1 NAME
 
-VOTable::Document - VOTable document class
+Astro::VO::VOTable::Document - VOTable document class
 
 =head1 SYNOPSIS
 
-use VOTable::Document
+use Astro::VO::VOTable::Document;
 
-$doc = VOTable::Document->new;
-$doc = VOTable::Document->new_from_string('<?xml version="1.0"?><VOTABLE/>');
-$doc = VOTable::Document->new_from_file('votable.xml');
+$doc = Astro::VO::VOTable::Document->new(%args);
+$doc = Astro::VO::VOTable::Document->new_from_string($string);
+$doc = Astro::VO::VOTable::Document->new_from_file($path);
+
+$version = $doc->get_version;
+$encoding = $doc->get_encoding;
+$doc->set_encoding($encoding);
+$standalone = $doc->get_standalone;
+$doc->set_standalone($standalone);
+
 $votable = $doc->get_VOTABLE;
 $doc->set_VOTABLE($votable);
 
@@ -24,40 +38,88 @@ inherits from XML::LibXML:Document.
 Upon initial loading of this module, the BEGIN subroutine creates a
 XML::LibXML parser object for global use by the class.
 
+In general, the Astro::VO::VOTable::* classes perform only the amount
+of input validation required for proper execution. For example, the
+Astro::VO::VOTable::Document constructors below do not check the
+actual values of the 'version', 'encoding', and 'standalone'
+attributes (other than to check that they are defined), since those
+values are not used by this code in any way - they are used only by
+the XML processor.
+
+Similarly, the Astro::VO::VOTable::* classes perform only rudimentary
+checks to ensure that elements are in the order described by the
+VOTable specification. It is easy for the user to get things out of
+order if he is not careful, especially if the inherited methods from
+XML::LibXML::* objects are used. It is probably best, for efficiency
+and QA purposes, that any VOTable documents produced using this code
+are validated by a separate XML validator before they are used by
+other programs.
+
 =head2 Methods
 
 =head3 new(%args)
 
-Create and return a new VOTable::Document object, containing a single,
-empty VOTABLE element. Throw an exception if an error occurs. The
-%args argument is used to pass optional named parameters to the
-constructor, in name => value format. The 'version' argument may be
-used to set the XML version in the XML declaration (the default
-version is '1.0'). The 'encoding' argument may be used to set the
-document encoding (the default encoding is 'UTF8').
+Create and return a new Astro::VO::VOTable::Document object,
+containing a single, empty VOTABLE element. Return undef if an error
+occurs. The optional %args argument may be used to pass named
+parameters to the constructor, in name => value format. The 'version'
+argument may be used to set the XML version in the XML declaration
+(the default version is '1.0'). The 'encoding' argument may be used to
+set the document encoding (the default encoding is 'UTF-8'). The
+'standalone' argument may be used to set the value of the standalone
+attribute (the default is to not define the 'standalone'
+attribute). Note that the Astro::VO::VOTable::* code itself makes no
+use of any of the attributes of the XML declaration.
 
-=head3 new_from_string($xml)
+=head3 new_from_string($string)
 
-Create and return a new VOTable::Document object using the specified
-XML string. Throw an exception if an error occurs.
+Create and return a new Astro::VO::VOTable::Document object by parsing
+the specified XML string. Return undef if an error occurs.
 
 =head3 new_from_file($path)
 
-Create and return a new VOTable::Document object using the contents
-(presumably valid XML!) of the specified file. Throw an exception if
-an error occurs.
+Create and return a new Astro::VO::VOTable::Document object using the
+contents of the specified file. Return undef if an error occurs.
 
-=head3 get_VOTABLE()
+=head3 get_version
 
-Return a VOTable::VOTABLE object for the VOTABLE element at the root
-of this Document. Throw an exception if no VOTABLE element is found,
-or an error occurs.
+Return the value of the 'version' attribute of the XML declaration for
+this object. The default value is '1.0'. Note that the counterpart
+set_version method is not supplied since the 'version' attribute
+must be specified when the document is created.
+
+=head3 get_encoding
+
+Return the value of the 'encoding' attribute of the XML declaration
+for this object. The default value is 'UTF-8'.
+
+=head3 set_encoding($encoding)
+
+Set the value of the 'version' attribute of the XML declaration for
+this object to the specified value. The default value is 'UTF-8'.
+
+=head3 get_standalone
+
+Return the value of the 'standalone' attribute of the XML declaration
+for this object. The valid values are 'yes', 'no', and undef (if not
+specified).
+
+=head3 set_standalone($standalone)
+
+Set the value of the 'attribute' attribute of the XML declaration for
+this object to the specified value. The valid values are 'yes', 'no',
+and undef (if not specified). Raise an exception if an error occurs.
+
+=head3 get_VOTABLE
+
+Return a Astro::VO::VOTable::VOTABLE object for the VOTABLE element at
+the root of this Document. Return undef if no VOTABLE element is
+found, or an error occurs.
 
 =head3 set_VOTABLE($votable)
 
 Set the VOTABLE element for this Document using the supplied
-VOTable::VOTABLE object. Return the old VOTABLE element on success, or
-raise an exception if an error occurs.
+Astro::VO::VOTable::VOTABLE object.
 
 =head1 WARNINGS
 
@@ -75,17 +137,17 @@ None.
 
 =item
 
-XML::DOM::Document
+XML::LibXML::Document
 
 =back
 
 =head1 AUTHOR
 
-Eric Winter, NASA GSFC (elwinter@milkyway.gsfc.nasa.gov)
+Eric Winter, NASA GSFC (Eric.L.Winter.1@gsfc.nasa.gov)
 
 =head1 VERSION
 
-$Id: Document.pm,v 1.1.1.13 2003/05/16 13:24:58 elwinter Exp $
+$Id: Document.pm,v 1.1.1.15 2003/11/14 15:38:11 elwinter Exp $
 
 =cut
 
@@ -94,6 +156,12 @@ $Id: Document.pm,v 1.1.1.13 2003/05/16 13:24:58 elwinter Exp $
 # Revision history
 
 # $Log: Document.pm,v $
+# Revision 1.1.1.15  2003/11/14 15:38:11  elwinter
+# Switched to Astro::VO::VOTable:: namespace.
+#
+# Revision 1.1.1.14  2003/10/28 15:55:30  elwinter
+# Overhaul in preparation for new version.
+#
 # Revision 1.1.1.13  2003/05/16 13:24:58  elwinter
 # Changed to use isa() method.
 #
@@ -140,28 +208,23 @@ $Id: Document.pm,v 1.1.1.13 2003/05/16 13:24:58 elwinter Exp $
 #******************************************************************************
 
 # Begin the package definition.
-package VOTable::Document;
+package Astro::VO::VOTable::Document;
 
-# Specify the minimum acceptable Perl version.
-use 5.6.1;
+#******************************************************************************
 
-# Turn on strict syntax checking.
+# Compiler pragmas.
 use strict;
-
-# Use enhanced diagnostic messages.
 use diagnostics;
-
-# Use enhanced warnings.
 use warnings;
 
 #******************************************************************************
 
 # Set up the inheritance mechanism.
 use XML::LibXML;
-our @ISA = qw(XML::LibXML::Document);
+our(@ISA) = qw(XML::LibXML::Document);
 
 # Module version.
-our $VERSION = 1.0;
+our($VERSION) = 1.1;
 
 #******************************************************************************
 
@@ -173,11 +236,17 @@ use Carp;
 # Third-party modules
 
 # Project modules
-use VOTable::VOTABLE;
+use Astro::VO::VOTable::VOTABLE;
 
 #******************************************************************************
 
 # Class constants
+
+# Default version of XML.
+use constant DEFAULT_VERSION => '1.0';
+
+# Default document encoding.
+use constant DEFAULT_ENCODING => 'UTF-8';
 
 #******************************************************************************
 
@@ -188,11 +257,15 @@ my($parser);
 
 #******************************************************************************
 
+# Local subroutines.
+
+#******************************************************************************
+
 BEGIN
 {
-
     # Create the class parser.
-    $parser = XML::LibXML->new or croak;
+    $parser = XML::LibXML->new
+	or croak('Unable to create XML::LibXML parser!');
 
 }
 
@@ -215,28 +288,31 @@ sub new()
     # Reference to new object.
     my($self);
 
+    # Attributes of new Document.
+    my($version, $encoding, $standalone);
+
     # New VOTABLE element.
     my($votable);
 
     #--------------------------------------------------------------------------
 
+    # Supply defaults for missing arguments.
+    $version = defined($args{'version'}) ? $args{'version'} : DEFAULT_VERSION;
+    $encoding = defined($args{'encoding'}) ? $args{'encoding'} :
+	DEFAULT_ENCODING;
+    $standalone = exists($args{'standalone'}) ? $args{'standalone'} : undef;
+
     # Create the object with the appropriate arguments.
-    if ($args{'version'} and $args{'encoding'}) {
-	$self = XML::LibXML::Document->new($args{'version'},
-					   $args{'encoding'}) or croak;
-    } elsif ($args{'version'}) {
-	$self = XML::LibXML::Document->new($args{'version'}) or croak;
-    } elsif ($args{'encoding'}) {
-	$self = XML::LibXML::Document->new('1.0', $args{'encoding'}) or croak;
-    } else {
-	$self = XML::LibXML::Document->new or croak;
-    }
+    $self = XML::LibXML::Document->new($version, $encoding) or return(undef);
 
     # Bless the new object into this class.
     bless $self => $class;
 
+    # If the 'standalone' attribute was specified, set it.
+    $self->set_standalone($standalone);
+
     # Create and add an empty VOTABLE element.
-    $votable = XML::LibXML::Element->new('VOTABLE') or croak;
+    $votable = Astro::VO::VOTable::VOTABLE->new() or return(undef);
     $self->setDocumentElement($votable);
 
     # Return a reference to the new object.
@@ -261,8 +337,9 @@ sub new_from_string()
 
     #--------------------------------------------------------------------------
 
-    # Parse the XML to create a XML::LibXML::Document object.
-    $self = $parser->parse_string($xml) or croak;
+    # Parse the XML to create a XML::LibXML::Document object. Use eval
+    # to catch exceptions that are raised if the XML is not valid.
+    $self = eval { $parser->parse_string($xml) } or return(undef);
 
     # Bless into this class.
     bless $self => $class;
@@ -290,7 +367,7 @@ sub new_from_file()
     #--------------------------------------------------------------------------
 
     # Parse the XML file to create a XML::LibXML::Document object.
-    $self = $parser->parse_file($path) or croak;
+    $self = eval { $parser->parse_file($path) } or return(undef);
 
     # Bless into this class.
     bless $self => $class;
@@ -298,6 +375,39 @@ sub new_from_file()
     # Return a reference to the new object.
     return($self);
 
+}
+
+#------------------------------------------------------------------------------
+
+sub get_version() { $_[0]->getVersion }
+
+#------------------------------------------------------------------------------
+
+sub get_encoding() { $_[0]->encoding }
+sub set_encoding() { $_[0]->setEncoding($_[1]) }
+
+#------------------------------------------------------------------------------
+
+sub get_standalone() {
+    my($standalone) = $_[0]->standalone;
+    $standalone = (undef, 'no', 'yes')[$standalone + 1];
+    return($standalone);
+}
+
+sub set_standalone() {
+    my($self, $standalone) = @_;
+    if (defined($standalone)) {
+	if ($standalone eq 'no') {
+	    $standalone = 0;
+	} elsif ($standalone eq 'yes') {
+	    $standalone = 1;
+	} else {
+	    croak("Bad standalone ($standalone)!");
+	}
+    } else {
+	$standalone = -1;
+    }
+    $self->setStandalone($standalone);
 }
 
 #------------------------------------------------------------------------------
@@ -312,19 +422,18 @@ sub get_VOTABLE()
 
     # Local variables.
 
-    # VOTable::VOTABLE for VOTABLE element.
+    # Astro::VO::VOTable::VOTABLE for VOTABLE element.
     my($votable);
 
     #--------------------------------------------------------------------------
 
-    # Find the first (only) VOTABLE child element.
-    $votable = $self->documentElement
-	or croak('No VOTABLE element in document!');
+    # Find the document root element.
+    $votable = $self->documentElement or return(undef);
 
-    # If not one already, convert it to a VOTable::VOTABLE object.
-    if (not $votable->isa('VOTable::VOTABLE')) {
-	$votable = VOTable::VOTABLE->new($votable)
-	    or croak('Unable to convert VOTABLE!');
+    # If not one already, convert it to a Astro::VO::VOTable::VOTABLE
+    # object.
+    if (not $votable->isa('Astro::VO::VOTable::VOTABLE')) {
+	$votable = Astro::VO::VOTable::VOTABLE->new($votable) or return(undef);
     }
 
     # Return the VOTABLE element object.
@@ -342,19 +451,8 @@ sub set_VOTABLE()
 
     #--------------------------------------------------------------------------
 
-    # Local variables.
-
-    # Old VOTABLE element object.
-    my($old_votable);
-
-    #--------------------------------------------------------------------------
-
-    # Replace the existing VOTABLE element.
-    $old_votable = $self->get_VOTABLE or croak;
-    $self->replaceChild($votable, $old_votable);
-
-    # Return the old element.
-    return($old_votable);
+    # Set the VOTABLE element.
+    $self->setDocumentElement($votable);
 
 }
 

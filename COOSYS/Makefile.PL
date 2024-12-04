@@ -2,7 +2,7 @@ use ExtUtils::MakeMaker;
 
 # Write the Makefile.
 WriteMakefile(
-	      'NAME' => 'VOTable::COOSYS',
+	      'NAME' => 'Astro::VO::VOTable::COOSYS',
 	      'VERSION_FROM' => 'COOSYS.pm',
 	      'PREREQ_PM' => {},
 	      'ABSTRACT_FROM' => 'COOSYS.pm',

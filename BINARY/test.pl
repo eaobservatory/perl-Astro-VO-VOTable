@@ -6,8 +6,8 @@
 # change 'tests => 1' to 'tests => last_test_to_print';
 
 use Test;
-BEGIN { plan tests => 2 };
-use VOTable::BINARY;
+BEGIN { plan tests => 4 };
+use Astro::VO::VOTable::BINARY;
 ok(1); # If we made it this far, we're ok.
 
 #########################
@@ -18,71 +18,139 @@ ok(1); # If we made it this far, we're ok.
 #########################
 
 # External modules
-use VOTable::Document;
 
 # Subroutine prototypes
+sub test_new();
 sub test_get_STREAM();
+sub test_set_STREAM();
 
 #########################
 
 # Test.
+ok(test_new, 1);
 ok(test_get_STREAM, 1);
+ok(test_set_STREAM, 1);
 
 #########################
 
-sub test_get_STREAM()
+sub test_new()
 {
 
-    # Local variables
+    # Test the plain-vanilla constructor.
+    Astro::VO::VOTable::BINARY->new or return(0);
 
-    # String of XML to parse.
+    # Try creating from a XML::LibXML::Element object.
+    Astro::VO::VOTable::BINARY->new(XML::LibXML::Element->new('BINARY')) or return(0);
+
+    # Make sure the constructor fails when a bad reference is passed
+    # in.
+    not eval { Astro::VO::VOTable::BINARY->new(XML::LibXML::Element->new('JUNK')) }
+      or return(0);
+    not eval { Astro::VO::VOTable::BINARY->new(\0) } or return(0);
+    not eval { Astro::VO::VOTable::BINARY->new([]) } or return(0);
+
+    #--------------------------------------------------------------------------
+
+    # Return success.
+    return(1);
+
+}
+
+sub test_get_STREAM()
+{
+    my($parser);
     my($xml);
-
-    # VOTable::Document object for current document.
     my($document);
-
-    # VOTable::VOTABLE object for the document element.
     my($votable);
-
-    # VOTable::RESOURCE object for the RESOURCE element.
     my($resource);
-
-    # VOTable::TABLE object for the TABLE element.
     my($table);
-
-    # VOTable::DATA object for the DATA element.
     my($data);
-
-    # VOTable::BINARY object for the BINARY element.
     my($binary);
-
-    # VOTable::STREAM object for the STREAM element.
     my($stream);
 
     #--------------------------------------------------------------------------
 
+    # Create the parser.
+    $parser = XML::LibXML->new or return(0);
+
     # Parse the XML.
     $xml = '<VOTABLE><RESOURCE><TABLE><DATA><BINARY><STREAM/></BINARY></DATA></TABLE></RESOURCE></VOTABLE>';
-    $document = VOTable::Document->new_from_string($xml) or return(0);
+    $document = $parser->parse_string($xml) or return(0);
 
     # Fetch the VOTABLE element.
-    $votable = $document->get_VOTABLE or return(0);
+    $votable = $document->documentElement or return(0);
 
     # Fetch the RESOURCE element.
-    $resource = ($votable->get_RESOURCE)[0] or return(0);
+    $resource = $votable->getChildrenByTagName('RESOURCE')->get_node(1)
+	or return(0);
 
     # Fetch the TABLE element.
-    $table = ($resource->get_TABLE)[0] or return(0);
+    $table = $resource->getChildrenByTagName('TABLE')->get_node(1)
+	or return(0);
 
     # Fetch the DATA element.
-    $data = ($table->get_DATA)[0] or return(0);
+    $data = $table->getChildrenByTagName('DATA')->get_node(1) or return(0);
 
     # Fetch the BINARY element.
-    $binary = ($data->get_BINARY)[0] or return(0);
+    $binary = $data->getChildrenByTagName('BINARY')->get_node(1)
+	or return(0);
+    $binary = Astro::VO::VOTable::BINARY->new($binary) or return(0);
 
     # Fetch the STREAM element.
-    $stream = ($binary->get_STREAM)[0] or return(0);
-    $stream->isa('VOTable::STREAM') or return(0);
+    $stream = $binary->get_STREAM(0) or return(0);
+    $stream->isa('Astro::VO::VOTable::STREAM') or return(0);
+
+    # All tests succeeded.
+    return(1);
+
+}
+
+sub test_set_STREAM()
+{
+    my($parser);
+    my($xml);
+    my($document);
+    my($votable);
+    my($resource);
+    my($table);
+    my($data);
+    my($binary);
+    my($stream);
+
+    #--------------------------------------------------------------------------
+
+    # Create the parser.
+    $parser = XML::LibXML->new or return(0);
+
+    # Parse the XML.
+    $xml = '<VOTABLE><RESOURCE><TABLE><DATA><BINARY/></DATA></TABLE></RESOURCE></VOTABLE>';
+    $document = $parser->parse_string($xml) or return(0);
+
+    # Fetch the VOTABLE element.
+    $votable = $document->documentElement or return(0);
+
+    # Fetch the RESOURCE element.
+    $resource = $votable->getChildrenByTagName('RESOURCE')->get_node(1)
+	or return(0);
+
+    # Fetch the TABLE element.
+    $table = $resource->getChildrenByTagName('TABLE')->get_node(1)
+	or return(0);
+
+    # Fetch the DATA element.
+    $data = $table->getChildrenByTagName('DATA')->get_node(1) or return(0);
+
+    # Fetch the BINARY element.
+    $binary = $data->getChildrenByTagName('BINARY')->get_node(1)
+	or return(0);
+    $binary = Astro::VO::VOTable::BINARY->new($binary) or return(0);
+
+    # Create the STREAM element.
+    $stream = XML::LibXML::Element->new('STREAM') or return(0);
+    $binary->set_STREAM($stream);
+
+    # Fetch the STREAM element.
+    $stream->isSameNode($binary->get_STREAM(0)) or return(0);
 
     # All tests succeeded.
     return(1);
